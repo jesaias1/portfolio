@@ -123,33 +123,7 @@ export default function Hero() {
           ))}
         </motion.div>
 
-        {/* Layer 4: Floating geometric shapes */}
-        <motion.div
-          style={{ x: mouseX, y: mouseY }}
-          className="absolute inset-0"
-        >
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute border border-white/10"
-              style={{
-                left: `${15 + i * 20}%`,
-                top: `${20 + i * 15}%`,
-                width: 100 + i * 50,
-                height: 100 + i * 50,
-              }}
-              animate={{
-                rotate: [0, 360],
-                y: [0, -30, 0],
-              }}
-              transition={{
-                duration: 20 + i * 5,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-            />
-          ))}
-        </motion.div>
+        {/* Layer 4: Floating geometric shapes - Removed as per user request */}
 
         {/* Layer 5: Mouse-following glow */}
         <motion.div
