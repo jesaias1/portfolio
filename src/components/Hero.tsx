@@ -161,25 +161,7 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Corner decorations with glow */}
-      <motion.div
-        className="absolute top-10 left-10 w-24 h-24 border-l-2 border-t-2 border-purple-500/50"
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ duration: 1, delay: 0.5 }}
-        style={{
-          boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)',
-        }}
-      />
-      <motion.div
-        className="absolute bottom-10 right-10 w-24 h-24 border-r-2 border-b-2 border-pink-500/50"
-        initial={{ scale: 0, rotate: 180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ duration: 1, delay: 0.5 }}
-        style={{
-          boxShadow: '0 0 20px rgba(236, 72, 153, 0.3)',
-        }}
-      />
+      {/* Corner decorations removed as per user request */}
     </section>
   );
 }
