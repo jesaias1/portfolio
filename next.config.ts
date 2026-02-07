@@ -12,9 +12,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['framer-motion', 'react-icons'],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
+
 
 export default nextConfig;
