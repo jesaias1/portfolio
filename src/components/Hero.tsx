@@ -42,46 +42,25 @@ export default function Hero() {
 
           {/* Kreativ/Reaktiv transformation */}
           <div 
-            className="overflow-hidden cursor-pointer relative"
+            className="cursor-pointer relative"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            <motion.div className="space-y-2">
+            <div className="space-y-4">
               {words.map((word, wordIndex) => (
-                <div key={wordIndex} className="overflow-hidden relative">
-                  <AnimatePresence mode="wait">
-                    <motion.h2
-                      key={isHovering ? word.replacement : word.original}
-                      initial={{ y: 100, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -100, opacity: 0 }}
-                      transition={{ 
-                        duration: 0.6,
-                        ease: [0.6, 0.05, 0.01, 0.9]
-                      }}
-                      className="text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none"
-                    >
-                      {(isHovering ? word.replacement : word.original).split('').map((char, charIndex) => (
-                        <motion.span
-                          key={charIndex}
-                          whileHover={{ 
-                            scale: 1.2,
-                            color: wordIndex === 0 ? '#a855f7' : '#ec4899',
-                            textShadow: wordIndex === 0 
-                              ? '0 0 30px rgba(168, 85, 247, 0.8)'
-                              : '0 0 30px rgba(236, 72, 153, 0.8)',
-                            transition: { duration: 0.2 }
-                          }}
-                          className="inline-block cursor-default"
-                        >
-                          {char}
-                        </motion.span>
-                      ))}
-                    </motion.h2>
-                  </AnimatePresence>
+                <div key={wordIndex} className="relative overflow-hidden h-[1.1em]">
+                  <ScrambleText 
+                    text={isHovering ? word.replacement : word.original} 
+                    className={`text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none ${
+                       wordIndex === 0 
+                         ? isHovering ? 'text-purple-400' : 'text-white'
+                         : 'text-white'
+                    }`}
+                    glowColor={wordIndex === 0 ? 'rgba(168, 85, 247, 0.8)' : undefined}
+                  />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Tagline with glitch effect */}
