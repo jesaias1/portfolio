@@ -72,11 +72,14 @@ async function main() {
     update: {},
     create: {
       id: 'main',
+      title: 'Om Mig',
       content: `
         <p>Hej! Jeg er Linas Jesaias, en passioneret udvikler der elsker at skabe digitale oplevelser der både ser fantastiske ud og fungerer perfekt.</p>
         <p>Med over 2+ års erfaring inden for web udvikling har jeg hjulpet brands og virksomheder med at realisere deres digitale visioner gennem moderne teknologi og kreativt design.</p>
         <p>Min mission er at transformere komplekse idéer til brugervenlige, smukke og skalerbare løsninger. Jeg specialiserer mig i multiplayer gaming platforme, e-commerce løsninger, og interactive web applikationer.</p>
       `,
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+      skills: JSON.stringify(['React', 'Next.js', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind CSS']),
     },
   })
 
@@ -91,3 +94,10 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+```
+
+---
+
+## **ERSTAT FILEN:**
+```
+C:\Users\lin4s\portfolio-app-NEXT-LEVEL\prisma\seed.ts
