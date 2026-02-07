@@ -180,22 +180,7 @@ export default function Hero() {
         style={{ opacity, scale }}
       >
         <div className="text-center space-y-12">
-          {/* Name - LINAS JESAIAS */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="mb-8"
-          >
-            <motion.h1 
-              className="text-4xl md:text-6xl lg:text-8xl font-display font-light tracking-tight mb-4"
-              style={{
-                textShadow: '0 0 60px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.3)',
-              }}
-            >
-              LINAS JESAIAS
-            </motion.h1>
-          </motion.div>
+          {/* Name removed as requested */}
 
           {/* Kreativ/Reaktiv transformation */}
           <div 

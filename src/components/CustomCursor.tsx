@@ -35,7 +35,7 @@ export default function CustomCursor() {
     <>
       {/* Main cursor */}
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[99999] mix-blend-difference"
+        className="fixed top-0 left-0 w-6 h-6 rounded-full pointer-events-none z-[99999] border-2 border-white"
         style={{
           x: cursorX,
           y: cursorY,
@@ -44,9 +44,9 @@ export default function CustomCursor() {
         }}
       >
         <motion.div
-          className="w-full h-full rounded-full bg-white"
+          className="w-full h-full rounded-full bg-white/20 backdrop-blur-sm"
           animate={{
-            scale: isPointer ? 1.5 : 1,
+            scale: isPointer ? 0.5 : 1,
           }}
           transition={{ duration: 0.2 }}
         />
