@@ -158,14 +158,19 @@ function LetterSwap({ isHovering }: { isHovering: boolean }) {
           className={`inline-block text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none ${
              i === 0 && isHovering ? 'text-purple-400' : 'text-white'
           }`}
+          style={{ 
+            textShadow: i === 0 && isHovering ? '0 0 30px rgba(168, 85, 247, 0.8)' : undefined,
+            display: 'inline-block' // Ensure transforms work
+          }}
+          animate={{
+             color: i === 0 && isHovering ? '#A855F7' : '#FFFFFF',
+             rotate: isHovering ? [0, -5, 5, 0] : 0, // Subtle shake
+          }}
           transition={{
             type: "spring",
-            stiffness: 70, // Slower
-            damping: 12,   // Bouncier
-            mass: 1.2
-          }}
-          style={{ 
-            textShadow: i === 0 && isHovering ? '0 0 30px rgba(168, 85, 247, 0.8)' : undefined
+            stiffness: 120, // Snappier
+            damping: 15,
+            mass: 1
           }}
         >
           {char}
