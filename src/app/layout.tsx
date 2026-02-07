@@ -18,9 +18,9 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio | Creative Developer",
-  description: "A stunning portfolio showcasing creative development work",
-  keywords: ["portfolio", "web developer", "full-stack", "design"],
+  title: "Jesaias",
+  description: "Portfolio of Jesaias - Creative Developer",
+  keywords: ["portfolio", "web developer", "full-stack", "design", "Jesaias"],
 };
 
 export default function RootLayout({
