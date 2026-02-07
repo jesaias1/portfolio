@@ -44,7 +44,11 @@ export default function Navigation() {
               href="/" 
               className="text-xl font-display font-semibold tracking-tight"
             >
-              Portfolio
+              <img 
+                src="/logo.png" 
+                alt="Logo" 
+                className="h-12 w-auto object-contain"
+              />
             </Link>
           </motion.div>
 

@@ -35,6 +35,7 @@ body {
   background: var(--background);
   font-family: var(--font-body);
   overflow-x: hidden;
+  cursor: none;
 }
 
 /* Custom scrollbar */
