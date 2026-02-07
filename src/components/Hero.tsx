@@ -27,7 +27,7 @@ export default function Hero() {
     <section 
       ref={heroRef}
       id="home" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20 pt-32"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20 pt-20"
     >
       {/* Background is now global in layout.tsx */}
 
@@ -133,13 +133,13 @@ export default function Hero() {
               className="flex flex-col items-center text-gray-400 hover:text-white transition-colors group"
             >
               <motion.span 
-                className="text-xs tracking-widest mb-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-xs tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 SCROLL
               </motion.span>
               <motion.div
                 animate={{ 
-                  y: [0, 12, 0],
+                  y: [0, 8, 0],
                 }}
                 transition={{ 
                   duration: 1.5, 
@@ -147,10 +147,10 @@ export default function Hero() {
                   ease: "easeInOut"
                 }}
               >
-                <HiArrowDown className="text-2xl" />
+                <HiArrowDown className="text-xl" />
               </motion.div>
               <motion.div
-                className="w-px h-20 bg-gradient-to-b from-purple-500/50 via-pink-500/50 to-transparent mt-2"
+                className="w-px h-10 bg-gradient-to-b from-purple-500/50 via-pink-500/50 to-transparent mt-2"
                 initial={{ scaleY: 0 }}
                 animate={{ scaleY: 1 }}
                 transition={{ duration: 1, delay: 2.5 }}
