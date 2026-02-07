@@ -156,14 +156,14 @@ function LetterSwap({ isHovering }: { isHovering: boolean }) {
           layoutId={`letter-${layoutIds[i]}`}
           key={`letter-${layoutIds[i]}`}
           className={`inline-block text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none ${
-             i === 0 && isHovering ? 'text-purple-400' : 'text-white'
+             i === 0 && isHovering ? 'text-green-400' : 'text-white'
           }`}
           style={{ 
-            textShadow: i === 0 && isHovering ? '0 0 30px rgba(168, 85, 247, 0.8)' : undefined,
+            textShadow: i === 0 && isHovering ? '0 0 30px rgba(74, 222, 128, 0.8)' : undefined,
             display: 'inline-block' // Ensure transforms work
           }}
           animate={{
-             color: i === 0 && isHovering ? '#A855F7' : '#FFFFFF',
+             color: i === 0 && isHovering ? '#4ade80' : '#FFFFFF',
              rotate: isHovering ? [0, -5, 5, 0] : 0, // Subtle shake
           }}
           transition={{
