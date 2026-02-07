@@ -27,7 +27,7 @@ export default function Hero() {
     <section 
       ref={heroRef}
       id="home" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20 pt-32"
     >
       {/* Background is now global in layout.tsx */}
 

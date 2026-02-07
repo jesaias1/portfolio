@@ -33,7 +33,7 @@ export default function Navigation() {
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      <div className={`max-w-6xl mx-auto px-6 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-6'}`}>
         <div className="flex items-center justify-between">
           {/* Logo */}
           <motion.div
@@ -47,7 +47,7 @@ export default function Navigation() {
               <img 
                 src="/logo.png" 
                 alt="Logo" 
-                className="h-24 w-auto object-contain"
+                className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-16' : 'h-24'}`}
               />
             </Link>
           </motion.div>
