@@ -9,7 +9,7 @@ import {
   HiFolder, 
   HiUser, 
   HiMail, 
-  HiLog Ud,
+  HiLogout,
   HiPencil,
   HiTrash,
   HiPlus,
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2 px-6 py-3 border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all"
             >
-              <HiLog Ud />
+              <HiLogout />
               Log Ud
             </motion.button>
           </div>
