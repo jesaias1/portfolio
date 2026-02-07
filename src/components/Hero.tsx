@@ -48,7 +48,7 @@ export default function Hero() {
     <section 
       ref={heroRef}
       id="home" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20"
     >
       {/* Cosmic Background Layers with Parallax */}
       <div className="absolute inset-0 overflow-hidden">
@@ -188,7 +188,7 @@ export default function Hero() {
             className="mb-8"
           >
             <motion.h1 
-              className="text-5xl md:text-7xl lg:text-9xl font-display font-light tracking-tight mb-4"
+              className="text-4xl md:text-6xl lg:text-8xl font-display font-light tracking-tight mb-4"
               style={{
                 textShadow: '0 0 60px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.3)',
               }}
