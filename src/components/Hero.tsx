@@ -47,7 +47,8 @@ export default function Hero() {
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            <LayoutGroup>
+             {/* LayoutGroup enables shared layout animations between components */}
+            <LayoutGroup id="kreativ-reaktiv-switch">
                <LetterSwap isHovering={isHovering} />
             </LayoutGroup>
           </div>
@@ -171,5 +172,64 @@ function LetterSwap({ isHovering }: { isHovering: boolean }) {
         </motion.span>
       ))}
     </div>
+  );
+}
+
+// Magnetic button with enhanced effects
+function MagneticButton({ 
+  children, 
+  href, 
+  variant = 'solid' 
+}: { 
+  children: React.ReactNode; 
+  href: string; 
+  variant?: 'solid' | 'outline';
+}) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setPosition({ x: x * 0.4, y: y * 0.4 });
+  };
+
+  const handleMouseLeave = () => {
+    setPosition({ x: 0, y: 0 });
+    setIsHovered(false);
+  };
+
+  return (
+    <motion.a
+      href={href}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovered(true)}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={`
+        relative px-12 py-5 font-medium text-sm tracking-widest overflow-hidden group
+        ${variant === 'solid' 
+          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+          : 'bg-transparent border-2 border-white/20 text-white'
+        }
+      `}
+      style={{
+        boxShadow: isHovered && variant === 'solid'
+          ? '0 0 40px rgba(168, 85, 247, 0.6)'
+          : 'none',
+      }}
+    >
+      <motion.span
+        className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20"
+        initial={{ x: '-100%' }}
+        animate={isHovered ? { x: '100%' } : { x: '-100%' }}
+        transition={{ duration: 0.8 }}
+      />
+      <span className="relative z-10">{children}</span>
+    </motion.a>
   );
 }
