@@ -3,6 +3,8 @@ import { Playfair_Display, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 
+import CosmicBackground from "@/components/CosmicBackground";
+
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
   variable: '--font-display',
@@ -29,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${workSans.variable}`}>
       <body className="antialiased">
-        <div className="gradient-mesh" />
+        <CosmicBackground />
         <div className="bg-grain">
           {children}
         </div>
