@@ -1,187 +1,160 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, AnimatePresence, LayoutGroup } from 'framer-motion';
-import { HiArrowDown } from 'react-icons/hi';
-import { useEffect, useState, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
 export default function Hero() {
-  const [isHovering, setIsHovering] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const [subtitleVisible, setSubtitleVisible] = useState(false);
+  const [subtitleText, setSubtitleText] = useState('');
   
-  const { scrollY } = useScroll();
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   });
   
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
 
-  const words = [
-    { original: "Kreativ", replacement: "Reaktiv" },
-    { original: "Udvikler", replacement: "Udvikler" }
-  ];
+  const fullSubtitle = '> kreativ_udvikler --fullstack --audio --design';
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSubtitleVisible(true);
+      let charIndex = 0;
+      const typeInterval = setInterval(() => {
+        charIndex++;
+        setSubtitleText(fullSubtitle.slice(0, charIndex));
+        if (charIndex >= fullSubtitle.length) {
+          clearInterval(typeInterval);
+        }
+      }, 35);
+      return () => clearInterval(typeInterval);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Waveform bars — pre-computed for stability
+  const waveformBars = useMemo(() => 
+    Array.from({ length: 80 }, (_, i) => ({
+      delay: i * 0.03,
+      height: Math.random() * 60 + 10,
+      duration: 0.8 + Math.random() * 0.6,
+    })), []
+  );
 
   return (
     <section 
       ref={heroRef}
       id="home" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden pb-20 pt-20"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
     >
-      {/* Background is now global in layout.tsx */}
-
+      {/* Audio waveform background visualization */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 flex items-end justify-center gap-[2px] opacity-[0.07] overflow-hidden">
+        {waveformBars.map((bar, i) => (
+          <motion.div
+            key={i}
+            className="w-[3px] bg-[#00ff41]"
+            animate={{
+              height: [bar.height * 0.3, bar.height, bar.height * 0.5, bar.height * 0.8, bar.height * 0.3],
+            }}
+            transition={{
+              duration: bar.duration,
+              repeat: Infinity,
+              delay: bar.delay,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
 
       {/* Main Content */}
       <motion.div 
         className="max-w-7xl mx-auto px-6 relative z-10"
-        style={{ opacity, scale }}
+        style={{ opacity, y }}
       >
-        <div className="text-center space-y-12">
-          {/* Name removed as requested */}
-
-          {/* Kreativ/Reaktiv transformation */}
-          {/* Kreativ/Reaktiv transformation */}
-          <div 
-            className="cursor-pointer relative h-[1.1em] overflow-visible"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+        <div className="text-center space-y-8">
+          {/* Name — large, glitched, monospace feel */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
           >
-             {/* LayoutGroup enables shared layout animations between components */}
-            <LayoutGroup id="kreativ-reaktiv-switch">
-               <LetterSwap isHovering={isHovering} />
-            </LayoutGroup>
-          </div>
-          
-          <div className="mt-4">
-             <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none text-white">
-                Udvikler
-             </h2>
-          </div>
+            <h1 
+              className="text-7xl md:text-9xl lg:text-[12rem] font-bold tracking-tighter leading-none glitch-text select-none"
+              data-text="JESAIAS"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: '#ffffff',
+              }}
+            >
+              JESAIAS
+            </h1>
+          </motion.div>
 
-          {/* Tagline with glitch effect */}
+          {/* Typing subtitle */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: subtitleVisible ? 1 : 0 }}
+            className="h-8 flex items-center justify-center"
+          >
+            <span 
+              className="font-mono text-sm md:text-base text-[#00ff41] tracking-wider"
+              style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.4)' }}
+            >
+              {subtitleText}
+              <span className="cursor-blink ml-0.5">▌</span>
+            </span>
+          </motion.div>
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 2.5 }}
+            className="text-lg md:text-xl text-gray-500 font-light tracking-wide max-w-xl mx-auto"
+          >
+            Skaber digitale oplevelser der overskrider grænserne
+          </motion.p>
+
+          {/* CTA Buttons — terminal commands */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
+          >
+            <TerminalButton href="#projects">
+              ./view_projects
+            </TerminalButton>
+            <TerminalButton href="#contact" variant="outline">
+              ./kontakt
+            </TerminalButton>
+          </motion.div>
+
+          {/* Scroll indicator */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="relative"
+            transition={{ delay: 3.5 }}
+            className="pt-16"
           >
-            <motion.p
-              className="text-xl md:text-3xl text-gray-300 font-light tracking-widest"
-              animate={{
-                textShadow: [
-                  '0 0 10px rgba(168, 85, 247, 0.3)',
-                  '0 0 20px rgba(236, 72, 153, 0.3)',
-                  '0 0 10px rgba(168, 85, 247, 0.3)',
-                ],
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex flex-col items-center gap-2"
             >
-              SKABER DIGITALE OPLEVELSER
-            </motion.p>
+              <span className="text-xs font-mono text-gray-600 tracking-widest">SCROLL</span>
+              <div className="w-px h-8 bg-gradient-to-b from-[#00ff41]/50 to-transparent" />
+            </motion.div>
           </motion.div>
-
-          {/* CTA Buttons with magnetic effect */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8"
-          >
-            <MagneticButton href="#projects">
-              SE MINE PROJEKTER
-            </MagneticButton>
-            <MagneticButton href="#contact" variant="outline">
-              KONTAKT MIG
-            </MagneticButton>
-          </motion.div>
-
-
         </div>
       </motion.div>
-
-      {/* Corner decorations removed as per user request */}
     </section>
   );
 }
 
-// Letter swapping component
-function LetterSwap({ isHovering }: { isHovering: boolean }) {
-  const words = [
-    { text: "Kreativ", chars: "KREATIV" }, 
-    { text: "Reaktiv", chars: "REAKTIV" }
-  ];
-  
-  // Map characters to unique layout IDs to track them across state changes
-  // K-R-E-A-T-I-V -> R-E-A-K-T-I-V
-  // We need to match the specific instances of letters
-  
-  const getLayoutId = (char: string, index: number, wordIndex: number) => {
-    // We want to track specific letters. 
-    // Kreativ: K(0), r(1), e(2), a(3), t(4), i(5), v(6)
-    // Reaktiv: R(0), e(1), a(2), k(3), t(4), i(5), v(6)
-    
-    // Mapping:
-    // K (Kreativ[0]) -> k (Reaktiv[3]) (Case change, but effectively same letter slot)
-    // r (Kreativ[1]) -> R (Reaktiv[0])
-    // e (Kreativ[2]) -> e (Reaktiv[1])
-    // a (Kreativ[3]) -> a (Reaktiv[2])
-    // t (Kreativ[4]) -> t (Reaktiv[4])
-    // i (Kreativ[5]) -> i (Reaktiv[5])
-    // v (Kreativ[6]) -> v (Reaktiv[6])
-    
-    // Simplified: Just use character + occurrence count if needed, but here all unique mostly.
-    
-    const idMap: {[key: string]: string} = {
-      'K': 'k-1', 'r': 'r-1', 'e': 'e-1', 'a': 'a-1', 't': 't-1', 'i': 'i-1', 'v': 'v-1',
-      'R': 'r-1', 'k': 'k-1' // Map upper/lowercase variants to same ID
-    };
-    
-    return `char-${idMap[char] || char}-${index}`; // Fallback if needed, but manual map best
-  };
-
-  // Manual mapping for precise control
-  // Kreativ: K(0), r(1), e(2), a(3), t(4), i(5), v(6)
-  // Reaktiv: R(0), e(1), a(2), k(3), t(4), i(5), v(6)
-  const layoutIds = isHovering 
-    ? ['r-1', 'e-1', 'a-1', 'k-1', 't-1', 'i-1', 'v-1'] // Reaktiv
-    : ['k-1', 'r-1', 'e-1', 'a-1', 't-1', 'i-1', 'v-1']; // Kreativ
-    
-  const currentText = isHovering ? "Reaktiv" : "Kreativ";
-
-  return (
-    <div className="flex justify-center">
-      {currentText.split('').map((char, i) => (
-        <motion.span
-          layoutId={`letter-${layoutIds[i]}`}
-          key={`letter-${layoutIds[i]}`}
-          className={`inline-block text-6xl md:text-8xl lg:text-[10rem] font-display font-light tracking-tighter leading-none ${
-             i === 0 && isHovering ? 'text-green-400' : 'text-white'
-          }`}
-          style={{ 
-            textShadow: i === 0 && isHovering ? '0 0 30px rgba(74, 222, 128, 0.8)' : undefined,
-            display: 'inline-block' // Ensure transforms work
-          }}
-          animate={{
-             color: i === 0 && isHovering ? '#4ade80' : '#FFFFFF',
-             rotate: isHovering ? [0, -5, 5, 0] : 0, // Subtle shake
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 120, // Snappier
-            damping: 15,
-            mass: 1
-          }}
-        >
-          {char}
-        </motion.span>
-      ))}
-    </div>
-  );
-}
-
-// Magnetic button with enhanced effects
-function MagneticButton({ 
+function TerminalButton({ 
   children, 
   href, 
   variant = 'solid' 
@@ -190,50 +163,22 @@ function MagneticButton({
   href: string; 
   variant?: 'solid' | 'outline';
 }) {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    setPosition({ x: x * 0.4, y: y * 0.4 });
-  };
-
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
-    setIsHovered(false);
-  };
-
   return (
     <motion.a
       href={href}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => setIsHovered(true)}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       className={`
-        relative px-12 py-5 font-medium text-sm tracking-widest overflow-hidden group
+        relative px-8 py-3 font-mono text-sm tracking-wider overflow-hidden group transition-all
         ${variant === 'solid' 
-          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-          : 'bg-transparent border-2 border-white/20 text-white'
+          ? 'bg-[#00ff41]/10 border border-[#00ff41]/40 text-[#00ff41] hover:bg-[#00ff41]/20 hover:border-[#00ff41]/70' 
+          : 'bg-transparent border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'
         }
       `}
       style={{
-        boxShadow: isHovered && variant === 'solid'
-          ? '0 0 40px rgba(168, 85, 247, 0.6)'
-          : 'none',
+        boxShadow: variant === 'solid' ? '0 0 20px rgba(0, 255, 65, 0.1)' : 'none',
       }}
     >
-      <motion.span
-        className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20"
-        initial={{ x: '-100%' }}
-        animate={isHovered ? { x: '100%' } : { x: '-100%' }}
-        transition={{ duration: 0.8 }}
-      />
       <span className="relative z-10">{children}</span>
     </motion.a>
   );

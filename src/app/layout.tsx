@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Work_Sans } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 
-import CosmicBackground from "@/components/CosmicBackground";
-
-const playfair = Playfair_Display({ 
+const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
   variable: '--font-display',
   display: 'swap',
 });
 
-const workSans = Work_Sans({ 
+const jetbrainsMono = JetBrains_Mono({ 
   subsets: ["latin"],
-  variable: '--font-body',
+  variable: '--font-mono',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "Jesaias",
-  description: "Portfolio of Jesaias - Creative Developer",
-  keywords: ["portfolio", "web developer", "full-stack", "design", "Jesaias"],
+  title: "Jesaias — Kreativ Udvikler",
+  description: "Portfolio of Jesaias — Creative Developer, Audio Engineer, and Digital Craftsman",
+  keywords: ["portfolio", "web developer", "full-stack", "audio", "VST", "Jesaias", "kreativ udvikler"],
 };
 
 export default function RootLayout({
@@ -29,10 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${workSans.variable}`}>
-      <body className="antialiased">
-        <CosmicBackground />
-        <div className="bg-grain">
+    <html lang="da" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+      <body className="antialiased" style={{ fontFamily: 'var(--font-display)' }}>
+        <div className="bg-grid bg-grain">
           {children}
         </div>
         <Toaster 
@@ -40,9 +37,11 @@ export default function RootLayout({
           toastOptions={{
             duration: 3000,
             style: {
-              background: '#1a1a1a',
-              color: '#fafafa',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
+              background: '#0a0a0a',
+              color: '#00ff41',
+              border: '1px solid rgba(0, 255, 65, 0.3)',
+              fontFamily: 'var(--font-mono)',
+              borderRadius: '0',
             },
           }}
         />

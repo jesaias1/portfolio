@@ -18,55 +18,51 @@ export default function Navigation() {
   }, []);
 
   const navItems = [
-    { name: 'Om', href: '#about' },
-    { name: 'Projekter', href: '#projects' },
-    { name: 'Kontakt', href: '#contact' },
+    { name: 'projekter', href: '#projects' },
+    { name: 'om', href: '#about' },
+    { name: 'kontakt', href: '#contact' },
   ];
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-black/60 backdrop-blur-xl py-4' 
-          : 'bg-transparent py-8'
+        isScrolled
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[rgba(0,255,65,0.08)]'
+          : 'bg-transparent'
       }`}
     >
-      <div className={`max-w-6xl mx-auto px-6 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-6'}`}>
+      <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ opacity: 0.7 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Link 
-              href="/" 
-              className="text-xl font-display font-semibold tracking-tight"
+          {/* Logo / name */}
+          <motion.div whileHover={{ opacity: 0.7 }}>
+            <Link
+              href="/"
+              className="font-mono text-sm text-[#00ff41] tracking-wider hover:text-white transition-colors"
+              style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.3)' }}
             >
-              <img 
-                src="/logo.png" 
-                alt="Logo" 
-                className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-16' : 'h-24'}`}
-              />
+              {'>'} jesaias.dev
             </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-12">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item, index) => (
               <motion.div
                 key={item.name}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: 0.3 + index * 0.1 }}
               >
                 <a
                   href={item.href}
-                  className="text-sm text-gray-400 hover:text-white font-medium transition-colors relative group tracking-wide"
+                  className="font-mono text-xs text-gray-500 hover:text-[#00ff41] transition-colors relative group tracking-wider"
                 >
+                  <span className="text-[#00ff41] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all group-hover:w-full" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#00ff41] transition-all group-hover:w-full opacity-50" />
                 </a>
               </motion.div>
             ))}
@@ -76,7 +72,7 @@ export default function Navigation() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-2xl"
+            className="md:hidden text-xl text-gray-400 hover:text-[#00ff41] transition-colors"
           >
             {isMobileMenuOpen ? <HiX /> : <HiMenu />}
           </motion.button>
@@ -90,7 +86,7 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/5"
+            className="md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-[rgba(0,255,65,0.08)]"
           >
             <div className="px-6 py-6 space-y-4">
               {navItems.map((item, index) => (
@@ -103,8 +99,9 @@ export default function Navigation() {
                   <a
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-lg text-gray-400 hover:text-white transition-colors py-2"
+                    className="block font-mono text-sm text-gray-400 hover:text-[#00ff41] transition-colors py-2"
                   >
+                    <span className="text-[#00ff41] mr-2">{'>'}</span>
                     {item.name}
                   </a>
                 </motion.div>

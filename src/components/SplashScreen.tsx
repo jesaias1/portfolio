@@ -1,169 +1,256 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+
+// ASCII logo placeholder — user will provide their own
+const ASCII_LOGO = `
+     ██╗███████╗███████╗ █████╗ ██╗ █████╗ ███████╗
+     ██║██╔════╝██╔════╝██╔══██╗██║██╔══██╗██╔════╝
+     ██║█████╗  ███████╗███████║██║███████║███████╗
+██   ██║██╔══╝  ╚════██║██╔══██║██║██╔══██║╚════██║
+╚█████╔╝███████╗███████║██║  ██║██║██║  ██║███████║
+ ╚════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝
+`;
+
+interface TerminalLine {
+  text: string;
+  type: 'command' | 'output' | 'progress' | 'success' | 'ascii' | 'blank';
+  delay: number;
+}
+
+const TERMINAL_SEQUENCE: TerminalLine[] = [
+  { text: '', type: 'blank', delay: 300 },
+  { text: 'PS C:\\Users\\jesaias> node portfolio.js', type: 'command', delay: 0 },
+  { text: '', type: 'blank', delay: 400 },
+  { text: '[init] Loading modules...', type: 'output', delay: 200 },
+  { text: '[init] Compiling components...', type: 'output', delay: 300 },
+  { text: '[init] Connecting to database...', type: 'output', delay: 250 },
+  { text: '[✓] All systems operational', type: 'success', delay: 400 },
+  { text: '', type: 'blank', delay: 200 },
+  { text: 'LOGO', type: 'ascii', delay: 100 },
+  { text: '', type: 'blank', delay: 300 },
+  { text: '[render] Building interface...', type: 'output', delay: 200 },
+  { text: '[render] Injecting styles...', type: 'output', delay: 150 },
+  { text: '[render] Mounting DOM...', type: 'output', delay: 200 },
+  { text: '', type: 'blank', delay: 100 },
+  { text: 'PROGRESS', type: 'progress', delay: 0 },
+  { text: '', type: 'blank', delay: 200 },
+  { text: '[✓] Portfolio ready. Launching...', type: 'success', delay: 500 },
+];
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
-  const [progress, setProgress] = useState(0);
-  const [showName, setShowName] = useState(false);
+  const [visibleLines, setVisibleLines] = useState<number>(0);
+  const [typedText, setTypedText] = useState('');
+  const [currentTypingLine, setCurrentTypingLine] = useState(-1);
+  const [progressValue, setProgressValue] = useState(0);
+  const [showProgress, setShowProgress] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const completedRef = useRef(false);
+
+  const processLine = useCallback((lineIndex: number) => {
+    if (lineIndex >= TERMINAL_SEQUENCE.length) {
+      // All lines done — start exit
+      setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(() => {
+          if (!completedRef.current) {
+            completedRef.current = true;
+            onComplete();
+          }
+        }, 600);
+      }, 400);
+      return;
+    }
+
+    const line = TERMINAL_SEQUENCE[lineIndex];
+    
+    if (line.type === 'command') {
+      // Type out command character by character
+      setCurrentTypingLine(lineIndex);
+      setVisibleLines(lineIndex + 1);
+      const fullText = line.text;
+      let charIndex = 0;
+      
+      const typeInterval = setInterval(() => {
+        charIndex++;
+        setTypedText(fullText.slice(0, charIndex));
+        
+        if (charIndex >= fullText.length) {
+          clearInterval(typeInterval);
+          setCurrentTypingLine(-1);
+          setTimeout(() => processLine(lineIndex + 1), line.delay + 200);
+        }
+      }, 25 + Math.random() * 30);
+    } else if (line.type === 'progress') {
+      setVisibleLines(lineIndex + 1);
+      setShowProgress(true);
+      // Animate progress bar
+      let prog = 0;
+      const progressInterval = setInterval(() => {
+        prog += 3 + Math.random() * 5;
+        if (prog >= 100) {
+          prog = 100;
+          clearInterval(progressInterval);
+          setTimeout(() => processLine(lineIndex + 1), 300);
+        }
+        setProgressValue(prog);
+      }, 40);
+    } else {
+      // Instant reveal for output/success/blank/ascii
+      setVisibleLines(lineIndex + 1);
+      setTimeout(() => processLine(lineIndex + 1), line.delay + 50);
+    }
+  }, [onComplete]);
 
   useEffect(() => {
-    // Progress animation
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(() => onComplete(), 500);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 30);
+    // Start the sequence
+    const timer = setTimeout(() => processLine(0), 500);
+    return () => clearTimeout(timer);
+  }, [processLine]);
 
-    // Show name after 1 second
-    setTimeout(() => setShowName(true), 1000);
+  // Auto-scroll terminal
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [visibleLines, typedText, progressValue]);
 
-    return () => clearInterval(progressInterval);
-  }, [onComplete]);
+  const renderLine = (line: TerminalLine, index: number) => {
+    if (index >= visibleLines) return null;
+
+    if (line.type === 'blank') {
+      return <div key={index} className="h-4" />;
+    }
+
+    if (line.type === 'ascii') {
+      return (
+        <motion.pre
+          key={index}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-[#00ff41] text-[0.45rem] sm:text-[0.55rem] md:text-xs leading-tight font-mono select-none whitespace-pre"
+          style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.5)' }}
+        >
+          {ASCII_LOGO}
+        </motion.pre>
+      );
+    }
+
+    if (line.type === 'progress') {
+      if (!showProgress) return null;
+      const filled = Math.floor(progressValue / 4);
+      const bar = '█'.repeat(filled) + '░'.repeat(25 - filled);
+      return (
+        <div key={index} className="font-mono text-sm text-gray-400">
+          <span className="text-[#00ff41]">[</span>
+          <span className="text-[#00ff41]">{bar}</span>
+          <span className="text-[#00ff41]">]</span>
+          <span className="text-gray-500 ml-2">{Math.floor(progressValue)}%</span>
+        </div>
+      );
+    }
+
+    if (line.type === 'command' && currentTypingLine === index) {
+      return (
+        <div key={index} className="font-mono text-sm">
+          <span className="text-gray-500">{typedText}</span>
+          <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
+        </div>
+      );
+    }
+
+    if (line.type === 'command') {
+      return (
+        <div key={index} className="font-mono text-sm text-gray-500">
+          {line.text}
+        </div>
+      );
+    }
+
+    if (line.type === 'success') {
+      return (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: -5 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="font-mono text-sm text-[#00ff41]"
+          style={{ textShadow: '0 0 8px rgba(0, 255, 65, 0.4)' }}
+        >
+          {line.text}
+        </motion.div>
+      );
+    }
+
+    // output
+    return (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-mono text-sm text-gray-500"
+      >
+        {line.text}
+      </motion.div>
+    );
+  };
 
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        animate={{ opacity: isExiting ? 0 : 1 }}
         transition={{ duration: 0.5 }}
-        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
+        className="fixed inset-0 z-[9999] bg-[#0a0a0a] flex items-center justify-center overflow-hidden"
       >
-        {/* Animated starfield */}
-        <div className="absolute inset-0">
-          {[...Array(100)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full bg-white"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: Math.random() * 3 + 1,
-                height: Math.random() * 3 + 1,
-              }}
-              animate={{
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
-              }}
-              transition={{
-                duration: Math.random() * 2 + 1,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
-        </div>
+        {/* Subtle scanlines */}
+        <div className="absolute inset-0 scanlines pointer-events-none opacity-30" />
+        
+        {/* Terminal window */}
+        <div className="w-full max-w-3xl mx-4">
+          {/* Terminal header bar */}
+          <div className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#333] border-b-0">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+              <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+              <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+            </div>
+            <span className="text-xs text-gray-500 font-mono ml-2">
+              Windows PowerShell
+            </span>
+          </div>
 
-        {/* Cosmic gradient background */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            background: [
-              'radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)',
-              'radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%)',
-              'radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 50%)',
-              'radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)',
-            ],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
+          {/* Terminal body */}
+          <div 
+            ref={containerRef}
+            className="bg-[#0c0c0c] border border-[#333] p-6 min-h-[400px] max-h-[70vh] overflow-y-auto space-y-1"
+          >
+            {/* Initial prompt */}
+            <div className="font-mono text-sm text-gray-600 mb-2">
+              Windows PowerShell
+            </div>
+            <div className="font-mono text-sm text-gray-600 mb-4">
+              Copyright (C) Microsoft Corporation. All rights reserved.
+            </div>
 
-        <div className="relative z-10 text-center">
-          {/* Name reveal */}
-          <AnimatePresence>
-            {showName && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: [0.6, 0.05, 0.01, 0.9] }}
-                className="mb-12"
-              >
-                <h1 className="text-6xl md:text-8xl font-display font-light tracking-tight">
-                  {['J', 'E', 'S', 'A', 'I', 'A', 'S'].map((letter, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: 0.3 + i * 0.1,
-                        ease: [0.6, 0.05, 0.01, 0.9],
-                      }}
-                      className="inline-block"
-                      style={{
-                        textShadow: '0 0 30px rgba(168, 85, 247, 0.5)',
-                      }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
-                </h1>
-              </motion.div>
+            {TERMINAL_SEQUENCE.map((line, index) => renderLine(line, index))}
+
+            {/* Blinking cursor at the end when idle */}
+            {visibleLines === 0 && (
+              <div className="font-mono text-sm">
+                <span className="text-gray-500">PS C:\Users\jesaias{'>'} </span>
+                <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
+              </div>
             )}
-          </AnimatePresence>
-
-          {/* Loading bar */}
-          <div className="w-64 mx-auto">
-            <div className="h-1 bg-white/10 rounded-full overflow-hidden mb-4">
-              <motion.div
-                className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500"
-                style={{
-                  width: `${progress}%`,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-
-            {/* Particles following progress */}
-            <div className="relative h-8">
-              {[...Array(5)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-purple-400 rounded-full"
-                  style={{
-                    left: `${progress}%`,
-                    bottom: 0,
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    opacity: [1, 0.5, 0],
-                  }}
-                  transition={{
-                    duration: 1,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Loading text */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-sm text-gray-400 tracking-widest mt-4"
-            >
-              INDLÆSER {Math.round(progress)}%
-            </motion.p>
           </div>
         </div>
 
-        {/* Grain texture overlay */}
-        <div 
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
+        {/* Corner decoration */}
+        <div className="absolute bottom-4 right-4 font-mono text-[10px] text-gray-700">
+          portfolio.exe v2.0.0
+        </div>
       </motion.div>
     </AnimatePresence>
   );

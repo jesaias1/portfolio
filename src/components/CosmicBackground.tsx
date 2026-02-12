@@ -1,21 +1,18 @@
 'use client';
 
-import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion';
-import { useEffect } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useMemo } from 'react';
 
 export default function CosmicBackground() {
-  // Use MotionValues instead of state to avoid re-renders
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Smooth spring physics for mouse follow - highly optimized
-  const springConfig = { damping: 50, stiffness: 100, mass: 0.5 };
+  const springConfig = { damping: 50, stiffness: 80, mass: 1 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Update MotionValues directly - no React re-renders!
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
@@ -24,83 +21,85 @@ export default function CosmicBackground() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  // Pre-compute random positions for particles (stable across renders)
+  const particles = useMemo(() => 
+    Array.from({ length: 30 }, () => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 1.5 + 0.5,
+      opacity: Math.random() * 0.3 + 0.1,
+      duration: Math.random() * 8 + 6,
+      delay: Math.random() * 5,
+    })), []
+  );
+
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none will-change-transform">
-      {/* Layer 1: Deep space base */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900 to-black" />
+      {/* Layer 1: Deep black base */}
+      <div className="absolute inset-0 bg-[#0a0a0a]" />
 
-      {/* Layer 2: Slow moving nebula */}
-      <motion.div className="absolute inset-0 opacity-40">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full blur-3xl opacity-30"
-            style={{
-              width: `${500 + i * 200}px`,
-              height: `${500 + i * 200}px`,
-              left: `${20 + i * 30}%`,
-              top: `${10 + i * 20}%`,
-              background: i === 0 
-                ? 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%)'
-                : i === 1
-                ? 'radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)',
-              x: useTransform(smoothX, value => (value / window.innerWidth - 0.5) * 50),
-              y: useTransform(smoothY, value => (value / window.innerHeight - 0.5) * 50),
-            }}
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.3, 0.4, 0.3],
-            }}
-            transition={{
-              duration: 15 + i * 5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-      </motion.div>
+      {/* Layer 2: Subtle gradient accents */}
+      <div className="absolute inset-0 opacity-30">
+        <motion.div
+          className="absolute rounded-full blur-[120px] opacity-20"
+          style={{
+            width: '600px',
+            height: '600px',
+            left: '10%',
+            top: '20%',
+            background: 'radial-gradient(circle, rgba(0, 255, 65, 0.15) 0%, transparent 70%)',
+            x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * 30),
+            y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * 30),
+          }}
+        />
+        <motion.div
+          className="absolute rounded-full blur-[120px] opacity-15"
+          style={{
+            width: '500px',
+            height: '500px',
+            right: '10%',
+            bottom: '20%',
+            background: 'radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%)',
+            x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * -20),
+            y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * -20),
+          }}
+        />
+      </div>
 
-      {/* Layer 3: Tiny stars - Reduced count for mobile performance */}
+      {/* Layer 3: Floating tiny dots (stars → data points) */}
       <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
+        {particles.map((p, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-white"
+            className="absolute bg-[#00ff41]"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: Math.random() * 2 + 0.5,
-              height: Math.random() * 2 + 0.5,
-              opacity: Math.random() * 0.5 + 0.2,
+              left: p.left,
+              top: p.top,
+              width: p.size,
+              height: p.size,
+              opacity: p.opacity,
             }}
             animate={{
-              opacity: [0.2, 0.5, 0.2],
+              opacity: [p.opacity, p.opacity * 2, p.opacity],
             }}
             transition={{
-              duration: Math.random() * 5 + 5,
+              duration: p.duration,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: p.delay,
             }}
           />
         ))}
       </div>
 
-      {/* Layer 5: Mouse-following glow - Optimized */}
+      {/* Layer 4: Mouse-following glow */}
       <motion.div
-        className="absolute w-[800px] h-[800px] rounded-full opacity-20"
+        className="absolute w-[600px] h-[600px] rounded-full opacity-15"
         style={{
-          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%)',
-          left: -400, 
-          top: -400,
+          background: 'radial-gradient(circle, rgba(0, 255, 65, 0.08) 0%, transparent 70%)',
+          left: -300,
+          top: -300,
           x: smoothX,
           y: smoothY,
-        }}
-        transition={{
-          type: "spring",
-          damping: 50,
-          stiffness: 400,
-          mass: 0.5
         }}
       />
     </div>
