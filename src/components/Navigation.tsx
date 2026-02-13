@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
 
@@ -39,17 +38,12 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <motion.div whileHover={{ opacity: 0.7 }}>
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="Jesaias"
-                width={120}
-                height={40}
-                className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity"
-                style={{
-                  filter: 'drop-shadow(0 0 6px rgba(0, 255, 65, 0.2))',
-                }}
-              />
+            <Link
+              href="/"
+              className="font-mono text-sm text-[#00ff41] tracking-wider hover:text-white transition-colors"
+              style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.3)' }}
+            >
+              {'>'} jesaias.dev
             </Link>
           </motion.div>
 
