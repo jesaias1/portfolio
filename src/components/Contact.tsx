@@ -59,7 +59,7 @@ export default function Contact() {
             </span>
             <div className="flex-1 h-px bg-gradient-to-r from-[#00ff41]/20 to-transparent" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-3">
+          <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
             Lad Os Snakke
           </h2>
           <p className="text-gray-500 font-mono text-sm">
@@ -89,7 +89,7 @@ export default function Contact() {
             </div>
 
             {/* Terminal body */}
-            <form onSubmit={handleSubmit} className="p-6 md:p-8 bg-[#0c0c0c] space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 md:p-8 bg-[#0c0c0c] space-y-6">
               {/* Name */}
               <TerminalInput
                 label="name"

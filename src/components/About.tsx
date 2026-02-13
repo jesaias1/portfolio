@@ -43,12 +43,12 @@ export default function About() {
             </span>
             <div className="flex-1 h-px bg-gradient-to-r from-[#00ff41]/20 to-transparent" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
+          <h2 className="text-3xl md:text-6xl font-bold tracking-tight">
             System Info
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-16">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-16">
           {/* Left: Bio as system info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

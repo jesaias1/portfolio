@@ -34,6 +34,7 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -41,6 +42,9 @@ body {
   background: var(--background);
   font-family: var(--font-body);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: pan-y;
 }
 
 /* Custom scrollbar - terminal green */
@@ -350,4 +354,40 @@ a, button {
   100% {
     filter: drop-shadow(0 0 40px rgba(0, 255, 65, 0.2)) drop-shadow(0 0 80px rgba(0, 212, 255, 0.05));
   }
+}
+
+/* Reduced motion — respect OS accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cursor-blink {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 640px) {
+  .hero-logo-glow pre {
+    font-size: 0.25rem;
+    line-height: 1.3;
+  }
+  section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+/* Animation performance hints */
+.hero-logo-glow {
+  will-change: filter;
+}
+
+/* Smooth page transitions */
+section {
+  will-change: transform;
 }

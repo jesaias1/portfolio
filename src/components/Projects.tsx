@@ -121,21 +121,18 @@ function ProjectRow({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer group ${
-        isReversed ? 'md:direction-rtl' : ''
-      }`}
-      style={{ direction: isReversed ? 'rtl' : 'ltr' }}
+      className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer group`}
     >
       {/* Image */}
       <motion.div
-        className="relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#00ff41]/30 transition-all duration-500"
+        className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#00ff41]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}
         whileHover={{ scale: 1.02 }}
-        style={{ direction: 'ltr' }}
       >
         <Image
           src={project.image}
           alt={project.title}
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-all duration-700 group-hover:scale-105"
           style={{
             filter: isHovered ? 'none' : 'grayscale(60%) brightness(0.7)',
@@ -172,7 +169,7 @@ function ProjectRow({
       </motion.div>
 
       {/* Info */}
-      <div className="space-y-4" style={{ direction: 'ltr' }}>
+      <div className={`space-y-4 ${isReversed ? 'md:order-1' : ''}`}>
         {/* Title */}
         <div>
           <motion.h3
@@ -219,7 +216,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-center justify-center p-6 overflow-y-auto"
+      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-start md:items-center justify-center p-4 md:p-6 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div
@@ -228,7 +225,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         exit={{ scale: 0.95, y: 30 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative max-w-5xl w-full bg-[#0c0c0c] border border-[rgba(0,255,65,0.1)] p-8 md:p-12"
+        className="relative max-w-5xl w-full bg-[#0c0c0c] border border-[rgba(0,255,65,0.1)] p-6 md:p-12 my-4 md:my-0"
       >
         {/* Terminal header */}
         <div className="flex items-center justify-between mb-8">
