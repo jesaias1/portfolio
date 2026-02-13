@@ -3,23 +3,21 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
 
-const ASCII_LOGO = [
-  '       .-                                                                       ',
-  '       .##-                                                     .................',
-  '         .#######################################################################-',
-  '            .####################################################################-',
-  '                                                                                 ',
-  '                                                                 .++######+-.    ',
-  '                                                           .+#############++##-. ',
-  '                   -#.                                -#############+.       .##. ',
-  '                  +#-                           .############+-..              ## ',
-  '                 .#-                      .+###########+-..                     #+',
-  '                 -#                  -############..                            ##',
-  '                 .#-         .--############-.                                  ##',
-  '                  -#+. .-+############-.                                       -#.',
-  '                   .+###########+..                                           -#. ',
-  '                      ..---..                                                    ',
-].join('\n');
+const ASCII_LOGO = `.-
+.##-                                                     .................
+  .#######################################################################-
+     .####################################################################-
+
+                                                          .++######+-.
+                                                    .+#############++##-.
+            -#.                                -#############+.       .##.
+           +#-                           .############+-..              ##
+          .#-                      .+###########+-..                     #+
+          -#                  -############..                            ##
+          .#-         .--############-.                                  ##
+           -#+. .-+############-.                                       -#.
+            .+###########+..                                           -#.
+               ..---..`;
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -97,18 +95,18 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-            className="hero-logo-glow w-full grid place-items-center"
+            className="hero-logo-glow w-full text-center"
           >
-            <div className="relative">
+            <div className="relative inline-block">
               <pre
-                className="text-[#00ff41] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre"
+                className="text-[#00ff41] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left"
                 style={{ textShadow: '0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.15)' }}
               >
                 {ASCII_LOGO}
               </pre>
               {/* Glitch overlay */}
               <motion.pre
-                className="absolute inset-0 text-[#00d4ff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none"
+                className="absolute inset-0 text-[#00d4ff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left"
                 animate={{
                   opacity: [0, 0.3, 0, 0, 0.2, 0],
                   x: [-2, 2, 0, -1, 1, 0],
