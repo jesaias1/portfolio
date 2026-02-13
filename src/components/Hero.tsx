@@ -3,21 +3,23 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
 
-const ASCII_LOGO = `       .-
-       .##-                                                     .................
-         .#######################################################################-
-            .####################################################################-
-
-                                                                 .++######+-.
-                                                           .+#############++##-.
-                   -#.                                -#############+.       .##.
-                  +#-                           .############+-..              ##
-                 .#-                      .+###########+-..                     #+
-                 -#                  -############..                            ##
-                 .#-         .--############-.                                  ##
-                  -#+. .-+############-.                                       -#.
-                   .+###########+..                                           -#.
-                      ..---..`;
+const ASCII_LOGO = [
+  '       .-                                                                       ',
+  '       .##-                                                     .................',
+  '         .#######################################################################-',
+  '            .####################################################################-',
+  '                                                                                 ',
+  '                                                                 .++######+-.    ',
+  '                                                           .+#############++##-. ',
+  '                   -#.                                -#############+.       .##. ',
+  '                  +#-                           .############+-..              ## ',
+  '                 .#-                      .+###########+-..                     #+',
+  '                 -#                  -############..                            ##',
+  '                 .#-         .--############-.                                  ##',
+  '                  -#+. .-+############-.                                       -#.',
+  '                   .+###########+..                                           -#. ',
+  '                      ..---..                                                    ',
+].join('\n');
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -86,18 +88,18 @@ export default function Hero() {
 
       {/* Main Content */}
       <motion.div 
-        className="max-w-7xl mx-auto px-6 relative z-10"
+        className="max-w-7xl mx-auto px-6 relative z-10 w-full"
         style={{ opacity, y }}
       >
-        <div className="text-center space-y-8">
+        <div className="flex flex-col items-center space-y-8">
           {/* ASCII Logo */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-            className="relative flex justify-center items-center hero-logo-glow"
+            className="hero-logo-glow"
           >
-            <div className="relative inline-block mx-auto">
+            <div className="w-fit mx-auto relative">
               <pre
                 className="text-[#00ff41] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre"
                 style={{ textShadow: '0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.15)' }}
