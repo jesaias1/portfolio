@@ -3,14 +3,22 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useCallback, useRef } from 'react';
 
-// ASCII logo placeholder — user will provide their own
 const ASCII_LOGO = `
-     ██╗███████╗███████╗ █████╗ ██╗ █████╗ ███████╗
-     ██║██╔════╝██╔════╝██╔══██╗██║██╔══██╗██╔════╝
-     ██║█████╗  ███████╗███████║██║███████║███████╗
-██   ██║██╔══╝  ╚════██║██╔══██║██║██╔══██║╚════██║
-╚█████╔╝███████╗███████║██║  ██║██║██║  ██║███████║
- ╚════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝
+                      .-
+                      .##-                                                     .................
+                        .#######################################################################-
+                           .####################################################################-
+
+                                                                                .++######+-.
+                                                                          .+#############++##-.
+                                  -#.                                -#############+.       .##.
+                                 +#-                           .############+-..              ##
+                                .#-                      .+###########+-..                     #+
+                                -#                  -############..                            ##
+                                .#-         .--############-.                                  ##
+                                 -#+. .-+############-.                                       -#.
+                                  .+###########+..                                           -#.
+                                     ..---..
 `;
 
 interface TerminalLine {
@@ -21,7 +29,7 @@ interface TerminalLine {
 
 const TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '', type: 'blank', delay: 300 },
-  { text: 'PS C:\\Users\\jesaias> node portfolio.js', type: 'command', delay: 0 },
+  { text: 'jesaias@dev:~$ node portfolio.js', type: 'command', delay: 0 },
   { text: '', type: 'blank', delay: 400 },
   { text: '[init] Loading modules...', type: 'output', delay: 200 },
   { text: '[init] Compiling components...', type: 'output', delay: 300 },
@@ -131,7 +139,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-[#00ff41] text-[0.45rem] sm:text-[0.55rem] md:text-xs leading-tight font-mono select-none whitespace-pre"
+          className="text-[#00ff41] text-[0.35rem] sm:text-[0.45rem] md:text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-x-auto"
           style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.5)' }}
         >
           {ASCII_LOGO}
@@ -218,7 +226,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
             </div>
             <span className="text-xs text-gray-500 font-mono ml-2">
-              Windows PowerShell
+              jesaias.dev — terminal
+            </span>
+            <span className="ml-auto text-[10px] text-gray-700 font-mono">
+              bash
             </span>
           </div>
 
@@ -229,10 +240,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           >
             {/* Initial prompt */}
             <div className="font-mono text-sm text-gray-600 mb-2">
-              Windows PowerShell
+              jesaias.dev — terminal v2.0
             </div>
             <div className="font-mono text-sm text-gray-600 mb-4">
-              Copyright (C) Microsoft Corporation. All rights reserved.
+              Type &apos;help&apos; for available commands.
             </div>
 
             {TERMINAL_SEQUENCE.map((line, index) => renderLine(line, index))}
@@ -240,7 +251,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {/* Blinking cursor at the end when idle */}
             {visibleLines === 0 && (
               <div className="font-mono text-sm">
-                <span className="text-gray-500">PS C:\Users\jesaias{'>'} </span>
+                <span className="text-gray-500">jesaias@dev:~$ </span>
                 <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
               </div>
             )}
@@ -249,7 +260,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         {/* Corner decoration */}
         <div className="absolute bottom-4 right-4 font-mono text-[10px] text-gray-700">
-          portfolio.exe v2.0.0
+          portfolio v2.0.0
         </div>
       </motion.div>
     </AnimatePresence>

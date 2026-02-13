@@ -11,6 +11,8 @@ import ScrollProgress from '@/components/ScrollProgress';
 import SplashScreen from '@/components/SplashScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CosmicBackground from '@/components/CosmicBackground';
+import SectionDivider from '@/components/SectionDivider';
+import Image from 'next/image';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -35,22 +37,55 @@ export default function Home() {
             <ScrollProgress />
             <Navigation />
             <Hero />
+            <SectionDivider />
             <Projects />
+            <SectionDivider />
             <About />
+            <SectionDivider />
             <Contact />
             
             {/* Footer — terminal style */}
-            <footer className="py-8 border-t border-white/5">
+            <footer className="py-12 border-t border-white/5">
               <div className="max-w-6xl mx-auto px-6">
-                <div className="flex justify-between items-center font-mono text-xs text-gray-700">
-                  <p>
-                    © {new Date().getFullYear()} jesaias.dev
-                  </p>
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                  {/* Logo + copyright */}
                   <div className="flex items-center gap-4">
-                    <span className="text-[#00ff41]/30">process exited with code 0</span>
+                    <Image
+                      src="/logo.png"
+                      alt="Jesaias"
+                      width={80}
+                      height={28}
+                      className="h-5 w-auto opacity-40"
+                    />
+                    <span className="font-mono text-xs text-gray-700">
+                      © {new Date().getFullYear()} jesaias.dev
+                    </span>
+                  </div>
+
+                  {/* Social links */}
+                  <div className="flex items-center gap-6">
+                    <a
+                      href="https://github.com/jesaias1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-gray-600 hover:text-[#00ff41] transition-colors"
+                    >
+                      github
+                    </a>
+                    <a
+                      href="https://linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-gray-600 hover:text-[#00ff41] transition-colors"
+                    >
+                      linkedin
+                    </a>
+                    <span className="text-[#00ff41]/20 font-mono text-[10px]">
+                      process exited with code 0
+                    </span>
                     <a 
                       href="/admin/login" 
-                      className="opacity-20 hover:opacity-100 transition-opacity"
+                      className="opacity-20 hover:opacity-100 transition-opacity text-xs"
                     >
                       •
                     </a>

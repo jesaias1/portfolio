@@ -1,7 +1,8 @@
 'use client';
 
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import Image from 'next/image';
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -74,22 +75,51 @@ export default function Hero() {
         style={{ opacity, y }}
       >
         <div className="text-center space-y-8">
-          {/* Name — large, glitched, monospace feel */}
+          {/* Logo Image — replaces the old h1 text */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="relative flex justify-center"
           >
-            <h1 
-              className="text-7xl md:text-9xl lg:text-[12rem] font-bold tracking-tighter leading-none glitch-text select-none"
-              data-text="JESAIAS"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: '#ffffff',
-              }}
-            >
-              JESAIAS
-            </h1>
+            <div className="relative w-full max-w-3xl hero-logo-glow">
+              <Image
+                src="/logo.png"
+                alt="Jesaias"
+                width={900}
+                height={300}
+                priority
+                className="w-full h-auto select-none drop-shadow-[0_0_30px_rgba(0,255,65,0.15)]"
+                style={{
+                  filter: 'brightness(1.1) contrast(1.05)',
+                }}
+              />
+              {/* Glitch overlay layers */}
+              <motion.div
+                className="absolute inset-0 opacity-0"
+                animate={{
+                  opacity: [0, 0.4, 0, 0, 0.3, 0],
+                  x: [-2, 2, 0, -1, 1, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                }}
+              >
+                <Image
+                  src="/logo.png"
+                  alt=""
+                  width={900}
+                  height={300}
+                  className="w-full h-auto"
+                  style={{
+                    filter: 'hue-rotate(90deg) brightness(1.5)',
+                    mixBlendMode: 'screen',
+                  }}
+                />
+              </motion.div>
+            </div>
           </motion.div>
 
           {/* Typing subtitle */}

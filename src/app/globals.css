@@ -337,3 +337,17 @@ a, button {
     cursor: pointer;
   }
 }
+
+/* Hero logo glow */
+.hero-logo-glow {
+  animation: logoGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.1));
+  }
+  100% {
+    filter: drop-shadow(0 0 40px rgba(0, 255, 65, 0.2)) drop-shadow(0 0 80px rgba(0, 212, 255, 0.05));
+  }
+}
