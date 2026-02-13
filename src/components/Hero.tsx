@@ -3,21 +3,21 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
 
-const ASCII_LOGO = `                      .-
-                      .##-                                                     .................
-                        .#######################################################################-
-                           .####################################################################-
+const ASCII_LOGO = `       .-
+       .##-                                                     .................
+         .#######################################################################-
+            .####################################################################-
 
-                                                                                .++######+-.
-                                                                          .+#############++##-.
-                                  -#.                                -#############+.       .##.
-                                 +#-                           .############+-..              ##
-                                .#-                      .+###########+-..                     #+
-                                -#                  -############..                            ##
-                                .#-         .--############-.                                  ##
-                                 -#+. .-+############-.                                       -#.
-                                  .+###########+..                                           -#.
-                                     ..---..`;
+                                                                 .++######+-.
+                                                           .+#############++##-.
+                   -#.                                -#############+.       .##.
+                  +#-                           .############+-..              ##
+                 .#-                      .+###########+-..                     #+
+                 -#                  -############..                            ##
+                 .#-         .--############-.                                  ##
+                  -#+. .-+############-.                                       -#.
+                   .+###########+..                                           -#.
+                      ..---..`;
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -95,30 +95,32 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-            className="relative flex justify-center hero-logo-glow"
+            className="relative flex justify-center items-center hero-logo-glow"
           >
-            <pre
-              className="text-[#00ff41] text-[0.35rem] sm:text-[0.5rem] md:text-[0.65rem] lg:text-xs leading-tight font-mono select-none whitespace-pre overflow-x-auto"
-              style={{ textShadow: '0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.15)' }}
-            >
-              {ASCII_LOGO}
-            </pre>
-            {/* Glitch overlay */}
-            <motion.pre
-              className="absolute inset-0 text-[#00d4ff] text-[0.35rem] sm:text-[0.5rem] md:text-[0.65rem] lg:text-xs leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none"
-              animate={{
-                opacity: [0, 0.3, 0, 0, 0.2, 0],
-                x: [-2, 2, 0, -1, 1, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                repeatDelay: 3,
-              }}
-              style={{ mixBlendMode: 'screen' }}
-            >
-              {ASCII_LOGO}
-            </motion.pre>
+            <div className="relative inline-block mx-auto">
+              <pre
+                className="text-[#00ff41] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre"
+                style={{ textShadow: '0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.15)' }}
+              >
+                {ASCII_LOGO}
+              </pre>
+              {/* Glitch overlay */}
+              <motion.pre
+                className="absolute inset-0 text-[#00d4ff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none"
+                animate={{
+                  opacity: [0, 0.3, 0, 0, 0.2, 0],
+                  x: [-2, 2, 0, -1, 1, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                }}
+                style={{ mixBlendMode: 'screen' }}
+              >
+                {ASCII_LOGO}
+              </motion.pre>
+            </div>
           </motion.div>
 
           {/* Typing subtitle */}
