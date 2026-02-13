@@ -43,7 +43,7 @@ export default function Navigation() {
               className="font-mono text-sm text-[#00ff41] tracking-wider hover:text-white transition-colors"
               style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.3)' }}
             >
-              {'>'} jesaias.dev
+              {'>'} jesaias.dk
             </Link>
           </motion.div>
 

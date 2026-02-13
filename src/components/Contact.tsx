@@ -84,7 +84,7 @@ export default function Contact() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
               </div>
               <span className="font-mono text-[10px] text-gray-600 ml-2">
-                kontakt@jesaias.dev
+                kontakt@jesaias.dk
               </span>
             </div>
 
@@ -182,10 +182,10 @@ export default function Contact() {
           <p className="font-mono text-xs text-gray-600">
             eller skriv direkte til{' '}
             <a 
-              href="mailto:jesaias@jesaias.dev" 
+              href="mailto:jesaias@jesaias.dk" 
               className="text-[#00ff41]/70 hover:text-[#00ff41] transition-colors"
             >
-              jesaias@jesaias.dev
+              jesaias@jesaias.dk
             </a>
           </p>
         </motion.div>

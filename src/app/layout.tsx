@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://jesaias.dev'),
+  metadataBase: new URL('https://jesaias.dk'),
   title: "Jesaias — Kreativ Udvikler",
   description: "Portfolio of Jesaias — Creative Developer, Audio Engineer, and Digital Craftsman. Full-stack web apps, VST plugins, After Effects extensions, and more.",
   keywords: ["portfolio", "web developer", "full-stack", "audio", "VST", "Jesaias", "kreativ udvikler", "react", "next.js"],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'da_DK',
-    url: 'https://jesaias.dev',
+    url: 'https://jesaias.dk',
     siteName: 'Jesaias — Kreativ Udvikler',
     title: 'Jesaias — Kreativ Udvikler',
     description: 'Creative Developer, Audio Engineer, and Digital Craftsman. Full-stack web apps, VST plugins, After Effects extensions.',

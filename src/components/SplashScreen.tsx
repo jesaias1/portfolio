@@ -29,7 +29,7 @@ interface TerminalLine {
 
 const TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '', type: 'blank', delay: 300 },
-  { text: 'jesaias@dev:~$ node portfolio.js', type: 'command', delay: 0 },
+  { text: 'jesaias@dk:~$ node portfolio.js', type: 'command', delay: 0 },
   { text: '', type: 'blank', delay: 400 },
   { text: '[init] Loading modules...', type: 'output', delay: 200 },
   { text: '[init] Compiling components...', type: 'output', delay: 300 },
@@ -226,7 +226,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
             </div>
             <span className="text-xs text-gray-500 font-mono ml-2">
-              jesaias.dev — terminal
+              jesaias.dk — terminal
             </span>
             <span className="ml-auto text-[10px] text-gray-700 font-mono">
               bash
@@ -240,7 +240,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           >
             {/* Initial prompt */}
             <div className="font-mono text-sm text-gray-600 mb-2">
-              jesaias.dev — terminal v2.0
+              jesaias.dk — terminal v2.0
             </div>
             <div className="font-mono text-sm text-gray-600 mb-4">
               Type &apos;help&apos; for available commands.
@@ -251,7 +251,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {/* Blinking cursor at the end when idle */}
             {visibleLines === 0 && (
               <div className="font-mono text-sm">
-                <span className="text-gray-500">jesaias@dev:~$ </span>
+                <span className="text-gray-500">jesaias@dk:~$ </span>
                 <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
               </div>
             )}

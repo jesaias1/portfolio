@@ -58,7 +58,7 @@ export default function Home() {
                       className="h-5 w-auto opacity-40"
                     />
                     <span className="font-mono text-xs text-gray-700">
-                      © {new Date().getFullYear()} jesaias.dev
+                      © {new Date().getFullYear()} jesaias.dk
                     </span>
                   </div>
 
