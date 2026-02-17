@@ -18,6 +18,7 @@ export default function Navigation() {
   }, []);
 
   const navItems = [
+    { name: 'services', href: '#services' },
     { name: 'projekter', href: '#projects' },
     { name: 'om', href: '#about' },
     { name: 'kontakt', href: '#contact' },
@@ -30,7 +31,7 @@ export default function Navigation() {
       transition={{ duration: 0.6, delay: 0.2 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[rgba(0,255,65,0.08)]'
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[rgba(77,219,255,0.08)]'
           : 'bg-transparent'
       }`}
     >
@@ -86,7 +87,7 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-[rgba(0,255,65,0.08)]"
+            className="md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-[rgba(77,219,255,0.08)]"
           >
             <div className="px-6 py-6 space-y-4">
               {navItems.map((item, index) => (

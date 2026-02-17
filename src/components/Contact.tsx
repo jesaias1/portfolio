@@ -11,6 +11,7 @@ export default function Contact() {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,6 +32,7 @@ export default function Contact() {
 
       if (response.ok) {
         toast.success('[✓] Besked sendt!');
+        setIsSuccess(true);
         setFormData({ name: '', email: '', message: '' });
       } else {
         toast.error('[✗] Fejl. Prøv igen.');
@@ -89,6 +91,56 @@ export default function Contact() {
             </div>
 
             {/* Terminal body */}
+            {isSuccess ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-4 md:p-8 bg-[#0c0c0c] space-y-3 font-mono text-sm"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-gray-500"
+                >
+                  {'>'} sending message...
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-gray-500"
+                >
+                  {'>'} connecting to server...
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="text-[#4ddbff]"
+                  style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.4)' }}
+                >
+                  [✓] message_sent.log — Besked modtaget!
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className="text-gray-600 pt-2"
+                >
+                  {'>'} Tak for din besked. Jeg vender tilbage hurtigst muligt.
+                </motion.div>
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.6 }}
+                  onClick={() => setIsSuccess(false)}
+                  className="font-mono text-xs text-[#4ddbff]/60 hover:text-[#4ddbff] transition-colors pt-4"
+                >
+                  {'>'} ./send_another
+                </motion.button>
+              </motion.div>
+            ) : (
             <form onSubmit={handleSubmit} className="p-4 md:p-8 bg-[#0c0c0c] space-y-6">
               {/* Name */}
               <TerminalInput
@@ -128,7 +180,7 @@ export default function Contact() {
                   placeholder="Fortæl mig om dit projekt..."
                   className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none resize-none transition-all border ${
                     focusedField === 'message'
-                      ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
+                      ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(77,219,255,0.05)]'
                       : 'border-white/5 hover:border-white/10'
                   }`}
                 />
@@ -168,6 +220,7 @@ export default function Contact() {
                 </motion.button>
               </div>
             </form>
+            )}
           </div>
         </motion.div>
 
@@ -227,7 +280,7 @@ function TerminalInput({
         placeholder={placeholder}
         className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none transition-all border ${
           focused
-            ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
+            ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(77,219,255,0.05)]'
             : 'border-white/5 hover:border-white/10'
         }`}
       />

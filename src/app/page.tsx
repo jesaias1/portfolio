@@ -12,10 +12,26 @@ import SplashScreen from '@/components/SplashScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CosmicBackground from '@/components/CosmicBackground';
 import SectionDivider from '@/components/SectionDivider';
+import ServicesSection from '@/components/ServicesSection';
+import StatsSection from '@/components/StatsSection';
 import Image from 'next/image';
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('jesaias-visited');
+    if (!hasVisited) {
+      setShowSplash(true);
+    }
+    setMounted(true);
+  }, []);
+
+  const handleSplashComplete = () => {
+    localStorage.setItem('jesaias-visited', 'true');
+    setShowSplash(false);
+  };
 
   useEffect(() => {
     if (showSplash) {
@@ -27,9 +43,9 @@ export default function Home() {
 
   return (
     <>
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       
-      {!showSplash && (
+      {(!showSplash && mounted) && (
         <SmoothScroll>
           <main className="relative">
             <CosmicBackground />
@@ -38,7 +54,11 @@ export default function Home() {
             <Navigation />
             <Hero />
             <SectionDivider />
+            <ServicesSection />
+            <SectionDivider />
             <Projects />
+            <SectionDivider />
+            <StatsSection />
             <SectionDivider />
             <About />
             <SectionDivider />
