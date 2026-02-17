@@ -9,16 +9,16 @@ export default function SectionDivider() {
         <div className="relative flex items-center gap-4">
           {/* Left dot */}
           <motion.div
-            className="w-1.5 h-1.5 bg-[#00ff41]/40 shrink-0"
+            className="w-1.5 h-1.5 bg-[#4ddbff]/40 shrink-0"
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 3, repeat: Infinity }}
           />
           
           {/* Animated line */}
           <div className="flex-1 relative h-px">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00ff41]/20 via-[#00d4ff]/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#4ddbff]/20 via-[#99eaff]/10 to-transparent" />
             <motion.div
-              className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-transparent via-[#00ff41]/40 to-transparent"
+              className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-transparent via-[#4ddbff]/40 to-transparent"
               animate={{ x: ['-10%', '500%'] }}
               transition={{
                 duration: 4,
@@ -40,12 +40,12 @@ export default function SectionDivider() {
 
           {/* Right line */}
           <div className="flex-1 relative h-px">
-            <div className="absolute inset-0 bg-gradient-to-l from-[#00ff41]/20 via-[#00d4ff]/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-l from-[#4ddbff]/20 via-[#99eaff]/10 to-transparent" />
           </div>
 
           {/* Right dot */}
           <motion.div
-            className="w-1.5 h-1.5 bg-[#00ff41]/40 shrink-0"
+            className="w-1.5 h-1.5 bg-[#4ddbff]/40 shrink-0"
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
           />

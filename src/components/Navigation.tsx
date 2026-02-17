@@ -40,8 +40,8 @@ export default function Navigation() {
           <motion.div whileHover={{ opacity: 0.7 }}>
             <Link
               href="/"
-              className="font-mono text-sm text-[#00ff41] tracking-wider hover:text-white transition-colors"
-              style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.3)' }}
+              className="font-mono text-sm text-[#4ddbff] tracking-wider hover:text-white transition-colors"
+              style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.3)' }}
             >
               {'>'} jesaias.dk
             </Link>
@@ -58,11 +58,11 @@ export default function Navigation() {
               >
                 <a
                   href={item.href}
-                  className="font-mono text-xs text-gray-500 hover:text-[#00ff41] transition-colors relative group tracking-wider"
+                  className="font-mono text-xs text-gray-500 hover:text-[#4ddbff] transition-colors relative group tracking-wider"
                 >
-                  <span className="text-[#00ff41] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
+                  <span className="text-[#4ddbff] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#00ff41] transition-all group-hover:w-full opacity-50" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#4ddbff] transition-all group-hover:w-full opacity-50" />
                 </a>
               </motion.div>
             ))}
@@ -72,7 +72,7 @@ export default function Navigation() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-xl text-gray-400 hover:text-[#00ff41] transition-colors"
+            className="md:hidden text-xl text-gray-400 hover:text-[#4ddbff] transition-colors"
           >
             {isMobileMenuOpen ? <HiX /> : <HiMenu />}
           </motion.button>
@@ -99,9 +99,9 @@ export default function Navigation() {
                   <a
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block font-mono text-sm text-gray-400 hover:text-[#00ff41] transition-colors py-2"
+                    className="block font-mono text-sm text-gray-400 hover:text-[#4ddbff] transition-colors py-2"
                   >
-                    <span className="text-[#00ff41] mr-2">{'>'}</span>
+                    <span className="text-[#4ddbff] mr-2">{'>'}</span>
                     {item.name}
                   </a>
                 </motion.div>

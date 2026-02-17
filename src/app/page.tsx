@@ -68,7 +68,7 @@ export default function Home() {
                       href="https://github.com/jesaias1"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-xs text-gray-600 hover:text-[#00ff41] transition-colors"
+                      className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
                     >
                       github
                     </a>
@@ -76,11 +76,11 @@ export default function Home() {
                       href="https://linkedin.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-xs text-gray-600 hover:text-[#00ff41] transition-colors"
+                      className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
                     >
                       linkedin
                     </a>
-                    <span className="text-[#00ff41]/20 font-mono text-[10px]">
+                    <span className="text-[#4ddbff]/20 font-mono text-[10px]">
                       process exited with code 0
                     </span>
                     <a 

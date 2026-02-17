@@ -42,8 +42,8 @@ export default function CustomCursor() {
           y: cursorY,
           translateX: '-50%',
           translateY: '-50%',
-          backgroundColor: '#00ff41',
-          boxShadow: '0 0 8px rgba(0, 255, 65, 0.6), 0 0 20px rgba(0, 255, 65, 0.2)',
+          backgroundColor: '#4ddbff',
+          boxShadow: '0 0 8px rgba(77, 219, 255, 0.6), 0 0 20px rgba(77, 219, 255, 0.2)',
         }}
       />
 
@@ -55,7 +55,7 @@ export default function CustomCursor() {
           y: cursorY,
           translateX: '-50%',
           translateY: '-50%',
-          background: 'radial-gradient(circle, rgba(0, 255, 65, 0.06) 0%, rgba(0, 212, 255, 0.03) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(77, 219, 255, 0.06) 0%, rgba(153, 234, 255, 0.03) 40%, transparent 70%)',
         }}
       />
     </>

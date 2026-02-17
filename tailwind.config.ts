@@ -11,9 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'terminal-green': '#00ff41',
-        'terminal-cyan': '#00d4ff',
-        'terminal-dim': '#00aa2a',
+        'terminal-green': '#4ddbff',
+        'terminal-cyan': '#99eaff',
+        'terminal-dim': '#3ab8d9',
       },
       fontFamily: {
         display: ['var(--font-display)'],
@@ -42,10 +42,10 @@ const config: Config = {
         },
         glowPulse: {
           '0%, 100%': { 
-            boxShadow: '0 0 5px rgba(0, 255, 65, 0.2)',
+            boxShadow: '0 0 5px rgba(77, 219, 255, 0.2)',
           },
           '50%': { 
-            boxShadow: '0 0 20px rgba(0, 255, 65, 0.4)',
+            boxShadow: '0 0 20px rgba(77, 219, 255, 0.4)',
           },
         },
         blink: {

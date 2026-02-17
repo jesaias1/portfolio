@@ -47,7 +47,7 @@ export default function CosmicBackground() {
             height: '600px',
             left: '10%',
             top: '20%',
-            background: 'radial-gradient(circle, rgba(0, 255, 65, 0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(77, 219, 255, 0.15) 0%, transparent 70%)',
             x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * 30),
             y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * 30),
           }}
@@ -59,7 +59,7 @@ export default function CosmicBackground() {
             height: '500px',
             right: '10%',
             bottom: '20%',
-            background: 'radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(153, 234, 255, 0.12) 0%, transparent 70%)',
             x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * -20),
             y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * -20),
           }}
@@ -71,7 +71,7 @@ export default function CosmicBackground() {
         {particles.map((p, i) => (
           <motion.div
             key={i}
-            className="absolute bg-[#00ff41]"
+            className="absolute bg-[#4ddbff]"
             style={{
               left: p.left,
               top: p.top,
@@ -95,7 +95,7 @@ export default function CosmicBackground() {
       <motion.div
         className="absolute w-[600px] h-[600px] rounded-full opacity-15"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 255, 65, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(77, 219, 255, 0.08) 0%, transparent 70%)',
           left: -300,
           top: -300,
           x: smoothX,

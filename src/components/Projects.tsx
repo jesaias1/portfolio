@@ -47,10 +47,10 @@ export default function Projects() {
             className="mb-16"
           >
             <div className="flex items-center gap-3 mb-4">
-              <span className="font-mono text-sm text-[#00ff41]" style={{ textShadow: '0 0 8px rgba(0, 255, 65, 0.3)' }}>
+              <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
                 ~/projects
               </span>
-              <div className="flex-1 h-px bg-gradient-to-r from-[#00ff41]/20 to-transparent" />
+              <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
             </div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
               Udvalgte Projekter
@@ -125,7 +125,7 @@ function ProjectRow({
     >
       {/* Image */}
       <motion.div
-        className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#00ff41]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}
+        className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#4ddbff]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}
         whileHover={{ scale: 1.02 }}
       >
         <Image
@@ -150,7 +150,7 @@ function ProjectRow({
           
           {/* Scan line animation */}
           <motion.div
-            className="absolute left-0 right-0 h-px bg-[#00ff41]/30"
+            className="absolute left-0 right-0 h-px bg-[#4ddbff]/30"
             animate={isHovered ? {
               top: ['0%', '100%'],
             } : {}}
@@ -163,7 +163,7 @@ function ProjectRow({
         </motion.div>
 
         {/* Project number */}
-        <div className="absolute top-4 right-4 font-mono text-xs text-white/20 group-hover:text-[#00ff41]/50 transition-all">
+        <div className="absolute top-4 right-4 font-mono text-xs text-white/20 group-hover:text-[#4ddbff]/50 transition-all">
           [{String(index + 1).padStart(2, '0')}]
         </div>
       </motion.div>
@@ -173,11 +173,11 @@ function ProjectRow({
         {/* Title */}
         <div>
           <motion.h3
-            className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-[#00ff41] transition-colors duration-300"
+            className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300"
           >
             {project.title}
           </motion.h3>
-          <div className="w-12 h-px bg-[#00ff41]/30 mt-3 group-hover:w-24 transition-all duration-500" />
+          <div className="w-12 h-px bg-[#4ddbff]/30 mt-3 group-hover:w-24 transition-all duration-500" />
         </div>
 
         {/* Description */}
@@ -190,7 +190,7 @@ function ProjectRow({
           {project.tags.slice(0, 5).map((tag) => (
             <span
               key={tag}
-              className="font-mono text-[10px] text-gray-600 border border-white/5 px-2 py-1 group-hover:border-[#00ff41]/20 group-hover:text-[#00ff41]/60 transition-all"
+              className="font-mono text-[10px] text-gray-600 border border-white/5 px-2 py-1 group-hover:border-[#4ddbff]/20 group-hover:text-[#4ddbff]/60 transition-all"
             >
               {tag}
             </span>
@@ -199,7 +199,7 @@ function ProjectRow({
 
         {/* View prompt */}
         <motion.div 
-          className="font-mono text-xs text-gray-600 group-hover:text-[#00ff41]/70 transition-colors pt-2"
+          className="font-mono text-xs text-gray-600 group-hover:text-[#4ddbff]/70 transition-colors pt-2"
           animate={isHovered ? { x: [0, 3, 0] } : {}}
           transition={{ duration: 0.5, repeat: Infinity }}
         >
@@ -241,7 +241,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
           </div>
           <button
             onClick={onClose}
-            className="font-mono text-xs text-gray-600 hover:text-[#00ff41] transition-colors"
+            className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
           >
             [ESC]
           </button>
@@ -288,7 +288,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="font-mono text-xs text-[#00ff41]/70 border border-[#00ff41]/20 px-3 py-1.5"
+                className="font-mono text-xs text-[#4ddbff]/70 border border-[#4ddbff]/20 px-3 py-1.5"
               >
                 {tag}
               </span>
@@ -309,7 +309,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 px-6 py-3 font-mono text-sm bg-[#00ff41]/10 border border-[#00ff41]/40 text-[#00ff41] hover:bg-[#00ff41]/20 transition-all"
+                className="flex items-center gap-2 px-6 py-3 font-mono text-sm bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 transition-all"
               >
                 <HiExternalLink /> ./open
               </motion.a>

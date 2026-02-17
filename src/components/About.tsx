@@ -38,10 +38,10 @@ export default function About() {
           className="mb-16"
         >
           <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-sm text-[#00ff41]" style={{ textShadow: '0 0 8px rgba(0, 255, 65, 0.3)' }}>
+            <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
               ~/about
             </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#00ff41]/20 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight">
             System Info
@@ -59,7 +59,7 @@ export default function About() {
             {/* System diagnostics style */}
             <div className="space-y-4 font-mono text-sm">
               <div className="border border-white/5 p-6 space-y-3">
-                <div className="text-[#00ff41] text-xs tracking-wider mb-4" style={{ textShadow: '0 0 6px rgba(0, 255, 65, 0.3)' }}>
+                <div className="text-[#4ddbff] text-xs tracking-wider mb-4" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
                   SYSTEM DIAGNOSTICS
                 </div>
                 
@@ -67,7 +67,7 @@ export default function About() {
                 <SystemLine label="ROLE" value="Kreativ Udvikler" />
                 <SystemLine label="LOCATION" value="Danmark 🇩🇰" />
                 <SystemLine label="EXPERIENCE" value="2+ years" />
-                <SystemLine label="STATUS" value="ONLINE" valueColor="#00ff41" />
+                <SystemLine label="STATUS" value="ONLINE" valueColor="#4ddbff" />
               </div>
 
               {/* Bio content */}
@@ -107,7 +107,7 @@ export default function About() {
             viewport={{ once: true }}
           >
             <div className="border border-white/5 p-6">
-              <div className="text-[#00ff41] text-xs tracking-wider mb-6 font-mono" style={{ textShadow: '0 0 6px rgba(0, 255, 65, 0.3)' }}>
+              <div className="text-[#4ddbff] text-xs tracking-wider mb-6 font-mono" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
                 TECH STACK ANALYSIS
               </div>
               
@@ -154,19 +154,19 @@ function TerminalSkillBar({ tech, index, animate }: { tech: typeof techStack[0];
     >
       <div className="flex items-center justify-between mb-1">
         <span className="text-gray-300">{tech.name}</span>
-        <span className="text-[#00ff41]/70">{tech.level}%</span>
+        <span className="text-[#4ddbff]/70">{tech.level}%</span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[#00ff41]/40">[</span>
+        <span className="text-[#4ddbff]/40">[</span>
         <div className="flex-1 relative h-2 bg-white/5 overflow-hidden">
           <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#00ff41]/60 to-[#00d4ff]/40"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#4ddbff]/60 to-[#99eaff]/40"
             initial={{ width: '0%' }}
             animate={animate ? { width: `${tech.level}%` } : {}}
             transition={{ duration: 1, delay: index * 0.08 + 0.3, ease: [0.6, 0, 0.2, 1] }}
           />
         </div>
-        <span className="text-[#00ff41]/40">]</span>
+        <span className="text-[#4ddbff]/40">]</span>
       </div>
     </motion.div>
   );

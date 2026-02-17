@@ -54,10 +54,10 @@ export default function Contact() {
           className="mb-12"
         >
           <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-sm text-[#00ff41]" style={{ textShadow: '0 0 8px rgba(0, 255, 65, 0.3)' }}>
+            <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
               ~/kontakt
             </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#00ff41]/20 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
             Lad Os Snakke
@@ -117,7 +117,7 @@ export default function Contact() {
               {/* Message */}
               <div className="space-y-2">
                 <label className="font-mono text-xs text-gray-500">
-                  <span className="text-[#00ff41]">{'>'}</span> message:
+                  <span className="text-[#4ddbff]">{'>'}</span> message:
                 </label>
                 <textarea
                   value={formData.message}
@@ -128,7 +128,7 @@ export default function Contact() {
                   placeholder="Fortæl mig om dit projekt..."
                   className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none resize-none transition-all border ${
                     focusedField === 'message'
-                      ? 'border-[#00ff41]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
+                      ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
                       : 'border-white/5 hover:border-white/10'
                   }`}
                 />
@@ -147,9 +147,9 @@ export default function Contact() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
-                  className="font-mono text-sm px-6 py-3 bg-[#00ff41]/10 border border-[#00ff41]/40 text-[#00ff41] hover:bg-[#00ff41]/20 hover:border-[#00ff41]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  className="font-mono text-sm px-6 py-3 bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   style={{
-                    boxShadow: '0 0 15px rgba(0, 255, 65, 0.1)',
+                    boxShadow: '0 0 15px rgba(77, 219, 255, 0.1)',
                   }}
                 >
                   {isSubmitting ? (
@@ -183,7 +183,7 @@ export default function Contact() {
             eller skriv direkte til{' '}
             <a 
               href="mailto:jesaias@jesaias.dk" 
-              className="text-[#00ff41]/70 hover:text-[#00ff41] transition-colors"
+              className="text-[#4ddbff]/70 hover:text-[#4ddbff] transition-colors"
             >
               jesaias@jesaias.dk
             </a>
@@ -216,7 +216,7 @@ function TerminalInput({
   return (
     <div className="space-y-2">
       <label className="font-mono text-xs text-gray-500">
-        <span className="text-[#00ff41]">{'>'}</span> {label}:
+        <span className="text-[#4ddbff]">{'>'}</span> {label}:
       </label>
       <input
         type={type}
@@ -227,7 +227,7 @@ function TerminalInput({
         placeholder={placeholder}
         className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none transition-all border ${
           focused
-            ? 'border-[#00ff41]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
+            ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(0,255,65,0.05)]'
             : 'border-white/5 hover:border-white/10'
         }`}
       />

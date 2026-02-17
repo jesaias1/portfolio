@@ -70,7 +70,7 @@ export default function Hero() {
         {waveformBars.map((bar, i) => (
           <motion.div
             key={i}
-            className="w-[3px] bg-[#00ff41]"
+            className="w-[3px] bg-[#4ddbff]"
             animate={{
               height: [bar.height * 0.3, bar.height, bar.height * 0.5, bar.height * 0.8, bar.height * 0.3],
             }}
@@ -99,14 +99,14 @@ export default function Hero() {
           >
             <div className="relative inline-block">
               <pre
-                className="text-[#00ff41] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left"
-                style={{ textShadow: '0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.15)' }}
+                className="text-[#4ddbff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left"
+                style={{ textShadow: '0 0 15px rgba(77, 219, 255, 0.4), 0 0 30px rgba(77, 219, 255, 0.15)' }}
               >
                 {ASCII_LOGO}
               </pre>
               {/* Glitch overlay */}
               <motion.pre
-                className="absolute inset-0 text-[#00d4ff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left"
+                className="absolute inset-0 text-[#99eaff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left"
                 animate={{
                   opacity: [0, 0.3, 0, 0, 0.2, 0],
                   x: [-2, 2, 0, -1, 1, 0],
@@ -130,8 +130,8 @@ export default function Hero() {
             className="h-8 flex items-center justify-center"
           >
             <span 
-              className="font-mono text-sm md:text-base text-[#00ff41] tracking-wider"
-              style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.4)' }}
+              className="font-mono text-sm md:text-base text-[#4ddbff] tracking-wider"
+              style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
             >
               {subtitleText}
               <span className="cursor-blink ml-0.5">▌</span>
@@ -176,7 +176,7 @@ export default function Hero() {
               className="flex flex-col items-center gap-2"
             >
               <span className="text-xs font-mono text-gray-600 tracking-widest">SCROLL</span>
-              <div className="w-px h-8 bg-gradient-to-b from-[#00ff41]/50 to-transparent" />
+              <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent" />
             </motion.div>
           </motion.div>
         </div>
@@ -202,12 +202,12 @@ function TerminalButton({
       className={`
         relative px-8 py-3 font-mono text-sm tracking-wider overflow-hidden group transition-all
         ${variant === 'solid' 
-          ? 'bg-[#00ff41]/10 border border-[#00ff41]/40 text-[#00ff41] hover:bg-[#00ff41]/20 hover:border-[#00ff41]/70' 
+          ? 'bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/70' 
           : 'bg-transparent border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'
         }
       `}
       style={{
-        boxShadow: variant === 'solid' ? '0 0 20px rgba(0, 255, 65, 0.1)' : 'none',
+        boxShadow: variant === 'solid' ? '0 0 20px rgba(77, 219, 255, 0.1)' : 'none',
       }}
     >
       <span className="relative z-10">{children}</span>

@@ -139,8 +139,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-[#00ff41] text-[0.35rem] sm:text-[0.45rem] md:text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-x-auto"
-          style={{ textShadow: '0 0 10px rgba(0, 255, 65, 0.5)' }}
+          className="text-[#4ddbff] text-[0.35rem] sm:text-[0.45rem] md:text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-x-auto"
+          style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.5)' }}
         >
           {ASCII_LOGO}
         </motion.pre>
@@ -153,9 +153,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       const bar = '█'.repeat(filled) + '░'.repeat(25 - filled);
       return (
         <div key={index} className="font-mono text-sm text-gray-400">
-          <span className="text-[#00ff41]">[</span>
-          <span className="text-[#00ff41]">{bar}</span>
-          <span className="text-[#00ff41]">]</span>
+          <span className="text-[#4ddbff]">[</span>
+          <span className="text-[#4ddbff]">{bar}</span>
+          <span className="text-[#4ddbff]">]</span>
           <span className="text-gray-500 ml-2">{Math.floor(progressValue)}%</span>
         </div>
       );
@@ -165,7 +165,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       return (
         <div key={index} className="font-mono text-sm">
           <span className="text-gray-500">{typedText}</span>
-          <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
+          <span className="cursor-blink text-[#4ddbff] text-lg leading-none">▌</span>
         </div>
       );
     }
@@ -184,8 +184,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           key={index}
           initial={{ opacity: 0, x: -5 }}
           animate={{ opacity: 1, x: 0 }}
-          className="font-mono text-sm text-[#00ff41]"
-          style={{ textShadow: '0 0 8px rgba(0, 255, 65, 0.4)' }}
+          className="font-mono text-sm text-[#4ddbff]"
+          style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.4)' }}
         >
           {line.text}
         </motion.div>
@@ -252,7 +252,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {visibleLines === 0 && (
               <div className="font-mono text-sm">
                 <span className="text-gray-500">jesaias@dk:~$ </span>
-                <span className="cursor-blink text-[#00ff41] text-lg leading-none">▌</span>
+                <span className="cursor-blink text-[#4ddbff] text-lg leading-none">▌</span>
               </div>
             )}
           </div>

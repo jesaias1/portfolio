@@ -73,8 +73,8 @@ export default function RootLayout({
             duration: 3000,
             style: {
               background: '#0a0a0a',
-              color: '#00ff41',
-              border: '1px solid rgba(0, 255, 65, 0.3)',
+              color: '#4ddbff',
+              border: '1px solid rgba(77, 219, 255, 0.3)',
               fontFamily: 'var(--font-mono)',
               borderRadius: '0',
             },
