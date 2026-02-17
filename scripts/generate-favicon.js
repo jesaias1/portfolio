@@ -7,7 +7,7 @@ const path = require('path');
 // we'll create an SVG-based favicon that matches the logo's wave design
 const svgFavicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <rect width="32" height="32" fill="#0a0a0a"/>
-  <g fill="none" stroke="#00ff41" stroke-width="1.5" stroke-linecap="round">
+  <g fill="none" stroke="#4ddbff" stroke-width="1.5" stroke-linecap="round">
     <!-- Top bar -->
     <line x1="3" y1="8" x2="29" y2="8" opacity="0.9"/>
     <line x1="4" y1="10" x2="28" y2="10" opacity="0.7"/>
