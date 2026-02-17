@@ -139,7 +139,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-[#4ddbff] text-[0.35rem] sm:text-[0.45rem] md:text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-x-auto"
+          className="text-[#4ddbff] text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-visible origin-left scale-[0.5] sm:scale-[0.65] md:scale-100 transition-transform"
           style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.5)' }}
         >
           {ASCII_LOGO}

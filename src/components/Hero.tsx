@@ -95,18 +95,18 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-            className="hero-logo-glow w-full text-center"
+            className="hero-logo-glow w-full flex justify-center overflow-hidden"
           >
-            <div className="relative inline-block">
+            <div className="relative inline-block origin-center scale-[0.55] sm:scale-[0.7] md:scale-90 lg:scale-100 transition-transform">
               <pre
-                className="text-[#4ddbff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left"
+                className="text-[#4ddbff] text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left"
                 style={{ textShadow: '0 0 15px rgba(77, 219, 255, 0.4), 0 0 30px rgba(77, 219, 255, 0.15)' }}
               >
                 {ASCII_LOGO}
               </pre>
               {/* Glitch overlay */}
               <motion.pre
-                className="absolute inset-0 text-[#99eaff] text-[0.3rem] sm:text-[0.4rem] md:text-[0.55rem] lg:text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left"
+                className="absolute inset-0 text-[#99eaff] text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left"
                 animate={{
                   opacity: [0, 0.3, 0, 0, 0.2, 0],
                   x: [-2, 2, 0, -1, 1, 0],
@@ -130,7 +130,7 @@ export default function Hero() {
             className="h-8 flex items-center justify-center"
           >
             <span 
-              className="font-mono text-sm md:text-base text-[#4ddbff] tracking-wider"
+              className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
               style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
             >
               {subtitleText}
