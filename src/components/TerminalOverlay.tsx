@@ -35,7 +35,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
 
     setHistory(prev => [...prev, `> ${input}`]);
     setInput('');
-    play('on'); // Typing click SFX
+    play('typing'); // Typing click SFX
 
     // Command Logic
     switch (cmd) {
@@ -122,7 +122,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
               value={input}
               onChange={e => {
                 setInput(e.target.value);
-                if (e.target.value.length > input.length) play('on'); // Sound per character
+                if (e.target.value.length > input.length) play('typing'); // Sound per character
               }}
               className="bg-transparent border-none outline-none text-[#4ddbff] w-full caret-[#4ddbff]"
               autoFocus

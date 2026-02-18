@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-type SoundType = 'hover' | 'click' | 'success' | 'on' | 'error';
+type SoundType = 'hover' | 'click' | 'success' | 'on' | 'error' | 'typing';
 
 // Module-scoped singleton for ambient audio to prevent multiple loops
 let globalAmbientAudio: HTMLAudioElement | null = null;
@@ -37,8 +37,8 @@ export function useSound() {
 
     // 2. Ambient Music (Singleton)
     if (!globalAmbientAudio) {
-      // User path: /sounds/background.wav
-      const audio = new Audio('/sounds/background.wav');
+      // Optimized path: /audio/background.mp3
+      const audio = new Audio('/audio/background.mp3');
       audio.loop = true;
       audio.volume = 0.1; // Low volume as requested
       globalAmbientAudio = audio;
@@ -174,7 +174,7 @@ export function useSound() {
         osc.stop(now + 0.2);
         break;
 
-      case 'on':
+      case 'typing':
         // Mechanical click for typing
         osc.type = 'square';
         osc.frequency.setValueAtTime(100, now);
