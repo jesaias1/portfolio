@@ -289,12 +289,23 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-            />
+            {project.video ? (
+              <video
+                src={project.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover"
+              />
+            )}
           </motion.div>
 
           {/* Title & description */}
@@ -344,7 +355,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center gap-2 px-6 py-3 font-mono text-sm bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 transition-all"
               >
-                <HiExternalLink /> ./open
+                <HiExternalLink /> ./visit_site
               </motion.a>
             )}
             {project.github && (

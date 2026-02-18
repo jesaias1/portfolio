@@ -12,7 +12,9 @@ export async function GET() {
 
     const formattedProjects = projects.map(project => {
       // Check for video file
-      const videoFilename = `${project.image.split('/').pop()?.replace(/\.[^/.]+$/, '')}.mp4`;
+      // Derive filename from title: "Ordbomben" -> "ordbomben.mp4", "dump.media" -> "dump-media.mp4"
+      const sanitizedTitle = project.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const videoFilename = `${sanitizedTitle}.mp4`;
       const videoPath = join(process.cwd(), 'public', 'projects', 'videos', videoFilename);
       const hasVideo = existsSync(videoPath);
 
