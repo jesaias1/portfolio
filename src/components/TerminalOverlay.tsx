@@ -48,6 +48,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
       case 'work':
       case 'projects':
         setHistory(prev => [...prev, 'INITIALIZING NAVIGATION...']);
+        window.dispatchEvent(new CustomEvent('glitch-trigger'));
         setTimeout(() => {
           onClose();
           document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });

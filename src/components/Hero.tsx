@@ -233,6 +233,7 @@ function TerminalButton({
       onMouseEnter={() => play('hover')}
       onClick={() => {
         play('click');
+        window.dispatchEvent(new CustomEvent('glitch-trigger'));
         onClick?.();
       }}
       className={`

@@ -63,7 +63,10 @@ export default function Navigation() {
                 <a
                   href={item.href}
                   onMouseEnter={() => play('hover')}
-                  onClick={() => play('click')}
+                  onClick={() => {
+                    play('click');
+                    window.dispatchEvent(new CustomEvent('glitch-trigger'));
+                  }}
                   className="font-mono text-xs text-gray-500 hover:text-[#4ddbff] transition-colors relative group tracking-wider"
                 >
                   <span className="text-[#4ddbff] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
