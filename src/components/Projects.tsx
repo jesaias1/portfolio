@@ -4,6 +4,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { HiExternalLink, HiCode, HiX } from 'react-icons/hi';
+import Parallax from './Parallax';
+import RevealText from './RevealText';
 
 interface Project {
   id: string;
@@ -137,20 +139,21 @@ function ProjectRow({
       className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer group`}
     >
       {/* Image */}
-      <motion.div
-        className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#4ddbff]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}
-        whileHover={{ scale: 1.02 }}
-      >
-        <Image
-          src={project.image}
-          alt={project.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition-all duration-700 group-hover:scale-105"
-          style={{
-            filter: isHovered ? 'none' : 'grayscale(60%) brightness(0.7)',
-          }}
-        />
+      <div className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#4ddbff]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}>
+        <Parallax offset={20} className="w-full h-full">
+          <div className="relative w-full h-full">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover transition-all duration-700 group-hover:scale-110"
+              style={{
+                filter: isHovered ? 'none' : 'grayscale(60%) brightness(0.7)',
+              }}
+            />
+          </div>
+        </Parallax>
 
         {/* Video on hover */}
         {project.video && (
@@ -198,17 +201,15 @@ function ProjectRow({
         <div className="absolute top-4 right-4 font-mono text-xs text-white/20 group-hover:text-[#4ddbff]/50 transition-all">
           [{String(index + 1).padStart(2, '0')}]
         </div>
-      </motion.div>
+      </div>
 
       {/* Info */}
       <div className={`space-y-4 ${isReversed ? 'md:order-1' : ''}`}>
         {/* Title */}
         <div>
-          <motion.h3
-            className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300"
-          >
-            {project.title}
-          </motion.h3>
+          <h3 className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300">
+             <RevealText text={project.title} delay={0.2} />
+          </h3>
           <div className="w-12 h-px bg-[#4ddbff]/30 mt-3 group-hover:w-24 transition-all duration-500" />
         </div>
 

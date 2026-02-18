@@ -2,6 +2,7 @@
 
 import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import RevealText from './RevealText';
 
 interface Stat {
   value: number;
@@ -39,7 +40,7 @@ export default function StatsSection() {
             </span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Resultater
+            <RevealText text="Resultater" delay={0.1} />
           </h2>
         </motion.div>
 
