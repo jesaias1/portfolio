@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
+import SoundController from '@/components/SoundController';
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
@@ -67,6 +68,7 @@ export default function RootLayout({
         <div className="bg-grid bg-grain">
           {children}
         </div>
+        <SoundController />
         <Toaster 
           position="bottom-right"
           toastOptions={{

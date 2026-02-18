@@ -4,34 +4,75 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 type SoundType = 'hover' | 'click' | 'success' | 'on' | 'error';
 
-export function useSound() {
-  const [isMuted, setIsMuted] = useState(false); // Default to UNMUTED
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
+// Module-scoped singleton for ambient audio to prevent multiple loops
+let globalAmbientAudio: HTMLAudioElement | null = null;
+let globalGainNode: GainNode | null = null;
+let globalAudioContext: AudioContext | null = null;
 
-  // Initialize audio context on first interaction
+export function useSound() {
+  const [isMuted, setIsMuted] = useState(false); 
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(globalAudioContext);
+
   const initAudio = useCallback(() => {
-    if (!audioContext) {
+    // 1. Web Audio Context (SFX)
+    if (!globalAudioContext) {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       if (Ctx) {
         const ctx = new Ctx();
         const gainNode = ctx.createGain();
         gainNode.connect(ctx.destination);
-        gainNode.gain.value = 0.1; // Master volume
-        gainNodeRef.current = gainNode;
+        gainNode.gain.value = 0.15;
+        
+        globalGainNode = gainNode;
+        globalAudioContext = ctx;
         setAudioContext(ctx);
         
-        // Resume if suspended (browser policy)
         if (ctx.state === 'suspended') {
           ctx.resume();
         }
       }
-    } else if (audioContext.state === 'suspended') {
-      audioContext.resume();
+    } else if (globalAudioContext.state === 'suspended' && !isMuted) {
+      globalAudioContext.resume();
     }
-  }, [audioContext]);
 
-  // Global event listener to unlock audio on first interaction
+    // 2. Ambient Music (Singleton)
+    if (!globalAmbientAudio) {
+      // User path: /sounds/background.wav
+      const audio = new Audio('/sounds/background.wav');
+      audio.loop = true;
+      audio.volume = 0.1; // Low volume as requested
+      globalAmbientAudio = audio;
+      
+      // Auto-play if not muted
+      // Wait for interaction (initAudio called on interaction)
+      // audio.play().catch(e => console.log('Ambient play failed'));
+    }
+    
+    // Play logic: handled by effect syncing with isMuted
+  }, [isMuted]);
+
+  // Sync Mute State
+  useEffect(() => {
+    // SFX
+    if (globalAudioContext) {
+      if (isMuted) {
+        globalAudioContext.suspend().catch(() => {});
+      } else {
+        globalAudioContext.resume().catch(() => {});
+      }
+    }
+
+    // Ambient
+    if (globalAmbientAudio) {
+      globalAmbientAudio.muted = isMuted;
+      if (!isMuted && globalAmbientAudio.paused) {
+          // Attempt to play if unmuted (and was created)
+          globalAmbientAudio.play().catch(e => console.log('Ambient resume failed:', e));
+      }
+    }
+  }, [isMuted]);
+
+  // Global event listener to unlock audio
   useEffect(() => {
     const handleInteraction = () => {
       initAudio();
@@ -51,28 +92,28 @@ export function useSound() {
     };
   }, [initAudio]);
 
-  // Removed localStorage logic as sound is now always on (miniscule fx)
-  
   const toggleMute = useCallback(() => {
-     // No-op or just log, since UI is removed
-     console.log('Sound toggle removed');
+     setIsMuted(prev => !prev);
   }, []);
 
   const play = useCallback((type: SoundType) => {
+    const ctx = globalAudioContext;
+    const gainNode = globalGainNode;
+
     // Attempt resume if context exists but suspended
-    if (audioContext && audioContext.state === 'suspended') {
-      audioContext.resume().catch(() => {});
+    if (ctx && ctx.state === 'suspended' && !isMuted) {
+      ctx.resume().catch(() => {});
     }
 
-    if (isMuted || !audioContext || !gainNodeRef.current) return;
+    if (isMuted || !ctx || !gainNode) return;
 
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
     osc.connect(gain);
-    gain.connect(gainNodeRef.current);
+    gain.connect(gainNode);
 
-    const now = audioContext.currentTime;
+    const now = ctx.currentTime;
 
     switch (type) {
       case 'hover':
@@ -131,6 +172,16 @@ export function useSound() {
         gain.gain.linearRampToValueAtTime(0, now + 0.2);
         osc.start(now);
         osc.stop(now + 0.2);
+        break;
+
+      case 'on':
+        // Mechanical click for typing
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(100, now);
+        gain.gain.setValueAtTime(0.02, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.02);
+        osc.start(now);
+        osc.stop(now + 0.02);
         break;
     }
   }, [isMuted, audioContext]);
