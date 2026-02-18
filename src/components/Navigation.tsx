@@ -5,10 +5,12 @@ import { useSound } from '@/hooks/use-sound';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
+import { useLenis } from 'lenis/react';
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const lenis = useLenis();
 
   const { play } = useSound();
 
@@ -27,6 +29,24 @@ export default function Navigation() {
     { name: 'kontakt', href: '#contact' },
   ];
 
+  const handleNavClick = (href: string) => {
+    play('click');
+    setIsMobileMenuOpen(false);
+    
+    // Trigger Glitch
+    window.dispatchEvent(new CustomEvent('glitch-trigger'));
+
+    // Wait for cover (400ms) then scroll
+    setTimeout(() => {
+      if (lenis && href.startsWith('#')) {
+        lenis.scrollTo(href, {
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      }
+    }, 400);
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -44,6 +64,10 @@ export default function Navigation() {
           <motion.div whileHover={{ opacity: 0.7 }}>
             <Link
               href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick('#top');
+              }}
               className="font-mono text-sm text-[#4ddbff] tracking-wider hover:text-white transition-colors"
               style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.3)' }}
             >
@@ -60,19 +84,15 @@ export default function Navigation() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
-                <a
-                  href={item.href}
+                <button
+                  onClick={() => handleNavClick(item.href)}
                   onMouseEnter={() => play('hover')}
-                  onClick={() => {
-                    play('click');
-                    window.dispatchEvent(new CustomEvent('glitch-trigger'));
-                  }}
                   className="font-mono text-xs text-gray-500 hover:text-[#4ddbff] transition-colors relative group tracking-wider"
                 >
                   <span className="text-[#4ddbff] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#4ddbff] transition-all group-hover:w-full opacity-50" />
-                </a>
+                </button>
               </motion.div>
             ))}
           </div>
@@ -105,14 +125,13 @@ export default function Navigation() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <a
-                    href={item.href}
-                    onClick={() => { setIsMobileMenuOpen(false); play('click'); }}
-                    className="block font-mono text-sm text-gray-400 hover:text-[#4ddbff] transition-colors py-2"
+                  <button
+                    onClick={() => handleNavClick(item.href)}
+                    className="block w-full text-left font-mono text-sm text-gray-400 hover:text-[#4ddbff] transition-colors py-2"
                   >
                     <span className="text-[#4ddbff] mr-2">{'>'}</span>
                     {item.name}
-                  </a>
+                  </button>
                 </motion.div>
               ))}
             </div>

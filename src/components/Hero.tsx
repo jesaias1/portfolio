@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
+import { useLenis } from 'lenis/react';
 
 const ASCII_LOGO = `.-
 .##-                                                     .................
@@ -26,6 +27,22 @@ export default function Hero() {
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [subtitleText, setSubtitleText] = useState('');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const { play } = useSound();
+  const lenis = useLenis();
+
+  const handleNavClick = (href: string) => {
+    play('click');
+    window.dispatchEvent(new CustomEvent('glitch-trigger'));
+    
+    setTimeout(() => {
+      if (lenis && href.startsWith('#')) {
+        lenis.scrollTo(href, {
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      }
+    }, 400);
+  };
   
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -174,13 +191,13 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 3 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
             >
-              <TerminalButton onClick={() => setIsTerminalOpen(true)}>
+              <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
                 ./root_access
               </TerminalButton>
-              <TerminalButton href="#projects" variant="outline">
+              <TerminalButton onClick={() => handleNavClick('#projects')} variant="outline">
                 ./view_projects
               </TerminalButton>
-              <TerminalButton href="#contact" variant="outline">
+              <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
                 ./kontakt
               </TerminalButton>
             </motion.div>

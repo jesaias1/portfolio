@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import SoundController from '@/components/SoundController';
+import SmoothScroll from '@/components/SmoothScroll';
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
@@ -65,9 +66,11 @@ export default function RootLayout({
   return (
     <html lang="da" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased" style={{ fontFamily: 'var(--font-display)' }}>
-        <div className="bg-grid bg-grain">
-          {children}
-        </div>
+        <SmoothScroll>
+          <div className="bg-grid bg-grain">
+            {children}
+          </div>
+        </SmoothScroll>
         <SoundController />
         <Toaster 
           position="bottom-right"

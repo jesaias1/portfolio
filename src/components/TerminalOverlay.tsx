@@ -52,7 +52,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         setTimeout(() => {
           onClose();
           document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
-        }, 800);
+        }, 400); // Sync with cover time
         break;
       case 'social':
         setHistory(prev => [...prev, 'FIND ME ON:', 'GitHub: @jesaias1', 'LinkedIn: Jesaias G.', 'Instagram: @jesaias_music']);
