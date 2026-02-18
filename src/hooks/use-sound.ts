@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 type SoundType = 'hover' | 'click' | 'success' | 'on' | 'error';
 
 export function useSound() {
-  const [isMuted, setIsMuted] = useState(true); // Default to muted for policy compliance
+  const [isMuted, setIsMuted] = useState(false); // Default to UNMUTED
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
@@ -26,40 +26,45 @@ export function useSound() {
           ctx.resume();
         }
       }
+    } else if (audioContext.state === 'suspended') {
+      audioContext.resume();
     }
   }, [audioContext]);
 
-  // Load mute state from localStorage
+  // Global event listener to unlock audio on first interaction
   useEffect(() => {
-    const saved = localStorage.getItem('sound-muted');
-    if (saved !== null) {
-      setIsMuted(JSON.parse(saved));
-    } else {
-        // If never saved, keep default (true) or set to false?
-        // User requested "remember all our previous changes".
-        // Let's default to MUTED until user enables it, then remember.
-        setIsMuted(true);
-    }
+    const handleInteraction = () => {
+      initAudio();
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+    };
+
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+    };
+  }, [initAudio]);
+
+  // Removed localStorage logic as sound is now always on (miniscule fx)
+  
+  const toggleMute = useCallback(() => {
+     // No-op or just log, since UI is removed
+     console.log('Sound toggle removed');
   }, []);
 
-  const toggleMute = useCallback(() => {
-    initAudio(); // Ensure context exists
-    setIsMuted(prev => {
-      const next = !prev;
-      localStorage.setItem('sound-muted', JSON.stringify(next));
-      if (audioContext && audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-      return next;
-    });
-  }, [initAudio, audioContext]);
-
   const play = useCallback((type: SoundType) => {
-    if (isMuted || !audioContext || !gainNodeRef.current) return;
-
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
+    // Attempt resume if context exists but suspended
+    if (audioContext && audioContext.state === 'suspended') {
+      audioContext.resume().catch(() => {});
     }
+
+    if (isMuted || !audioContext || !gainNodeRef.current) return;
 
     const osc = audioContext.createOscillator();
     const gain = audioContext.createGain();
