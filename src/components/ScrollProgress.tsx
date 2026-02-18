@@ -12,13 +12,13 @@ export default function ScrollProgress() {
 
   return (
     <>
-      {/* Top progress bar — terminal green */}
+      {/* Top progress bar — terminal cyan */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-[2px] origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[100]"
         style={{ 
           scaleX,
-          background: 'linear-gradient(90deg, #4ddbff, #99eaff)',
-          boxShadow: '0 0 10px rgba(77, 219, 255, 0.5)',
+          background: 'linear-gradient(90deg, #4ddbff, #00b8e6)',
+          boxShadow: '0 0 15px rgba(77, 219, 255, 0.4)',
         }}
       />
     </>

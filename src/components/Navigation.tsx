@@ -52,9 +52,9 @@ export default function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[rgba(77,219,255,0.08)]'
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#4ddbff]/15'
           : 'bg-transparent'
       }`}
     >
