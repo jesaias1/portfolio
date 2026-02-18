@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSound } from '@/hooks/use-sound';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
@@ -8,6 +9,8 @@ import { HiMenu, HiX } from 'react-icons/hi';
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { play } = useSound();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,6 +62,8 @@ export default function Navigation() {
               >
                 <a
                   href={item.href}
+                  onMouseEnter={() => play('hover')}
+                  onClick={() => play('click')}
                   className="font-mono text-xs text-gray-500 hover:text-[#4ddbff] transition-colors relative group tracking-wider"
                 >
                   <span className="text-[#4ddbff] opacity-0 group-hover:opacity-100 transition-opacity mr-1">{'>'}</span>
@@ -72,7 +77,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <motion.button
             whileTap={{ scale: 0.9 }}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); play('click'); }}
             className="md:hidden text-xl text-gray-400 hover:text-[#4ddbff] transition-colors"
           >
             {isMobileMenuOpen ? <HiX /> : <HiMenu />}
@@ -99,7 +104,7 @@ export default function Navigation() {
                 >
                   <a
                     href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => { setIsMobileMenuOpen(false); play('click'); }}
                     className="block font-mono text-sm text-gray-400 hover:text-[#4ddbff] transition-colors py-2"
                   >
                     <span className="text-[#4ddbff] mr-2">{'>'}</span>

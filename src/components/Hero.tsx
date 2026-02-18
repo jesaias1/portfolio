@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import { useSound } from '@/hooks/use-sound';
 
 const ASCII_LOGO = `.-
 .##-                                                     .................
@@ -194,11 +195,15 @@ function TerminalButton({
   href: string; 
   variant?: 'solid' | 'outline';
 }) {
+  const { play } = useSound();
+
   return (
     <motion.a
       href={href}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
+      onMouseEnter={() => play('hover')}
+      onClick={() => play('click')}
       className={`
         relative px-8 py-3 font-mono text-sm tracking-wider overflow-hidden group transition-all
         ${variant === 'solid' 

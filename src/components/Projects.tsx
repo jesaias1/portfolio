@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { HiExternalLink, HiCode, HiX } from 'react-icons/hi';
 import Parallax from './Parallax';
+import { useSound } from '@/hooks/use-sound';
 import RevealText from './RevealText';
 
 interface Project {
@@ -116,6 +117,8 @@ function ProjectRow({
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const { play } = useSound();
+
   useEffect(() => {
     if (videoRef.current) {
       if (isHovered) {
@@ -133,9 +136,9 @@ function ProjectRow({
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: index * 0.1 }}
       viewport={{ once: true, margin: "-100px" }}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => { setIsHovered(true); play('hover'); }}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={onClick}
+      onClick={() => { onClick(); play('click'); }}
       className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer group`}
     >
       {/* Image */}
@@ -244,6 +247,12 @@ function ProjectRow({
 }
 
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  const { play } = useSound();
+  
+  useEffect(() => {
+    play('on');
+  }, [play]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

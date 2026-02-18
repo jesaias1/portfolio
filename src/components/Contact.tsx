@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useSound } from '@/hooks/use-sound';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -13,11 +14,14 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const { play } = useSound();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    play('click');
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Alle felter skal udfyldes');
+      play('error');
       return;
     }
 
@@ -32,13 +36,16 @@ export default function Contact() {
 
       if (response.ok) {
         toast.success('[✓] Besked sendt!');
+        play('success');
         setIsSuccess(true);
         setFormData({ name: '', email: '', message: '' });
       } else {
         toast.error('[✗] Fejl. Prøv igen.');
+        play('error');
       }
     } catch (error) {
       toast.error('[✗] Netværksfejl. Prøv igen.');
+      play('error');
     } finally {
       setIsSubmitting(false);
     }
@@ -198,6 +205,7 @@ export default function Contact() {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onMouseEnter={() => play('hover')}
                   disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
                   className="font-mono text-sm px-6 py-3 bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   style={{
