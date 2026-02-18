@@ -15,6 +15,7 @@ interface Project {
   github?: string;
   featured: boolean;
   longDesc?: string;
+  video?: string | null;
 }
 
 export default function Projects() {
@@ -111,6 +112,18 @@ function ProjectRow({
   isReversed: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isHovered) {
+        videoRef.current.play().catch(() => {});
+      } else {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    }
+  }, [isHovered]);
 
   return (
     <motion.div
@@ -138,6 +151,25 @@ function ProjectRow({
             filter: isHovered ? 'none' : 'grayscale(60%) brightness(0.7)',
           }}
         />
+
+        {/* Video on hover */}
+        {project.video && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 z-10"
+          >
+            <video
+              ref={videoRef}
+              src={project.video}
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+        )}
         
         {/* Overlay scan effect on hover */}
         <motion.div
