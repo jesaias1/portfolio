@@ -28,22 +28,22 @@ export const metadata: Metadata = {
     locale: 'da_DK',
     url: 'https://jesaias.dk',
     siteName: 'Jesaias — Kreativ Udvikler',
-    title: 'Jesaias — Kreativ Udvikler',
-    description: 'Creative Developer, Audio Engineer, and Digital Craftsman. Full-stack web apps, VST plugins, After Effects extensions.',
+    title: 'Jesaias — Next-Level Portfolio',
+    description: 'Skaber digitale oplevelser der overskrider grænserne. Fullstack-udvikling, Audio og Design.',
     images: [
       {
-        url: '/logo.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Jesaias Logo',
+        alt: 'Jesaias — Kreativ Udvikler Portfolio Preview',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Jesaias — Kreativ Udvikler',
+    title: 'Jesaias — Next-Level Portfolio',
     description: 'Creative Developer, Audio Engineer, and Digital Craftsman.',
-    images: ['/logo.png'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -66,6 +66,23 @@ export default function RootLayout({
   return (
     <html lang="da" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased" style={{ fontFamily: 'var(--font-display)' }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Jesaias",
+              "url": "https://jesaias.dk",
+              "jobTitle": "Creative Developer & Audio Engineer",
+              "description": "Creative Developer specializing in Full-stack web development, VST plugins, and Audio software engineering.",
+              "sameAs": [
+                "https://github.com/jesaias1",
+                "https://linkedin.com"
+              ]
+            })
+          }}
+        />
         <SmoothScroll>
           <div className="bg-grid bg-grain">
             {children}
