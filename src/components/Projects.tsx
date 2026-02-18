@@ -315,7 +315,18 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             transition={{ delay: 0.3 }}
           >
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-              {project.title}
+              {project.link ? (
+                <a 
+                  href={project.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-[#4ddbff] hover:underline decoration-2 underline-offset-4 transition-all"
+                >
+                  {project.title}
+                </a>
+              ) : (
+                project.title
+              )}
             </h2>
             <p className="text-lg text-gray-400 leading-relaxed">
               {project.longDesc || project.description}

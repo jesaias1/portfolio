@@ -57,7 +57,7 @@ export default function ServicesSection() {
             <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            <RevealText text="Hvad Jeg Tilbyder" delay={0.1} />
+            <RevealText text="Kompetencer" delay={0.1} />
           </h2>
           <p className="text-gray-500 font-mono text-sm">
             {'>'} cat services.json --format=detailed

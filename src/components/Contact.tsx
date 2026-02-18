@@ -225,23 +225,7 @@ export default function Contact() {
         </motion.div>
 
         {/* Alternative contact */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <p className="font-mono text-xs text-gray-600">
-            eller skriv direkte til{' '}
-            <a 
-              href="mailto:jesaias@jesaias.dk" 
-              className="text-[#4ddbff]/70 hover:text-[#4ddbff] transition-colors"
-            >
-              jesaias@jesaias.dk
-            </a>
-          </p>
-        </motion.div>
+
       </div>
     </section>
   );
