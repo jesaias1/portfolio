@@ -304,6 +304,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
                 alt={project.title}
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, 900px"
               />
             )}
           </motion.div>

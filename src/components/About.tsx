@@ -83,7 +83,6 @@ export default function About() {
                   fill
                   className="object-cover object-top grayscale group-hover:grayscale-[50%] transition-all duration-700"
                   sizes="(max-width: 768px) 256px, 288px"
-                  priority
                 />
                 {/* Cyan overlay on hover */}
                 <div className="absolute inset-0 bg-[#4ddbff]/5 group-hover:bg-[#4ddbff]/10 transition-all duration-700 mix-blend-overlay" />
