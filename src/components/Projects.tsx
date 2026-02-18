@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { HiExternalLink, HiCode, HiX } from 'react-icons/hi';
@@ -115,27 +115,38 @@ function ProjectRow({
   isReversed: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isInView = useInView(containerRef, { amount: 0.6 });
 
   const { play } = useSound();
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     if (videoRef.current) {
-      if (isHovered) {
+      const shouldPlay = isMobile ? isInView : isHovered;
+      if (shouldPlay) {
         videoRef.current.play().catch(() => {});
       } else {
         videoRef.current.pause();
-        videoRef.current.currentTime = 0;
+        if (!isMobile) videoRef.current.currentTime = 0;
       }
     }
-  }, [isHovered]);
+  }, [isHovered, isInView, isMobile]);
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: index * 0.1 }}
-      viewport={{ once: true, margin: "-100px" }}
       onMouseEnter={() => { setIsHovered(true); play('hover'); }}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => { onClick(); play('click'); }}

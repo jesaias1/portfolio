@@ -14,7 +14,7 @@ interface Stat {
 
 const stats: Stat[] = [
   { value: 3, label: 'Live Produkter', suffix: '+', icon: '◎' },
-  { value: 1000, label: 'Aktive Brugere', suffix: '+', icon: '⟐' },
+  { value: 964, label: 'Aktive Brugere', icon: '⟐' },
   { value: 99, label: 'Kundetilfredshed', suffix: '%', icon: '★' },
   { value: 2, label: 'År Erfaring', suffix: '+', icon: '⏱' },
 ];
