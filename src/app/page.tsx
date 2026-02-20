@@ -11,6 +11,7 @@ import ScrollProgress from '@/components/ScrollProgress';
 import SplashScreen from '@/components/SplashScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CosmicBackground from '@/components/CosmicBackground';
+import ScrollVideo from '@/components/ScrollVideo';
 import SectionDivider from '@/components/SectionDivider';
 import ServicesSection from '@/components/ServicesSection';
 import StatsSection from '@/components/StatsSection';
@@ -48,6 +49,7 @@ export default function Home() {
       {(!showSplash && mounted) && (
         <SmoothScroll>
           <main className="relative">
+            <ScrollVideo />
             <CosmicBackground />
             <CustomCursor />
             <ScrollProgress />

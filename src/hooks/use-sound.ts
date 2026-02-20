@@ -10,90 +10,133 @@ let globalGainNode: GainNode | null = null;
 let globalAudioContext: AudioContext | null = null;
 
 export function useSound() {
-  const [isMuted, setIsMuted] = useState(false); 
+  const [isMuted, setIsMuted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('jesaias-muted');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
+  
   const [audioContext, setAudioContext] = useState<AudioContext | null>(globalAudioContext);
 
   const initAudio = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
     // 1. Web Audio Context (SFX)
     if (!globalAudioContext) {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (Ctx) {
         const ctx = new Ctx();
         const gainNode = ctx.createGain();
         gainNode.connect(ctx.destination);
-        gainNode.gain.value = 0.15;
+        gainNode.gain.value = 0.25; // Increased from 0.15
         
         globalGainNode = gainNode;
         globalAudioContext = ctx;
         setAudioContext(ctx);
-        
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
       }
-    } else if (globalAudioContext.state === 'suspended' && !isMuted) {
-      globalAudioContext.resume();
     }
 
     // 2. Ambient Music (Singleton)
     if (!globalAmbientAudio) {
-      // Optimized path: /audio/background.mp3
       const audio = new Audio('/audio/background.mp3');
       audio.loop = true;
-      audio.volume = 0.1; // Low volume as requested
+      audio.volume = 0.5; // Increased from 0.3 for better audibility
       globalAmbientAudio = audio;
-      
-      // Auto-play if not muted
-      // Wait for interaction (initAudio called on interaction)
-      // audio.play().catch(e => console.log('Ambient play failed'));
+
+      // Media Session API for mobile/OS control
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Portfolio Ambient',
+          artist: 'Jesaias',
+          album: 'Next-Level Experience',
+          artwork: [{ src: '/og-image.png', sizes: '512x512', type: 'image/png' }]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          globalAmbientAudio?.play();
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+          globalAmbientAudio?.pause();
+        });
+        navigator.mediaSession.setActionHandler('stop', () => {
+          globalAmbientAudio?.pause();
+          if (globalAmbientAudio) globalAmbientAudio.currentTime = 0;
+        });
+      }
     }
     
-    // Play logic: handled by effect syncing with isMuted
+    // CRITICAL: Force resume/play during user interaction for Safari/iOS
+    if (globalAudioContext?.state === 'suspended' && !isMuted) {
+      globalAudioContext.resume().catch(() => {});
+    }
+
+    if (globalAmbientAudio && !isMuted && globalAmbientAudio.paused) {
+      globalAmbientAudio.play().catch(() => {});
+    }
   }, [isMuted]);
 
-  // Sync Mute State
+  // Handle Mute & Visibility Sync
   useEffect(() => {
-    // SFX
-    if (globalAudioContext) {
-      if (isMuted) {
-        globalAudioContext.suspend().catch(() => {});
-      } else {
-        globalAudioContext.resume().catch(() => {});
-      }
-    }
+    localStorage.setItem('jesaias-muted', JSON.stringify(isMuted));
 
-    // Ambient
-    if (globalAmbientAudio) {
-      globalAmbientAudio.muted = isMuted;
-      if (!isMuted && globalAmbientAudio.paused) {
-          // Attempt to play if unmuted (and was created)
-          globalAmbientAudio.play().catch(e => console.log('Ambient resume failed:', e));
+    const syncAudio = () => {
+      const isHidden = document.hidden;
+      
+      // Ambient Sync
+      if (globalAmbientAudio) {
+        globalAmbientAudio.muted = isMuted;
+        if (isMuted || isHidden) {
+          globalAmbientAudio.pause();
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+        } else if (globalAmbientAudio.paused) {
+           globalAmbientAudio.play().catch(() => {});
+           if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+        }
       }
-    }
+
+      // SFX Sync
+      if (globalAudioContext) {
+        if (isMuted || isHidden) {
+          globalAudioContext.suspend().catch(() => {});
+        } else {
+          globalAudioContext.resume().catch(() => {});
+        }
+      }
+    };
+
+    syncAudio();
+
+    document.addEventListener('visibilitychange', syncAudio);
+    return () => document.removeEventListener('visibilitychange', syncAudio);
   }, [isMuted]);
 
-  // Global event listener to unlock audio
+  // Global interaction unlock (Safari/iOS compatibility)
   useEffect(() => {
     const handleInteraction = () => {
       initAudio();
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
+      // Only remove if initialized
+      if (globalAudioContext || globalAmbientAudio) {
+        ['click', 'touchstart', 'keydown'].forEach(evt => 
+          window.removeEventListener(evt, handleInteraction)
+        );
+      }
     };
 
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('touchstart', handleInteraction);
-    window.addEventListener('keydown', handleInteraction);
+    ['click', 'touchstart', 'keydown'].forEach(evt => 
+      window.addEventListener(evt, handleInteraction, { once: true, capture: true })
+    );
 
     return () => {
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
+      ['click', 'touchstart', 'keydown'].forEach(evt => 
+        window.removeEventListener(evt, handleInteraction)
+      );
     };
   }, [initAudio]);
 
   const toggleMute = useCallback(() => {
-     setIsMuted(prev => !prev);
+     setIsMuted((prev: boolean) => !prev);
   }, []);
 
   const play = useCallback((type: SoundType) => {

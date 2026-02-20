@@ -35,8 +35,8 @@ export default function CosmicBackground() {
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none will-change-transform">
-      {/* Layer 1: Deep black base */}
-      <div className="absolute inset-0 bg-[#0a0a0a]" />
+      {/* Layer 1: Deep black base, made slightly transparent to reveal video */}
+      <div className="absolute inset-0 bg-[#0a0a0a]/70" />
 
       {/* Layer 2: Subtle gradient accents */}
       <div className="absolute inset-0 opacity-30">

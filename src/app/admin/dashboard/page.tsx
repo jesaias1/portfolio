@@ -106,11 +106,11 @@ export default function AdminDashboard() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="w-16 h-16 border-2 border-white/20 border-t-indigo-500 rounded-full"
+          className="w-16 h-16 border-2 border-[#4ddbff]/10 border-t-[#4ddbff] rounded-full"
         />
       </div>
     );
@@ -120,12 +120,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen p-6 relative">
-      {/* Animated background */}
-      <div className="fixed inset-0 -z-10">
+      {/* Animated background - Cyan scanlines */}
+      <div className="fixed inset-0 -z-10 bg-[#0a0a0a]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(77,219,255,0.03)_0%,transparent_100%)]" />
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-px h-20 bg-gradient-to-b from-transparent via-indigo-500/10 to-transparent"
+            className="absolute w-px h-20 bg-gradient-to-b from-transparent via-[#4ddbff]/10 to-transparent"
             style={{
               left: `${(i / 20) * 100}%`,
               top: '-80px',
@@ -148,61 +149,63 @@ export default function AdminDashboard() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-center mb-12 pb-6 border-b border-white/10"
+          className="flex justify-between items-center mb-12 pb-6 border-b border-[#4ddbff]/10"
         >
           <div>
-            <h1 className="text-4xl font-display font-light mb-2 tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Dashboard
+            <div className="inline-block border border-[#4ddbff]/20 bg-[#0c0c0c] px-3 py-0.5 mb-4">
+              <span className="font-mono text-[10px] text-[#4ddbff]">SESSION_AUTH: ACTIVE</span>
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">
+              Control Panel
             </h1>
-            <p className="text-gray-400 font-light">
-              Velkommen tilbage, <span className="text-white">{session.user?.email}</span>
+            <p className="text-gray-500 font-mono text-xs uppercase tracking-widest">
+              Welcome back, <span className="text-[#4ddbff]">{session.user?.email}</span>
             </p>
           </div>
           <div className="flex gap-4">
             <motion.a
               href="/"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 transition-all"
+              whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(77, 219, 255, 0.1)' }}
+              whileTap={{ scale: 0.98 }}
+              className="px-6 py-3 border border-[#4ddbff]/30 text-[#4ddbff] hover:bg-[#4ddbff]/5 transition-all font-mono text-xs uppercase tracking-widest"
             >
-              Se Hjemmeside
+              View Site
             </motion.a>
             <motion.button
               onClick={() => signOut({ callbackUrl: '/' })}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-6 py-3 border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 px-6 py-3 border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all font-mono text-xs uppercase tracking-widest"
             >
               <HiLogout />
-              Log Ud
+              Terminate
             </motion.button>
           </div>
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-8 border-b border-white/10">
+        <div className="flex gap-4 mb-8 border-b border-white/5">
           {[
-            { id: 'projects', label: 'Projekter', icon: HiFolder },
-            { id: 'about', label: 'Om', icon: HiUser },
-            { id: 'contact', label: 'Kontakt', icon: HiMail },
+            { id: 'projects', label: 'Projects', icon: HiFolder },
+            { id: 'about', label: 'System Bio', icon: HiUser },
+            { id: 'contact', label: 'Comm Link', icon: HiMail },
           ].map((tab) => (
             <motion.button
               key={tab.id}
               onClick={() => setAktivTab(tab.id as Tab)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-all relative ${
+              className={`flex items-center gap-2 px-6 py-4 font-mono text-xs uppercase tracking-widest transition-all relative ${
                 activeTab === tab.id
-                  ? 'text-white'
+                  ? 'text-[#4ddbff]'
                   : 'text-gray-500 hover:text-white'
               }`}
             >
-              <tab.icon />
+              <tab.icon className="text-lg" />
               {tab.label}
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4ddbff]"
+                  style={{ boxShadow: '0 0 10px rgba(77, 219, 255, 0.5)' }}
                 />
               )}
             </motion.button>

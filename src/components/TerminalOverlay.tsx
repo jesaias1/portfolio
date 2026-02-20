@@ -64,6 +64,14 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         setHistory(prev => [...prev, 'SHUTDOWN INITIATED...']);
         setTimeout(onClose, 500);
         break;
+      case 'root':
+      case 'admin':
+        setHistory(prev => [...prev, 'ACCESSING CORE SYSTEM...', 'REDIRECTING TO ADMIN PANEL...']);
+        window.dispatchEvent(new CustomEvent('glitch-trigger'));
+        setTimeout(() => {
+          window.location.href = '/admin/login';
+        }, 400);
+        break;
       default:
         setHistory(prev => [...prev, `ERR: Command "${cmd}" not found. Type "help" for assistance.`]);
     }
