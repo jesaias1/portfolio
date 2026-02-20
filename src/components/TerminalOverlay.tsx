@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSound } from '@/hooks/use-sound';
+import { signIn } from 'next-auth/react';
 
 interface TerminalOverlayProps {
   isOpen: boolean;
@@ -28,7 +29,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
     }
   }, [history]);
 
-  const handleCommand = (e: React.FormEvent) => {
+  const handleCommand = async (e: React.FormEvent) => {
     e.preventDefault();
     const cmd = input.trim().toLowerCase();
     if (!cmd) return;
@@ -64,9 +65,33 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         setHistory(prev => [...prev, 'SHUTDOWN INITIATED...']);
         setTimeout(onClose, 500);
         break;
+      case '/admin miebs112':
+      case 'admin miebs112':
+        setHistory(prev => [...prev, 'AUTHENTICATING...', 'ACCESSING CORE SYSTEM...']);
+        try {
+          const result = await signIn('credentials', {
+            email: 'lin4s@live.dk',
+            password: 'miebs112',
+            redirect: false,
+          });
+
+          if (result?.error) {
+            setHistory(prev => [...prev, 'ERR: Authentication failed. Invalid credentials.']);
+          } else {
+            setHistory(prev => [...prev, 'AUTH GRANTED.', 'REDIRECTING TO ADMIN DASHBOARD...']);
+            window.dispatchEvent(new CustomEvent('glitch-trigger'));
+            setTimeout(() => {
+              window.location.href = '/admin/dashboard';
+            }, 400);
+          }
+        } catch (error) {
+          setHistory(prev => [...prev, 'ERR: Connection to auth server failed.']);
+        }
+        break;
       case 'root':
       case 'admin':
-        setHistory(prev => [...prev, 'ACCESSING CORE SYSTEM...', 'REDIRECTING TO ADMIN PANEL...']);
+      case '/admin':
+        setHistory(prev => [...prev, 'ACCESSING CORE SYSTEM...', 'REDIRECTING TO ADMIN LOGIN...']);
         window.dispatchEvent(new CustomEvent('glitch-trigger'));
         setTimeout(() => {
           window.location.href = '/admin/login';
