@@ -54,13 +54,16 @@ export default function ScrollVideo() {
     <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
       <video
         ref={videoRef}
-        src="/video/bg.mp4"
+        src="/video/bg_1.mp4"
         className="w-full h-full object-cover opacity-80 grayscale contrast-125"
         playsInline
         muted
         preload="auto"
         onLoadedMetadata={handleLoadedMetadata}
       />
+      {/* Soft Vignette Overlay placed globally to maintain contrast perfectly across all sections */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)] z-10" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/30 via-transparent to-black/60 z-10" />
     </div>
   );
 }
