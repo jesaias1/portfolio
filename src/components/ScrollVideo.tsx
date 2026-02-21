@@ -1,62 +1,80 @@
 'use client';
 
 import { useLenis } from 'lenis/react';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [duration, setDuration] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  
+  // We use a ref to hold the target playhead time to decouple it from React renders
+  const targetTimeRef = useRef(0);
 
-  // Directly hook into Lenis for zero-latency frame syncing
+  // Use Lenis strictly to update the target time math when scroll happens
   useLenis((lenis) => {
-    if (!videoRef.current || duration === 0 || !isReady) return;
-    
-    // Calculate progress with defensive fallbacks
-    const limit = lenis.limit || (document.documentElement.scrollHeight - window.innerHeight);
-    const scroll = lenis.scroll || window.scrollY;
-    
-    if (limit <= 0) return;
-    
-    const progress = Math.max(0, Math.min(1, scroll / limit));
-    let newTime = progress * duration;
-    
-    if (newTime >= duration) newTime = duration - 0.05;
-    if (newTime < 0) newTime = 0;
-
-    // Use requestAnimationFrame to sync with the browser's paint cycle
-    requestAnimationFrame(() => {
-      if (videoRef.current) {
-        videoRef.current.currentTime = newTime;
-      }
-    });
+    if (duration > 0) {
+      const limit = lenis.limit || Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const scroll = lenis.scroll || window.scrollY;
+      const progress = Math.max(0, Math.min(1, scroll / limit));
+      targetTimeRef.current = progress * duration;
+    }
   });
 
-  const handleLoadedMetadata = useCallback((e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
-    const rawDur = e.currentTarget.duration;
-    if (rawDur && !isNaN(rawDur)) {
-      setDuration(rawDur);
-    }
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
+      if (video.duration && !isNaN(video.duration)) {
+        setDuration(video.duration);
+      }
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    if (video.readyState >= 1) handleLoadedMetadata();
+
+    return () => video.removeEventListener('loadedmetadata', handleLoadedMetadata);
   }, []);
 
-  const handleCanPlayThrough = useCallback(() => {
-    if (videoRef.current) {
-      // Pause the video as soon as it's ready so it doesn't just play normally.
-      // This allows 'autoPlay' to initialize the buffer, but stops it from advancing
-      // automatically, handing control over to Lenis.
-      videoRef.current.pause();
-      setIsReady(true);
-    }
-  }, []);
+  // Dedicated, continuous high-performance render loop for the video
+  useEffect(() => {
+    let animationFrameId: number;
+    let actualTime = 0;
+
+    const renderLoop = () => {
+      if (videoRef.current && duration > 0) {
+        // Linear Interpolation: Move 10% of the remaining distance to the target time every frame.
+        // This acts as a frictionless physics spring, completely eliminating jitter.
+        actualTime += (targetTimeRef.current - actualTime) * 0.1;
+
+        let safeTime = actualTime;
+        if (safeTime >= duration) safeTime = duration - 0.05;
+        if (safeTime < 0) safeTime = 0;
+
+        // Apply to video frame
+        // Checking difference prevents redundant assignment which ruins performance on mobile/Safari
+        if (Math.abs(videoRef.current.currentTime - safeTime) > 0.01) {
+          videoRef.current.currentTime = safeTime;
+        }
+      }
+      animationFrameId = requestAnimationFrame(renderLoop);
+    };
+
+    animationFrameId = requestAnimationFrame(renderLoop);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [duration]);
 
   useEffect(() => {
-    // Touch unlock for strict mobile browsers
+    // Strict mobile interaction unlock without disrupting the scrub loop
     const touchVideo = () => {
       if (videoRef.current) {
-        videoRef.current.play().then(() => {
-          videoRef.current?.pause();
-          setIsReady(true);
-        }).catch(() => {});
+        const p = videoRef.current.play();
+        if (p !== undefined) {
+            p.then(() => {
+                videoRef.current?.pause();
+            }).catch(() => {});
+        }
       }
       window.removeEventListener('touchstart', touchVideo);
       window.removeEventListener('click', touchVideo);
@@ -64,16 +82,6 @@ export default function ScrollVideo() {
 
     window.addEventListener('touchstart', touchVideo, { once: true });
     window.addEventListener('click', touchVideo, { once: true });
-    
-    // Fallback if video is somehow completely loaded instantly
-    if (videoRef.current && videoRef.current.readyState >= 3) {
-      const rawDur = videoRef.current.duration;
-      if (rawDur && !isNaN(rawDur)) {
-        setDuration(rawDur);
-      }
-      videoRef.current.pause();
-      setIsReady(true);
-    }
 
     return () => {
       window.removeEventListener('touchstart', touchVideo);
@@ -90,10 +98,7 @@ export default function ScrollVideo() {
         className="opacity-80 grayscale contrast-125"
         playsInline
         muted
-        autoPlay // Forces the browser to prime the playhead and load the first frame
         preload="auto"
-        onLoadedMetadata={handleLoadedMetadata}
-        onCanPlayThrough={handleCanPlayThrough}
       />
       {/* Soft Vignette Overlay placed globally to maintain contrast perfectly across all sections */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)] z-10" />
