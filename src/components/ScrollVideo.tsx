@@ -1,19 +1,29 @@
 'use client';
 
-import { useScroll, useSpring } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [duration, setDuration] = useState(0);
 
-  const { scrollYProgress } = useScroll();
-  
-  // Add physics-based smoothing for buttery video scrubbing
-  const smoothProgress = useSpring(scrollYProgress, {
-    damping: 30,
-    stiffness: 100,
-    mass: 0.5
+  // Use Lenis directly instead of Framer Motion's useScroll.
+  // This eliminates the react loop / physics spring delay between Lenis calculating 
+  // the scroll position and Framer Motion reading it, which causes jitter.
+  useLenis((lenis) => {
+    if (!videoRef.current || duration === 0) return;
+    
+    // calculate scroll progress from 0 to 1 directly from lenis
+    const progress = lenis.scroll / lenis.limit;
+    
+    let newTime = progress * duration;
+    
+    // Prevent hitting exact end to avoid flickering
+    if (newTime >= duration) newTime = duration - 0.05;
+    if (newTime < 0) newTime = 0;
+
+    // Apply exact time to video frame synchronously
+    videoRef.current.currentTime = newTime;
   });
 
   const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
@@ -26,29 +36,6 @@ export default function ScrollVideo() {
       setDuration(videoRef.current.duration);
     }
   }, []);
-
-  useEffect(() => {
-    // Subscribe to the smoothed progress
-    const unsubscribe = smoothProgress.on('change', (latest) => {
-      if (videoRef.current && duration > 0) {
-        // Calculate proportional time
-        let newTime = latest * duration;
-        
-        // Prevent it from hitting the exact end which might cause flickering
-        if (newTime >= duration) newTime = duration - 0.05;
-        if (newTime < 0) newTime = 0;
-
-        // Apply time via RAF to avoid choking the main thread
-        requestAnimationFrame(() => {
-          if (videoRef.current) {
-            videoRef.current.currentTime = newTime;
-          }
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, [smoothProgress, duration]);
 
   return (
     <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
