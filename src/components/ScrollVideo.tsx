@@ -1,50 +1,44 @@
 'use client';
 
-import { useScroll } from 'framer-motion';
+import { useScroll, useSpring } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [duration, setDuration] = useState(0);
 
-  // useScroll without target tracks the global window scroll
   const { scrollYProgress } = useScroll();
+  
+  // Add physics-based smoothing for buttery video scrubbing
+  const smoothProgress = useSpring(scrollYProgress, {
+    damping: 30,
+    stiffness: 100,
+    mass: 0.5
+  });
+
+  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    setDuration(e.currentTarget.duration);
+  };
 
   useEffect(() => {
-    if (!videoRef.current) return;
-    
-    // Ensure the video is loaded enough to know its duration
-    const handleLoadedMetadata = () => {
-      if (videoRef.current) {
-        setDuration(videoRef.current.duration);
-      }
-    };
-
-    videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
-    
-    // Fallback if already loaded
-    if (videoRef.current.readyState >= 1) {
+    // Fallback if video is somehow already loaded when the component mounts
+    if (videoRef.current && videoRef.current.readyState >= 1) {
       setDuration(videoRef.current.duration);
     }
-
-    return () => {
-      if (videoRef.current) {
-        videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      }
-    };
   }, []);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
+    // Subscribe to the smoothed progress
+    const unsubscribe = smoothProgress.on('change', (latest) => {
       if (videoRef.current && duration > 0) {
-        // Scrub the video based on scroll progress
+        // Calculate proportional time
         let newTime = latest * duration;
         
-        // Prevent it from hitting the exact end which might stop playback or flicker
+        // Prevent it from hitting the exact end which might cause flickering
         if (newTime >= duration) newTime = duration - 0.05;
         if (newTime < 0) newTime = 0;
 
-        // Use requestAnimationFrame for smoother updates
+        // Apply time via RAF to avoid choking the main thread
         requestAnimationFrame(() => {
           if (videoRef.current) {
             videoRef.current.currentTime = newTime;
@@ -54,17 +48,18 @@ export default function ScrollVideo() {
     });
 
     return () => unsubscribe();
-  }, [scrollYProgress, duration]);
+  }, [smoothProgress, duration]);
 
   return (
     <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
       <video
         ref={videoRef}
         src="/video/bg.mp4"
-        className="w-full h-full object-cover opacity-80"
+        className="w-full h-full object-cover opacity-80 grayscale contrast-125"
         playsInline
         muted
         preload="auto"
+        onLoadedMetadata={handleLoadedMetadata}
       />
     </div>
   );
