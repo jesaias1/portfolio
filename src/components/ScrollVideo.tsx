@@ -1,58 +1,51 @@
 'use client';
 
-import { useLenis } from 'lenis/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [duration, setDuration] = useState(0);
-  
-  // We use a ref to hold the target playhead time to decouple it from React renders
-  const targetTimeRef = useRef(0);
 
-  // Use Lenis strictly to update the target time math when scroll happens
-  useLenis((lenis) => {
-    if (duration > 0) {
-      const limit = lenis.limit || Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const scroll = lenis.scroll || window.scrollY;
-      const progress = Math.max(0, Math.min(1, scroll / limit));
-      targetTimeRef.current = progress * duration;
+  const handleLoadedMetadata = useCallback((e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    const rawDur = e.currentTarget.duration;
+    if (rawDur && !isNaN(rawDur)) {
+      setDuration(rawDur);
     }
-  });
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const handleLoadedMetadata = () => {
-      if (video.duration && !isNaN(video.duration)) {
-        setDuration(video.duration);
-      }
-    };
-
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    if (video.readyState >= 1) handleLoadedMetadata();
-
-    return () => video.removeEventListener('loadedmetadata', handleLoadedMetadata);
   }, []);
 
-  // Dedicated, continuous high-performance render loop for the video
+  // 1. Pure, native scroll event listener.
+  // We attach this directly to the window so we don't rely on Framer Motion's useScroll
+  // or Lenis's useLenis hooks, which seem to be dropping the timeline connection on Vercel.
   useEffect(() => {
+    if (duration <= 0) return;
+
+    // Use a tiny physics buffer for smoothness
+    let currentScrollTime = 0;
+    let targetScrollTime = 0;
     let animationFrameId: number;
-    let actualTime = 0;
+
+    const handleScroll = () => {
+      // Calculate max scroll depth
+      const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      
+      // Calculate fraction
+      const fraction = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+      
+      // Set the target playhead time
+      targetScrollTime = fraction * duration;
+    };
 
     const renderLoop = () => {
-      if (videoRef.current && duration > 0) {
-        // Linear Interpolation: Move 10% of the remaining distance to the target time every frame.
-        // This acts as a frictionless physics spring, completely eliminating jitter.
-        actualTime += (targetTimeRef.current - actualTime) * 0.1;
-
-        let safeTime = actualTime;
+      if (videoRef.current) {
+        // Linear interpolation for silky smoothness
+        currentScrollTime += (targetScrollTime - currentScrollTime) * 0.08;
+        
+        // Safety bounds
+        let safeTime = currentScrollTime;
         if (safeTime >= duration) safeTime = duration - 0.05;
         if (safeTime < 0) safeTime = 0;
 
-        // Apply to video frame
-        // Checking difference prevents redundant assignment which ruins performance on mobile/Safari
+        // Apply if difference is meaningful
         if (Math.abs(videoRef.current.currentTime - safeTime) > 0.01) {
           videoRef.current.currentTime = safeTime;
         }
@@ -60,13 +53,23 @@ export default function ScrollVideo() {
       animationFrameId = requestAnimationFrame(renderLoop);
     };
 
+    // Start listening
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Kick off one layout calculation immediately to handle initial load position
+    handleScroll();
+    
+    // Start continuous render loop
     animationFrameId = requestAnimationFrame(renderLoop);
 
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, [duration]);
 
   useEffect(() => {
-    // Strict mobile interaction unlock without disrupting the scrub loop
+    // Touch unlock for mobile browsers
     const touchVideo = () => {
       if (videoRef.current) {
         const p = videoRef.current.play();
@@ -83,6 +86,14 @@ export default function ScrollVideo() {
     window.addEventListener('touchstart', touchVideo, { once: true });
     window.addEventListener('click', touchVideo, { once: true });
 
+    // Fallback if video is somehow already loaded when the component mounts
+    if (videoRef.current && videoRef.current.readyState >= 1) {
+      const rawDur = videoRef.current.duration;
+      if (rawDur && !isNaN(rawDur)) {
+        setDuration(rawDur);
+      }
+    }
+
     return () => {
       window.removeEventListener('touchstart', touchVideo);
       window.removeEventListener('click', touchVideo);
@@ -91,18 +102,20 @@ export default function ScrollVideo() {
 
   return (
     <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
+      {/* Video element - significantly darkened via CSS filters */}
       <video
         ref={videoRef}
         src="/video/bg_1.mp4"
         style={{ width: '100%', height: '100%', objectFit: 'cover', willChange: 'transform' }}
-        className="opacity-80 grayscale contrast-125"
+        className="opacity-[0.85] grayscale contrast-[1.4] brightness-[0.4]"
         playsInline
         muted
         preload="auto"
+        onLoadedMetadata={handleLoadedMetadata}
       />
-      {/* Soft Vignette Overlay placed globally to maintain contrast perfectly across all sections */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)] z-10" />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/30 via-transparent to-black/60 z-10" />
+      {/* Heavy vignette overlays to ensure text pops and the aesthetic is dramatic */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)] z-10" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/90 z-10" />
     </div>
   );
 }
