@@ -60,8 +60,8 @@ export default function ScrollVideo() {
     <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
       <video
         ref={videoRef}
-        src="/hero-bg.mp4"
-        className="w-full h-full object-cover opacity-60"
+        src="/video/bg.mp4"
+        className="w-full h-full object-cover opacity-80"
         playsInline
         muted
         preload="auto"
