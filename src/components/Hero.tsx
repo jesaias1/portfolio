@@ -101,9 +101,9 @@ export default function Hero() {
         id="home" 
         className="min-h-screen flex items-center justify-center relative overflow-hidden"
       >
-        {/* Epic Vignette Overlay to focus the center and darken the edges */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)] z-0" />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/80 z-0" />
+        {/* Soft Vignette Overlay to maintain contrast without hiding video */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)] z-0" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/30 via-transparent to-black/60 z-0" />
 
         {/* Audio waveform background visualization */}
         <div className="absolute bottom-0 left-0 right-0 h-40 flex items-end justify-center gap-[3px] opacity-[0.25] overflow-hidden mix-blend-screen drop-shadow-[0_0_15px_rgba(77,219,255,0.6)] z-0">
