@@ -14,8 +14,7 @@ export default function CustomCursor() {
   // Trail follows slower
   const trailConfig = { damping: 40, stiffness: 150, mass: 0.8 };
   const trailX = useSpring(mouseX, trailConfig);
-  const trailY = useSpring(mouseX, trailConfig);
-  const trailYActual = useSpring(mouseY, trailConfig);
+  const trailY = useSpring(mouseY, trailConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -51,8 +50,8 @@ export default function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-48 h-48 rounded-full pointer-events-none z-[9998]"
         style={{
-          x: cursorX,
-          y: cursorY,
+          x: trailX,
+          y: trailY,
           translateX: '-50%',
           translateY: '-50%',
           background: 'radial-gradient(circle, rgba(77, 219, 255, 0.06) 0%, rgba(153, 234, 255, 0.03) 40%, transparent 70%)',
