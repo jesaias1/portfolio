@@ -1,102 +1,54 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [duration, setDuration] = useState(0);
-
-  const handleLoadedMetadata = useCallback((e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
-    const rawDur = e.currentTarget.duration;
-    if (rawDur && !isNaN(rawDur)) {
-      setDuration(rawDur);
-    }
-  }, []);
-
-  // 1. Pure, native scroll event listener.
-  // We attach this directly to the window so we don't rely on Framer Motion's useScroll
-  // or Lenis's useLenis hooks, which seem to be dropping the timeline connection on Vercel.
-  useEffect(() => {
-    if (duration <= 0) return;
-
-    // Use a tiny physics buffer for smoothness
-    let currentScrollTime = 0;
-    let targetScrollTime = 0;
-    let animationFrameId: number;
-
-    const handleScroll = () => {
-      // Calculate max scroll depth
-      const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
-      
-      // Calculate fraction
-      const fraction = Math.max(0, Math.min(1, window.scrollY / maxScroll));
-      
-      // Set the target playhead time
-      targetScrollTime = fraction * duration;
-    };
-
-    const renderLoop = () => {
-      if (videoRef.current) {
-        // Linear interpolation for silky smoothness
-        currentScrollTime += (targetScrollTime - currentScrollTime) * 0.08;
-        
-        // Safety bounds
-        let safeTime = currentScrollTime;
-        if (safeTime >= duration) safeTime = duration - 0.05;
-        if (safeTime < 0) safeTime = 0;
-
-        // Apply if difference is meaningful
-        if (Math.abs(videoRef.current.currentTime - safeTime) > 0.01) {
-          videoRef.current.currentTime = safeTime;
-        }
-      }
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    // Start listening
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Kick off one layout calculation immediately to handle initial load position
-    handleScroll();
-    
-    // Start continuous render loop
-    animationFrameId = requestAnimationFrame(renderLoop);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [duration]);
 
   useEffect(() => {
-    // Touch unlock for mobile browsers
-    const touchVideo = () => {
-      if (videoRef.current) {
-        const p = videoRef.current.play();
-        if (p !== undefined) {
-            p.then(() => {
-                videoRef.current?.pause();
-            }).catch(() => {});
-        }
-      }
-      window.removeEventListener('touchstart', touchVideo);
-      window.removeEventListener('click', touchVideo);
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Start playing slowly as soon as media is ready
+    const tryPlay = () => {
+      video.playbackRate = 0.35;
+      video.play().catch(() => {});
     };
 
-    window.addEventListener('touchstart', touchVideo, { once: true });
-    window.addEventListener('click', touchVideo, { once: true });
-
-    // Fallback if video is somehow already loaded when the component mounts
-    if (videoRef.current && videoRef.current.readyState >= 1) {
-      const rawDur = videoRef.current.duration;
-      if (rawDur && !isNaN(rawDur)) {
-        setDuration(rawDur);
-      }
+    if (video.readyState >= 3) {
+      tryPlay();
+    } else {
+      video.addEventListener('canplay', tryPlay, { once: true });
     }
 
+    // Slightly speed up / slow down based on scroll velocity for a subtle
+    // "driven by scrolling" feel — without ever seeking (which causes frame skips).
+    let lastY = window.scrollY;
+    let lastT = performance.now();
+    let rafId: number;
+
+    const BASE_RATE = 0.35;
+    const MAX_RATE = 1.2;
+
+    const tick = (now: number) => {
+      const dy = window.scrollY - lastY;
+      const dt = Math.max(1, now - lastT); // ms
+      const velocity = Math.abs(dy) / dt; // px/ms
+
+      // Map velocity → playback rate
+      const boosted = BASE_RATE + velocity * 0.8;
+      video.playbackRate = Math.min(MAX_RATE, boosted);
+
+      lastY = window.scrollY;
+      lastT = now;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+
     return () => {
-      window.removeEventListener('touchstart', touchVideo);
-      window.removeEventListener('click', touchVideo);
+      cancelAnimationFrame(rafId);
+      video.removeEventListener('canplay', tryPlay);
     };
   }, []);
 
@@ -110,8 +62,8 @@ export default function ScrollVideo() {
         className="opacity-[0.85] grayscale contrast-[1.4] brightness-[0.4]"
         playsInline
         muted
+        loop
         preload="auto"
-        onLoadedMetadata={handleLoadedMetadata}
       />
       {/* Heavy vignette overlays to ensure text pops and the aesthetic is dramatic */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)] z-10" />
