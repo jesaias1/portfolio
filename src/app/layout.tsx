@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://jesaias.dk',
     siteName: 'Jesaias — Creative Developer',
-    title: 'Jesaias — Next-Level Portfolio',
+    title: 'Jesaias — Creative Developer',
     description: 'Creating digital experiences that transcend boundaries. Fullstack development, Audio and Design.',
     images: [
       {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Jesaias — Next-Level Portfolio',
+    title: 'Jesaias — Creative Developer',
     description: 'Creative Developer, Audio Engineer, and Digital Craftsman.',
     images: ['/og-image.png'],
   },
