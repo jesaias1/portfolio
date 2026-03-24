@@ -1,0 +1,27 @@
+
+Invalid `prisma.project.create()` invocation in
+C:\Users\lin4s\portfolio-app-NEXT-LEVEL\add-stickman-project.js:6:39
+
+  3 
+  4 async function main() {
+  5   // First update others to false if they want only 3 featured project maybe, but let's just create it as featured and let it be added to the list.
+→ 6   const result = await prisma.project.create({
+        data: {
+          id: "stickman-knockout",
+          title: "Stickman Knockout",
+          description: "A fast-paced multiplayer fighting game where the goal is to be the last stickman standing by pushing opponents out of the arena.",
+          longDesc: "Stickman Knockout is an intense multiplayer physics-based brawler featuring solo and duo campaigns, local versus, and online multiplayer. Players use strategic movement, powerful dashes, and a variety of colorful skins to knock their opponents off the stage and claim victory.",
+          image: "/projects/images/stickman-knockout.png",
+          video: "/projects/videos/stickman-knockout.mp4",
+          ~~~~~
+          tags: "[\"React\",\"TypeScript\",\"Game Development\",\"Multiplayer\",\"WebSocket\"]",
+          link: "https://stickmatchup.vercel.app",
+          featured: true,
+      ?   github?: String | Null,
+      ?   order?: Int,
+      ?   createdAt?: DateTime,
+      ?   updatedAt?: DateTime
+        }
+      })
+
+Unknown argument `video`. Did you mean `id`? Available options are marked with ?.
