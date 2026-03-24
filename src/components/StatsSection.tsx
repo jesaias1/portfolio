@@ -13,10 +13,10 @@ interface Stat {
 }
 
 const stats: Stat[] = [
-  { value: 3, label: 'Live Produkter', suffix: '+', icon: '◎' },
-  { value: 964, label: 'Aktive Brugere', icon: '⟐' },
-  { value: 99, label: 'Kundetilfredshed', suffix: '%', icon: '★' },
-  { value: 7, label: 'År Erfaring', suffix: '+', icon: '⏱' },
+  { value: 3, label: 'Live Products', suffix: '+', icon: '◎' },
+  { value: 964, label: 'Active Users', icon: '⟐' },
+  { value: 99, label: 'Customer Satisfaction', suffix: '%', icon: '★' },
+  { value: 6, label: 'Years Experience', suffix: '+', icon: '⏱' },
 ];
 
 export default function StatsSection() {
@@ -40,7 +40,7 @@ export default function StatsSection() {
             </span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            <RevealText text="Resultater" delay={0.1} />
+            <RevealText text="Results" delay={0.1} />
           </h2>
         </motion.div>
 

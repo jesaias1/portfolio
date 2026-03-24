@@ -19,23 +19,23 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://jesaias.dk'),
-  title: "Jesaias — Kreativ Udvikler",
+  title: "Jesaias — Creative Developer",
   description: "Portfolio of Jesaias — Creative Developer, Audio Engineer, and Digital Craftsman. Full-stack web apps, VST plugins, After Effects extensions, and more.",
-  keywords: ["portfolio", "web developer", "full-stack", "audio", "VST", "Jesaias", "kreativ udvikler", "react", "next.js"],
+  keywords: ["portfolio", "web developer", "full-stack", "audio", "VST", "Jesaias", "creative developer", "react", "next.js"],
   authors: [{ name: "Jesaias" }],
   openGraph: {
     type: 'website',
-    locale: 'da_DK',
+    locale: 'en_US',
     url: 'https://jesaias.dk',
-    siteName: 'Jesaias — Kreativ Udvikler',
+    siteName: 'Jesaias — Creative Developer',
     title: 'Jesaias — Next-Level Portfolio',
-    description: 'Skaber digitale oplevelser der overskrider grænserne. Fullstack-udvikling, Audio og Design.',
+    description: 'Creating digital experiences that transcend boundaries. Fullstack development, Audio and Design.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Jesaias — Kreativ Udvikler Portfolio Preview',
+        alt: 'Jesaias — Creative Developer Portfolio Preview',
       },
     ],
   },
@@ -64,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="da" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased" style={{ fontFamily: 'var(--font-display)' }}>
         <script
           type="application/ld+json"

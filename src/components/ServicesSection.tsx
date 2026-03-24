@@ -7,30 +7,30 @@ import RevealText from './RevealText';
 const services = [
   {
     icon: '{}',
-    title: 'Web Applikationer',
+    title: 'Web Applications',
     command: './build --webapp',
-    description: 'Full-stack web apps med moderne teknologier',
+    description: 'Full-stack web apps with modern technologies',
     features: ['React & Next.js', 'Node.js Backend', 'Database Design', 'API Integration'],
   },
   {
     icon: '⚡',
-    title: 'Real-time Systemer',
+    title: 'Real-time Systems',
     command: './build --realtime',
-    description: 'Multiplayer spil og real-time applikationer',
+    description: 'Multiplayer games and real-time applications',
     features: ['WebSocket', 'Real-time Sync', 'Leaderboards', 'Cross-platform'],
   },
   {
     icon: '♪',
     title: 'Audio Engineering',
     command: './build --audio',
-    description: 'VST plugins og lyddesign til produktion',
-    features: ['C++ / JUCE', 'VST3 Plugins', 'DSP Algoritmer', 'Audio Processing'],
+    description: 'VST plugins and sound design for production',
+    features: ['C++ / JUCE', 'VST3 Plugins', 'DSP Algorithms', 'Audio Processing'],
   },
   {
     icon: '◆',
     title: 'Creative Tools',
     command: './build --creative',
-    description: 'Extensions og tools til kreative workflows',
+    description: 'Extensions and tools for creative workflows',
     features: ['After Effects SDK', 'Automation', 'UI/UX Design', 'Motion Graphics'],
   },
 ];
@@ -57,7 +57,7 @@ export default function ServicesSection() {
             <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            <RevealText text="Kompetencer" delay={0.1} />
+            <RevealText text="Services" delay={0.1} />
           </h2>
           <p className="text-gray-500 font-mono text-sm">
             {'>'} cat services.json --format=detailed

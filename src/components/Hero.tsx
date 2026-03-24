@@ -52,7 +52,7 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
 
-  const fullSubtitle = '> kreativ_udvikler --fullstack --audio --design';
+  const fullSubtitle = '> creative_developer --fullstack --audio --design';
 
   // Global keyboard shortcut
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function Hero() {
               className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center"
               style={{ textShadow: '0 2px 15px rgba(0,0,0,1), 0 0 20px rgba(77, 219, 255, 0.2)' }}
             >
-              Skaber digitale oplevelser der overskrider grænserne
+              Creating digital experiences that transcend boundaries
             </motion.p>
 
             {/* CTA Buttons — terminal commands */}
@@ -201,7 +201,7 @@ export default function Hero() {
                 ./view_projects
               </TerminalButton>
               <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
-                ./kontakt
+                ./contact
               </TerminalButton>
             </motion.div>
 

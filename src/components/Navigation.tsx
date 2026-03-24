@@ -24,9 +24,9 @@ export default function Navigation() {
 
   const navItems = [
     { name: 'services', href: '#services' },
-    { name: 'projekter', href: '#projects' },
-    { name: 'om', href: '#about' },
-    { name: 'kontakt', href: '#contact' },
+    { name: 'projects', href: '#projects' },
+    { name: 'about', href: '#about' },
+    { name: 'contact', href: '#contact' },
   ];
 
   const handleNavClick = (href: string) => {

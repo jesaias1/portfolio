@@ -22,8 +22,8 @@ async function main() {
     create: {
       id: 'ordbomben-001',
       title: 'Ordbomben',
-      description: 'Multiplayer ordspil hvor 1-16 spillere kæmper om at finde flest ord før tiden løber ud.',
-      longDesc: 'Ordbomben er et intenst multiplayer ordspil bygget med Next.js og WebSocket teknologi. Spillere konkurrerer i real-time om at finde flest mulige ord fra et tilfældigt sæt bogstaver.',
+      description: 'Multiplayer word game where 1-16 players compete to find the most words before time runs out.',
+      longDesc: 'Ordbomben is an intense multiplayer word game built with Next.js and WebSocket technology. Players compete in real-time to find the most possible words from a random set of letters.',
       image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=800',
       tags: JSON.stringify(['Next.js', 'WebSocket', 'PostgreSQL', 'Real-time', 'Multiplayer']),
       link: 'https://www.ordbomben.dk',
@@ -38,8 +38,8 @@ async function main() {
     create: {
       id: 'lettus-002',
       title: 'Lettus',
-      description: 'Wordle-inspireret ordgættespil med daglige udfordringer og progressive sværhedsgrader.',
-      longDesc: 'Lettus er et engagerende ordgættespil inspireret af Wordle, hvor spillere har 6 forsøg på at gætte dagens ord. Spillet tilbyder daglige udfordringer og statistik tracking.',
+      description: 'Wordle-inspired word guessing game with daily challenges and progressive difficulty levels.',
+      longDesc: 'Lettus is an engaging word guessing game inspired by Wordle, where players have 6 attempts to guess the word of the day. The game offers daily challenges and stat tracking.',
       image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800',
       tags: JSON.stringify(['React', 'TypeScript', 'Game Logic', 'PWA', 'Mobile First']),
       link: 'https://www.lettus.fun',
@@ -54,8 +54,8 @@ async function main() {
     create: {
       id: 'dump-003',
       title: 'dump.media',
-      description: 'Producer beat marketplace hvor musikskabere kan købe og sælge beats med abonnementsbaseret adgang.',
-      longDesc: 'dump.media er en professionel platform for producere og kunstnere. Platformen forbinder beat producere med kunstnere gennem et intuitivt interface.',
+      description: 'Producer beat marketplace where music creators can buy and sell beats with subscription-based access.',
+      longDesc: 'dump.media is a professional platform for producers and artists. The platform connects beat producers with artists through an intuitive interface.',
       image: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=800',
       tags: JSON.stringify(['Next.js', 'Stripe', 'Audio Player', 'E-commerce', 'Subscriptions']),
       link: 'https://www.dump.media',
@@ -69,8 +69,8 @@ async function main() {
     update: {},
     create: {
       id: 'main',
-      title: 'Om Mig',
-      content: '<p>Hej! Jeg er Linas Jesaias, en passioneret udvikler der elsker at skabe digitale oplevelser der både ser fantastiske ud og fungerer perfekt.</p><p>Med over 2+ års erfaring inden for web udvikling har jeg hjulpet brands og virksomheder med at realisere deres digitale visioner gennem moderne teknologi og kreativt design.</p><p>Min mission er at transformere komplekse ideer til brugervenlige, smukke og skalerbare løsninger.</p>',
+      title: 'About Me',
+      content: '<p>Hi! I\'m Linas Jesaias, a passionate developer who loves to create digital experiences that both look fantastic and function perfectly.</p><p>With over 6+ years of experience in web development, I have helped brands and companies realize their digital visions through modern technology and creative design.</p><p>My mission is to transform complex ideas into user-friendly, beautiful, and scalable solutions.</p>',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
       skills: JSON.stringify(['React', 'Next.js', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind CSS']),
     },

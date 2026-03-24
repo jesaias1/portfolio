@@ -57,7 +57,7 @@ export default function Projects() {
               <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
             </div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Udvalgte Projekter
+              Featured Projects
             </h2>
             <p className="text-gray-500 mt-3 font-mono text-sm">
               {'>'} ls -la ./projects --sort=featured

@@ -115,9 +115,9 @@ export default function About() {
                 </div>
                 
                 <SystemLine label="USER" value="Jesaias (Linas)" />
-                <SystemLine label="ROLE" value="Kreativ Udvikler" />
-                <SystemLine label="LOCATION" value="Danmark 🇩🇰" />
-                <SystemLine label="EXPERIENCE" value="2+ years" />
+                <SystemLine label="ROLE" value="Creative Developer" />
+                <SystemLine label="LOCATION" value="Denmark 🇩🇰" />
+                <SystemLine label="EXPERIENCE" value="6+ years" />
                 <SystemLine label="STATUS" value="ONLINE" valueColor="#4ddbff" />
               </div>
             </motion.div>
@@ -135,15 +135,15 @@ export default function About() {
               ) : (
                 <>
                   <p>
-                    Passioneret udvikler der bygger alt fra <span className="text-white">web apps</span> og{' '}
-                    <span className="text-white">multiplayer spil</span> til{' '}
-                    <span className="text-white">VST plugins</span> og{' '}
+                    Passionate developer building everything from <span className="text-white">web apps</span> and{' '}
+                    <span className="text-white">multiplayer games</span> to{' '}
+                    <span className="text-white">VST plugins</span> and{' '}
                     <span className="text-white">After Effects extensions</span>.
                   </p>
                   <p>
-                    Min mission er at transformere komplekse idéer til 
-                    brugervenlige, smukke og skalerbare løsninger der
-                    overskrider det forventede.
+                    My mission is to transform complex ideas into 
+                    user-friendly, beautiful, and scalable solutions that
+                    exceed expectations.
                   </p>
                 </>
               )}

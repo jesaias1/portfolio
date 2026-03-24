@@ -20,7 +20,7 @@ export default function Contact() {
     e.preventDefault();
     play('click');
     if (!formData.name || !formData.email || !formData.message) {
-      toast.error('Alle felter skal udfyldes');
+      toast.error('All fields must be filled');
       play('error');
       return;
     }
@@ -35,16 +35,16 @@ export default function Contact() {
       });
 
       if (response.ok) {
-        toast.success('[✓] Besked sendt!');
+        toast.success('[✓] Message sent!');
         play('success');
         setIsSuccess(true);
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error('[✗] Fejl. Prøv igen.');
+        toast.error('[✗] Error. Try again.');
         play('error');
       }
     } catch (error) {
-      toast.error('[✗] Netværksfejl. Prøv igen.');
+      toast.error('[✗] Network error. Try again.');
       play('error');
     } finally {
       setIsSubmitting(false);
@@ -64,12 +64,12 @@ export default function Contact() {
         >
           <div className="flex items-center gap-3 mb-4">
             <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
-              ~/kontakt
+              ~/contact
             </span>
             <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            Lad Os Snakke
+            Let's Talk
           </h2>
           <p className="text-gray-500 font-mono text-sm">
             {'>'} init --new-project --collaborate
@@ -93,7 +93,7 @@ export default function Contact() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
               </div>
               <span className="font-mono text-[10px] text-gray-600 ml-2">
-                kontakt@jesaias.dk
+                contact@jesaias.dk
               </span>
             </div>
 
@@ -127,7 +127,7 @@ export default function Contact() {
                   className="text-[#4ddbff]"
                   style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.4)' }}
                 >
-                  [✓] message_sent.log — Besked modtaget!
+                  [✓] message_sent.log — Message received!
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -135,7 +135,7 @@ export default function Contact() {
                   transition={{ delay: 1.2 }}
                   className="text-gray-600 pt-2"
                 >
-                  {'>'} Tak for din besked. Jeg vender tilbage hurtigst muligt.
+                  {'>'} Thank you for your message. I will get back to you as soon as possible.
                 </motion.div>
                 <motion.button
                   initial={{ opacity: 0 }}
@@ -155,7 +155,7 @@ export default function Contact() {
                 type="text"
                 value={formData.name}
                 onChange={(val) => setFormData({ ...formData, name: val })}
-                placeholder="Dit navn"
+                placeholder="Your name"
                 focused={focusedField === 'name'}
                 onFocus={() => setFocusedField('name')}
                 onBlur={() => setFocusedField(null)}
@@ -167,7 +167,7 @@ export default function Contact() {
                 type="email"
                 value={formData.email}
                 onChange={(val) => setFormData({ ...formData, email: val })}
-                placeholder="din@email.dk"
+                placeholder="your@email.com"
                 focused={focusedField === 'email'}
                 onFocus={() => setFocusedField('email')}
                 onBlur={() => setFocusedField(null)}
@@ -184,7 +184,7 @@ export default function Contact() {
                   onFocus={() => setFocusedField('message')}
                   onBlur={() => setFocusedField(null)}
                   rows={5}
-                  placeholder="Fortæl mig om dit projekt..."
+                  placeholder="Tell me about your project..."
                   className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none resize-none transition-all border ${
                     focusedField === 'message'
                       ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(77,219,255,0.05)]'
@@ -223,7 +223,7 @@ export default function Contact() {
                       sending...
                     </span>
                   ) : (
-                    './send_besked'
+                    './send_message'
                   )}
                 </motion.button>
               </div>
