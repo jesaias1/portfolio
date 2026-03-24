@@ -13,8 +13,10 @@ import {
   HiPencil,
   HiTrash,
   HiPlus,
-  HiX
+  HiX,
+  HiMenu
 } from 'react-icons/hi';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import toast from 'react-hot-toast';
 
 interface Project {
@@ -269,7 +271,7 @@ export default function AdminDashboard() {
 
 // Projects Tab Component
 function ProjectsTab({ 
-  projects, 
+  projects: initialProjects, 
   onEdit, 
   onCreate, 
   onDelete, 
@@ -281,6 +283,45 @@ function ProjectsTab({
   onDelete: (id: string) => void;
   isDeleting: string | null;
 }) {
+  const [projects, setProjects] = useState(initialProjects);
+  const [isUpdatingOrder, setIsUpdatingOrder] = useState(false);
+
+  useEffect(() => {
+    setProjects(initialProjects);
+  }, [initialProjects]);
+
+  const onDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(projects);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setProjects(items);
+
+    const payload = items.map((item, index) => ({ id: item.id, order: index }));
+    setIsUpdatingOrder(true);
+
+    try {
+      const res = await fetch('/api/projects/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: payload }),
+      });
+      if (res.ok) {
+        toast.success('Rækkefølge gemt!');
+      } else {
+        toast.error('Kunne ikke gemme rækkefølgen');
+        setProjects(initialProjects);
+      }
+    } catch {
+      toast.error('Netværksfejl ved gemning af rækkefølge');
+      setProjects(initialProjects);
+    } finally {
+      setIsUpdatingOrder(false);
+    }
+  };
+
   return (
     <motion.div
       key="projects"
@@ -301,58 +342,77 @@ function ProjectsTab({
         </motion.button>
       </div>
 
-      <div className="space-y-4">
-        {projects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            whileHover={{ x: 5 }}
-            className="flex items-center justify-between p-4 bg-black/30 border border-white/10 hover:border-indigo-500/30 transition-all group"
-          >
-            <div className="flex items-center gap-4 flex-1">
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-20 h-20 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all"
-              />
-              <div className="flex-1">
-                <h3 className="font-medium mb-1">{project.title}</h3>
-                <p className="text-sm text-gray-400 line-clamp-1">
-                  {project.description}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  {project.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-xs text-indigo-400 border border-indigo-500/30 px-2 py-0.5">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="projects-list">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4 mt-4 relative">
+              {isUpdatingOrder && (
+                <div className="absolute inset-0 z-10 bg-black/20 backdrop-blur-[1px] rounded-lg"></div>
+              )}
+              {projects.map((project, index) => (
+                <Draggable key={project.id} draggableId={project.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className={`flex items-center justify-between p-4 bg-black/30 border ${
+                        snapshot.isDragging ? 'border-[#4ddbff] shadow-[0_0_15px_rgba(77,219,255,0.2)] z-20' : 'border-white/10 hover:border-indigo-500/30'
+                      } transition-colors group`}
+                    >
+                      <div className="flex items-center gap-4 flex-1">
+                        <div 
+                          {...provided.dragHandleProps} 
+                          className="text-gray-500 hover:text-white cursor-grab active:cursor-grabbing p-2"
+                        >
+                          <HiMenu className="text-xl" />
+                        </div>
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-20 h-20 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium mb-1">{project.title}</h3>
+                          <p className="text-sm text-gray-400 line-clamp-1">
+                            {project.description}
+                          </p>
+                          <div className="flex gap-2 mt-2">
+                            {project.tags.slice(0, 3).map(tag => (
+                              <span key={tag} className="text-xs text-indigo-400 border border-indigo-500/30 px-2 py-0.5">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pl-4">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => onEdit(project)}
+                          className="p-3 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/10 text-indigo-400 transition-all"
+                        >
+                          <HiPencil />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => onDelete(project.id)}
+                          disabled={isDeleting === project.id}
+                          className="p-3 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 text-red-400 transition-all disabled:opacity-50"
+                        >
+                          {isDeleting === project.id ? '⟳' : <HiTrash />}
+                        </motion.button>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
             </div>
-            <div className="flex gap-2">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => onEdit(project)}
-                className="p-3 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/10 text-indigo-400 transition-all"
-              >
-                <HiPencil />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => onDelete(project.id)}
-                disabled={isDeleting === project.id}
-                className="p-3 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 text-red-400 transition-all disabled:opacity-50"
-              >
-                {isDeleting === project.id ? '⟳' : <HiTrash />}
-              </motion.button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </motion.div>
   );
 }
