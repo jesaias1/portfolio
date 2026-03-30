@@ -5,22 +5,20 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
 import { useLenis } from 'lenis/react';
+import dynamic from 'next/dynamic';
 
-const ASCII_LOGO = `.-
-.##-                                                     .................
-  .#######################################################################-
-     .####################################################################-
+const Logo3D = dynamic(() => import('./Logo3D'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] flex items-center justify-center">
+      <div className="text-[#4ddbff] font-mono text-sm animate-pulse" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
+        loading_3d_engine...
+      </div>
+    </div>
+  ),
+});
 
-                                                          .++######+-.
-                                                    .+#############++##-.
-            -#.                                -#############+.       .##.
-           +#-                           .############+-..              ##
-          .#-                      .+###########+-..                     #+
-          -#                  -############..                            ##
-          .#-         .--############-.                                  ##
-           -#+. .-+############-.                                       -#.
-            .+###########+..                                           -#.
-               ..---..`;
+/* ASCII_LOGO removed — replaced with 3D Logo component */
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -127,37 +125,32 @@ export default function Hero() {
           className="w-full relative z-10 px-4"
           style={{ opacity, y }}
         >
-          <div className="flex flex-col items-center space-y-8">
-            {/* ASCII Logo */}
+          <div className="flex flex-col items-center pt-8 md:pt-12">
+            {/* 3D Interactive Logo */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-              className="hero-logo-glow w-full flex justify-center overflow-hidden"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, ease: [0.6, 0.05, 0.01, 0.9] }}
+              className="hero-logo-glow w-full flex justify-center -mb-16 md:-mb-24"
             >
-              <div className="relative inline-block origin-center scale-[0.55] sm:scale-[0.7] md:scale-90 lg:scale-100 transition-transform">
-                <pre
-                  className="text-[#4ddbff] text-[0.65rem] leading-tight font-mono select-none whitespace-pre text-left font-bold"
-                  style={{ textShadow: '0 0 20px rgba(77, 219, 255, 0.6), 0 0 40px rgba(77, 219, 255, 0.3), 0 0 80px rgba(77, 219, 255, 0.1)' }}
-                >
-                  {ASCII_LOGO}
-                </pre>
-                {/* Glitch overlay */}
-                <motion.pre
-                  className="absolute inset-0 text-[#ffffff] text-[0.65rem] leading-tight font-mono select-none whitespace-pre overflow-hidden pointer-events-none text-left drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+              <div className="relative w-full max-w-[800px] h-[280px] sm:h-[320px] md:h-[400px] lg:h-[500px]">
+                <Logo3D className="w-full h-full" />
+                {/* Glitch scan-line overlay */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
                   animate={{
-                    opacity: [0, 0.3, 0, 0, 0.2, 0],
-                    x: [-2, 2, 0, -1, 1, 0],
+                    opacity: [0, 0.08, 0, 0, 0.05, 0],
                   }}
                   transition={{
                     duration: 4,
                     repeat: Infinity,
                     repeatDelay: 3,
                   }}
-                  style={{ mixBlendMode: 'screen' }}
-                >
-                  {ASCII_LOGO}
-                </motion.pre>
+                  style={{
+                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
+                    mixBlendMode: 'screen',
+                  }}
+                />
               </div>
             </motion.div>
 
@@ -165,7 +158,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: subtitleVisible ? 1 : 0 }}
-              className="h-8 flex items-center justify-center"
+              className="h-8 flex items-center justify-center mt-1"
             >
               <span 
                 className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
@@ -181,7 +174,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 2.5 }}
-              className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center"
+              className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center mt-2"
               style={{ textShadow: '0 2px 15px rgba(0,0,0,1), 0 0 20px rgba(77, 219, 255, 0.2)' }}
             >
               Creating digital experiences that transcend boundaries
@@ -192,7 +185,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-5"
             >
               <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
                 ./root_access
@@ -205,23 +198,24 @@ export default function Hero() {
               </TerminalButton>
             </motion.div>
 
-            {/* Scroll indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.5 }}
-              className="pt-16"
-            >
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex flex-col items-center gap-2"
-              >
-                <span className="text-xs font-mono text-gray-600 tracking-widest">SCROLL</span>
-                <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent" />
-              </motion.div>
-            </motion.div>
           </div>
+        </motion.div>
+
+        {/* Scroll indicator — absolute so it doesn't affect centering */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        >
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex flex-col items-center gap-2"
+          >
+            <span className="text-xs font-mono text-gray-600 tracking-widest">SCROLL</span>
+            <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent" />
+          </motion.div>
         </motion.div>
       </section>
 

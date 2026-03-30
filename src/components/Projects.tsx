@@ -34,7 +34,7 @@ export default function Projects() {
   useEffect(() => {
     fetch('/api/projects')
       .then(res => res.json())
-      .then(data => setProjects(data))
+      .then(data => { if (Array.isArray(data)) setProjects(data); })
       .catch(console.error);
   }, []);
 

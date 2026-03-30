@@ -65,7 +65,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
-      <body className="antialiased" style={{ fontFamily: 'var(--font-display)' }}>
+      <body className="antialiased" suppressHydrationWarning style={{ fontFamily: 'var(--font-display)' }}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
