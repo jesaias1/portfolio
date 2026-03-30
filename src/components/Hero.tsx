@@ -125,7 +125,7 @@ export default function Hero() {
           className="w-full relative z-10 px-4"
           style={{ opacity, y }}
         >
-          <div className="flex flex-col items-center pt-8 md:pt-12">
+          <div className="flex flex-col items-center pb-12 md:pb-24">
             {/* 3D Interactive Logo */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
