@@ -125,15 +125,15 @@ export default function Hero() {
           className="w-full relative z-10 px-4"
           style={{ opacity, y }}
         >
-          <div className="flex flex-col items-center pb-12 md:pb-24">
+          <div className="flex flex-col items-center pt-16 md:pt-32 pb-2">
             {/* 3D Interactive Logo */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, ease: [0.6, 0.05, 0.01, 0.9] }}
-              className="hero-logo-glow w-full flex justify-center -mb-16 md:-mb-24"
+              className="hero-logo-glow w-full flex justify-center -mb-8 md:-mb-16"
             >
-              <div className="relative w-full max-w-[800px] h-[280px] sm:h-[320px] md:h-[400px] lg:h-[500px]">
+              <div className="relative w-full max-w-[800px] h-[180px] sm:h-[220px] md:h-[400px] lg:h-[500px]">
                 <Logo3D className="w-full h-full" />
                 {/* Glitch scan-line overlay */}
                 <motion.div

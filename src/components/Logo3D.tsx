@@ -74,9 +74,9 @@ function LogoModel({ mousePos }: { mousePos: React.RefObject<{ x: number; y: num
   useFrame((_, delta) => {
     if (!groupRef.current || !mousePos.current) return;
 
-    // Target rotation based on mouse (subtle), offset from base
-    const targetX = mousePos.current.y * 0.15;
-    const targetY = BASE_Y_ROTATION + mousePos.current.x * 0.25;
+    // Target rotation based on mouse or gyro (increased ranges for more noticeable effect)
+    const targetX = mousePos.current.y * 0.4; // Up/down tilt
+    const targetY = BASE_Y_ROTATION + mousePos.current.x * 0.6; // Left/right tilt
 
     // Smooth lerp
     const lerpFactor = 1 - Math.pow(0.05, delta);
@@ -193,8 +193,10 @@ export default function Logo3D({ className = '' }: { className?: string }) {
 
   // Device orientation for mobile tilt effect
   const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
-    const gamma = (e.gamma || 0) / 45; // left-right tilt, normalize to ~-1..1
-    const beta = ((e.beta || 0) - 45) / 45; // front-back tilt (offset 45° for holding phone)
+    // Decrease the divisor to make smaller physical tilts result in larger model rotations
+    // e.gamma is -90 to 90 (left/right). e.beta is -180 to 180 (front/back).
+    const gamma = (e.gamma || 0) / 20; // 20 degrees = full rotation limits
+    const beta = ((e.beta || 0) - 45) / 20; // Offset 45 degrees for standard holding angle
     mousePos.current.x = Math.max(-1, Math.min(1, gamma));
     mousePos.current.y = Math.max(-1, Math.min(1, beta));
   }, []);
