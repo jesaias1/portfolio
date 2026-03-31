@@ -62,8 +62,8 @@ function LogoModel({ mousePos }: { mousePos: React.RefObject<{ x: number; y: num
     const size = box.getSize(new THREE.Vector3());
     const c = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Scale to fit roughly 4 units wide
-    const sf = 4 / maxDim;
+    // Scale to fit roughly 5.5 units wide to make it appear larger
+    const sf = 5.5 / maxDim;
     return { center: c, scaleFactor: sf };
   }, [clonedScene]);
 
