@@ -81,10 +81,19 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="border border-white/5 hover:border-[#4ddbff]/20 bg-[#0c0c0c]/50 p-6 text-center group transition-all duration-500"
+      className="relative border border-white/5 hover:border-[#4ddbff]/20 bg-[#0c0c0c]/50 p-6 text-center group transition-all duration-500 hover:shadow-[0_0_25px_rgba(77,219,255,0.04)]"
     >
+      {/* Top glow line on hover */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/0 group-hover:via-[#4ddbff]/30 to-transparent transition-all duration-700" />
+      
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/25 transition-all duration-500" />
+      <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/25 transition-all duration-500" />
+      <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/25 transition-all duration-500" />
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/25 transition-all duration-500" />
+
       {/* Icon */}
-      <div className="text-2xl text-[#4ddbff]/60 mb-3 font-mono group-hover:text-[#4ddbff] transition-colors" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.2)' }}>
+      <div className="text-2xl text-[#4ddbff]/40 mb-3 font-mono group-hover:text-[#4ddbff]/80 transition-colors duration-500" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.2)' }}>
         {stat.icon}
       </div>
 
@@ -92,7 +101,7 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
       <div
         ref={ref}
         className="text-3xl md:text-4xl font-bold font-mono text-[#4ddbff] mb-2"
-        style={{ textShadow: '0 0 15px rgba(77, 219, 255, 0.3)' }}
+        style={{ textShadow: '0 0 20px rgba(77, 219, 255, 0.3), 0 0 40px rgba(77, 219, 255, 0.1)' }}
       >
         0
       </div>
@@ -105,10 +114,10 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
       {/* Animated bar */}
       <div className="w-full h-px mt-4 bg-white/5 overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-[#4ddbff]/40 to-[#99eaff]/20"
+          className="h-full bg-gradient-to-r from-[#4ddbff]/50 via-[#99eaff]/30 to-[#4ddbff]/10"
           initial={{ width: '0%' }}
           animate={isInView ? { width: '100%' } : {}}
-          transition={{ duration: 1, delay: index * 0.1 + 0.5 }}
+          transition={{ duration: 1.2, delay: index * 0.1 + 0.5, ease: [0.6, 0, 0.2, 1] }}
         />
       </div>
     </motion.div>

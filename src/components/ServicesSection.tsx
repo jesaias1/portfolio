@@ -73,15 +73,24 @@ export default function ServicesSection() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="group"
             >
-              <div className="border border-white/5 hover:border-[#4ddbff]/30 transition-all duration-500 bg-[#0c0c0c]/50">
+              <div className="relative border border-white/5 hover:border-[#4ddbff]/30 transition-all duration-500 bg-[#0c0c0c]/50 group-hover:shadow-[0_0_30px_rgba(77,219,255,0.05)]">
+                {/* Top glow line on hover */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/0 group-hover:via-[#4ddbff]/40 to-transparent transition-all duration-700" />
+                
+                {/* Corner accents */}
+                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
+
                 {/* Card header — terminal style */}
-                <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 bg-[#111]">
+                <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 bg-[#111]/80">
                   <div className="flex gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#ff5f56]/60" />
                     <div className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]/60" />
                     <div className="w-1.5 h-1.5 rounded-full bg-[#27c93f]/60" />
                   </div>
-                  <span className="font-mono text-[10px] text-gray-600 ml-1">
+                  <span className="font-mono text-[10px] text-gray-600 ml-1 group-hover:text-[#4ddbff]/50 transition-colors duration-500">
                     {service.command}
                   </span>
                 </div>
@@ -89,7 +98,7 @@ export default function ServicesSection() {
                 {/* Card body */}
                 <div className="p-6">
                   <div className="flex items-start gap-4 mb-4">
-                    <span className="text-2xl text-[#4ddbff] font-mono mt-1" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
+                    <span className="text-2xl text-[#4ddbff]/60 font-mono mt-1 group-hover:text-[#4ddbff] transition-colors duration-500" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
                       {service.icon}
                     </span>
                     <div>

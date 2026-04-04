@@ -33,18 +33,25 @@ export default function Navigation() {
     play('click');
     setIsMobileMenuOpen(false);
     
-    // Trigger Glitch
-    window.dispatchEvent(new CustomEvent('glitch-trigger'));
-
-    // Wait for cover (400ms) then scroll
-    setTimeout(() => {
-      if (lenis && href.startsWith('#')) {
-        lenis.scrollTo(href, {
-          duration: 1.5,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-        });
+    if (href.startsWith('#')) {
+      const el = document.querySelector(href) as HTMLElement;
+      if (el) {
+        if (lenis) {
+          lenis.scrollTo(el, {
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+          });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
       }
-    }, 400);
+    } else {
+      // Trigger Glitch for page navigation
+      window.dispatchEvent(new CustomEvent('glitch-trigger'));
+      setTimeout(() => {
+        window.location.href = href;
+      }, 400);
+    }
   };
 
   return (
@@ -52,9 +59,9 @@ export default function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${
         isScrolled
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#4ddbff]/15'
+          ? 'bg-[#0a0a0a]/85 backdrop-blur-lg border-b border-[#4ddbff]/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]'
           : 'bg-transparent'
       }`}
     >

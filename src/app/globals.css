@@ -349,11 +349,26 @@ a, button {
 
 @keyframes logoGlow {
   0% {
-    filter: drop-shadow(0 0 20px rgba(77, 219, 255, 0.1));
+    filter: drop-shadow(0 0 20px rgba(77, 219, 255, 0.1)) drop-shadow(0 0 60px rgba(77, 219, 255, 0.02));
   }
   100% {
-    filter: drop-shadow(0 0 40px rgba(77, 219, 255, 0.2)) drop-shadow(0 0 80px rgba(153, 234, 255, 0.05));
+    filter: drop-shadow(0 0 40px rgba(77, 219, 255, 0.25)) drop-shadow(0 0 80px rgba(153, 234, 255, 0.08)) drop-shadow(0 0 120px rgba(77, 219, 255, 0.03));
   }
+}
+
+/* Shimmer sweep effect for premium elements */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-on-hover:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(77, 219, 255, 0.05), transparent);
+  animation: shimmer 1.5s ease-in-out;
+  pointer-events: none;
 }
 
 /* Reduced motion — respect OS accessibility */

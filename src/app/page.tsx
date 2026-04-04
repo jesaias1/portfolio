@@ -66,51 +66,109 @@ export default function Home() {
             <SectionDivider />
             <Contact />
             
-            {/* Footer — terminal style */}
-            <footer className="py-12 border-t border-white/5">
+            {/* Footer — premium terminal style */}
+            <footer className="relative py-16 border-t border-white/5">
+              {/* Top glow line */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/30 to-transparent" />
+              
               <div className="max-w-6xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                  {/* Logo + copyright */}
-                  <div className="flex items-center gap-4">
+                {/* Upper footer */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                  {/* Branding */}
+                  <div className="space-y-4">
                     <Image
                       src="/logo.png"
                       alt="Jesaias"
-                      width={80}
-                      height={28}
-                      className="h-5 w-auto opacity-40"
+                      width={100}
+                      height={35}
+                      className="h-6 w-auto opacity-60"
                     />
-                    <span className="font-mono text-xs text-gray-700">
-                      © {new Date().getFullYear()} jesaias.dk
-                    </span>
+                    <p className="font-mono text-xs text-gray-600 leading-relaxed max-w-xs">
+                      Creative developer building digital experiences at the intersection of code, audio, and design.
+                    </p>
                   </div>
 
-                  {/* Social links */}
-                  <div className="flex items-center gap-6">
-                    <a
-                      href="https://github.com/jesaias1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                    >
-                      github
-                    </a>
-                    <a
-                      href="https://linkedin.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                    >
-                      linkedin
-                    </a>
-                    <span className="text-[#4ddbff]/20 font-mono text-[10px]">
-                      process exited with code 0
+                  {/* Navigation */}
+                  <div className="space-y-3">
+                    <span className="font-mono text-[10px] text-[#4ddbff]/50 tracking-widest uppercase">Sitemap</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['services', 'projects', 'about', 'contact'].map(item => (
+                        <a
+                          key={item}
+                          href={`#${item}`}
+                          className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
+                        >
+                          <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
+                          {item}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Social & Status */}
+                  <div className="space-y-3">
+                    <span className="font-mono text-[10px] text-[#4ddbff]/50 tracking-widest uppercase">Connect</span>
+                    <div className="flex flex-col gap-2">
+                      <a
+                        href="https://github.com/jesaias1"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
+                      >
+                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
+                        github
+                      </a>
+                      <a
+                        href="https://linkedin.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
+                      >
+                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
+                        linkedin
+                      </a>
+                      <a
+                        href="https://instagram.com/linasjesaias"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
+                      >
+                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
+                        instagram
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom bar */}
+                <div className="border-t border-white/5 pt-6">
+                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      {/* Heartbeat status dot */}
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ddbff] opacity-50" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4ddbff]" />
+                      </span>
+                      <span className="font-mono text-[10px] text-gray-700 tracking-wider">
+                        system_status: online
+                      </span>
+                    </div>
+
+                    <span className="font-mono text-[10px] text-gray-700">
+                      © {new Date().getFullYear()} jesaias.dk — all rights reserved
                     </span>
-                    <a 
-                      href="/admin/login" 
-                      className="opacity-20 hover:opacity-100 transition-opacity text-xs"
-                    >
-                      •
-                    </a>
+
+                    <div className="flex items-center gap-3">
+                      <span className="text-[#4ddbff]/15 font-mono text-[10px]">
+                        process exited with code 0
+                      </span>
+                      <a 
+                        href="/admin/login" 
+                        className="opacity-15 hover:opacity-100 transition-opacity text-xs"
+                      >
+                        •
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

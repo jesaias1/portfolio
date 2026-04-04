@@ -27,8 +27,8 @@ export default function ScrollVideo() {
     let lastT = performance.now();
     let rafId: number;
 
-    const BASE_RATE = 0.5;
-    const MAX_RATE = 1.2;
+    const BASE_RATE = 0.85;
+    const MAX_RATE = 1.5;
 
     const tick = (now: number) => {
       const dy = window.scrollY - lastY;

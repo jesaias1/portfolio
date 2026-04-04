@@ -30,16 +30,25 @@ export default function Hero() {
 
   const handleNavClick = (href: string) => {
     play('click');
-    window.dispatchEvent(new CustomEvent('glitch-trigger'));
     
-    setTimeout(() => {
-      if (lenis && href.startsWith('#')) {
-        lenis.scrollTo(href, {
-          duration: 1.5,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-        });
+    if (href.startsWith('#')) {
+      const el = document.querySelector(href) as HTMLElement;
+      if (el) {
+        if (lenis) {
+          lenis.scrollTo(el, {
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+          });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
       }
-    }, 400);
+    } else {
+      window.dispatchEvent(new CustomEvent('glitch-trigger'));
+      setTimeout(() => {
+        window.location.href = href;
+      }, 400);
+    }
   };
   
   const { scrollYProgress } = useScroll({
@@ -97,7 +106,8 @@ export default function Hero() {
       <section 
         ref={heroRef}
         id="home" 
-        className="min-h-screen flex items-center justify-center relative overflow-hidden"
+        className="min-h-screen flex items-center justify-center relative"
+        style={{ overflow: 'clip' }}
       >
         {/* Vignette overlays were moved to ScrollVideo.tsx so they don't scroll with the Hero and cause hard edges */}
 
@@ -126,66 +136,72 @@ export default function Hero() {
           style={{ opacity, y }}
         >
           <div className="flex flex-col items-center -mt-8 md:-mt-16">
-            {/* 3D Interactive Logo */}
+            {/* 3D Interactive Logo — z-30 so it renders ABOVE the text layer */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, ease: [0.6, 0.05, 0.01, 0.9] }}
-              className="hero-logo-glow w-full flex justify-center mb-4 md:mb-12 lg:mb-16"
+              className="hero-logo-glow w-full flex justify-center -mb-2 sm:-mb-4 md:-mb-6 lg:-mb-8 relative z-30 pointer-events-none"
+              style={{ isolation: 'isolate' }}
             >
-              <div className="relative w-full max-w-[1000px] h-[200px] sm:h-[260px] md:h-[300px] lg:h-[360px]">
-                <Logo3D className="w-full h-full" />
-                {/* Glitch scan-line overlay */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  animate={{
-                    opacity: [0, 0.08, 0, 0, 0.05, 0],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    repeatDelay: 3,
-                  }}
-                  style={{
-                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
-                    mixBlendMode: 'screen',
-                  }}
-                />
+              <div className="relative w-full max-w-[800px] h-[180px] sm:h-[220px] md:h-[260px] lg:h-[300px] pointer-events-none flex items-center justify-center">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[350px] sm:h-[420px] md:h-[500px] lg:h-[580px] pointer-events-auto" style={{ zIndex: 30 }}>
+                  <Logo3D className="w-full h-full" />
+                  {/* Glitch scan-line overlay */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    animate={{
+                      opacity: [0, 0.08, 0, 0, 0.05, 0],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      repeatDelay: 3,
+                    }}
+                    style={{
+                      background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
+                      mixBlendMode: 'screen',
+                    }}
+                  />
+                </div>
               </div>
             </motion.div>
 
-            {/* Typing subtitle */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: subtitleVisible ? 1 : 0 }}
-              className="h-8 flex items-center justify-center mt-1"
-            >
-              <span 
-                className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
-                style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
+            {/* Content that gets overlapped — z-20 sits beneath the logo's z-30 */}
+            <div className="relative z-20 flex flex-col items-center pt-8">
+              {/* Typing subtitle */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: subtitleVisible ? 1 : 0 }}
+                className="h-8 flex items-center justify-center mt-1"
               >
-                {subtitleText}
-                <span className="cursor-blink ml-0.5">▌</span>
-              </span>
-            </motion.div>
+                <span 
+                  className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
+                  style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
+                >
+                  {subtitleText}
+                  <span className="cursor-blink ml-0.5">▌</span>
+                </span>
+              </motion.div>
 
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 2.5 }}
-              className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center mt-2"
-              style={{ textShadow: '0 2px 15px rgba(0,0,0,1), 0 0 20px rgba(77, 219, 255, 0.2)' }}
-            >
-              Creating digital experiences that transcend boundaries
-            </motion.p>
+              {/* Tagline */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 2.5 }}
+                className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center mt-2"
+                style={{ textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 30px rgba(0,0,0,0.8), 0 0 20px rgba(77, 219, 255, 0.15)' }}
+              >
+                Creating digital experiences that transcend boundaries
+              </motion.p>
+            </div>
 
             {/* CTA Buttons — terminal commands */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-5"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 md:mt-12 relative z-40 pointer-events-auto"
             >
               <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
                 ./root_access
@@ -242,25 +258,39 @@ function TerminalButton({
 
   const content = (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.03, y: -1 }}
+      whileTap={{ scale: 0.97 }}
       onMouseEnter={() => play('hover')}
       onClick={() => {
         play('click');
-        window.dispatchEvent(new CustomEvent('glitch-trigger'));
         onClick?.();
       }}
       className={`
-        relative px-8 py-3 font-mono text-sm tracking-wider overflow-hidden group transition-all cursor-pointer
+        relative px-8 py-3.5 font-mono text-sm tracking-wider overflow-hidden group transition-all duration-300 cursor-pointer
         ${variant === 'solid' 
-          ? 'bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/70' 
-          : 'bg-transparent border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'
+          ? 'bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/80' 
+          : 'bg-white/[0.02] border border-gray-700 text-gray-400 hover:border-[#4ddbff]/40 hover:text-[#4ddbff]/80 hover:bg-[#4ddbff]/5'
         }
       `}
       style={{
-        boxShadow: variant === 'solid' ? '0 0 20px rgba(77, 219, 255, 0.1)' : 'none',
+        boxShadow: variant === 'solid' 
+          ? '0 0 20px rgba(77, 219, 255, 0.1), inset 0 1px 0 rgba(77, 219, 255, 0.1)' 
+          : 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
       }}
     >
+      {/* Hover sweep glow */}
+      <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: variant === 'solid' 
+            ? 'linear-gradient(90deg, transparent, rgba(77, 219, 255, 0.08), transparent)' 
+            : 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent)',
+        }}
+      />
+      {/* Scan line sweep on hover */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+      />
       <span className="relative z-10">{children}</span>
     </motion.div>
   );

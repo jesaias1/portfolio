@@ -63,7 +63,7 @@ function LogoModel({ mousePos }: { mousePos: React.RefObject<{ x: number; y: num
     const c = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
     // Scale to fit roughly 5.5 units wide to make it appear larger
-    const sf = 5.5 / maxDim;
+    const sf = 4.2 / maxDim;
     return { center: c, scaleFactor: sf };
   }, [clonedScene]);
 
@@ -232,14 +232,6 @@ export default function Logo3D({ className = '' }: { className?: string }) {
           <LogoScene mousePos={mousePos} />
         </Suspense>
       </Canvas>
-
-      {/* Glow overlay effect */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(77, 219, 255, 0.06) 0%, transparent 70%)',
-        }}
-      />
     </div>
   );
 }
