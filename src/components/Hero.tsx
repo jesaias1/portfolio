@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
 import { useLenis } from 'lenis/react';
@@ -92,15 +92,6 @@ export default function Hero() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Waveform bars — pre-computed for stability
-  const waveformBars = useMemo(() => 
-    Array.from({ length: 80 }, (_, i) => ({
-      delay: i * 0.03,
-      height: Math.random() * 60 + 10,
-      duration: 0.8 + Math.random() * 0.6,
-    })), []
-  );
-
   return (
     <>
       <section 
@@ -109,22 +100,16 @@ export default function Hero() {
         className="min-h-screen flex items-center justify-center relative"
         style={{ overflow: 'clip' }}
       >
-        {/* Vignette overlays were moved to ScrollVideo.tsx so they don't scroll with the Hero and cause hard edges */}
-
-        {/* Audio waveform background visualization */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 flex items-end justify-center gap-[3px] opacity-[0.25] overflow-hidden mix-blend-screen drop-shadow-[0_0_15px_rgba(77,219,255,0.6)] z-0">
-          {waveformBars.map((bar, i) => (
-            <motion.div
+        {/* Audio waveform background visualization — CSS-only */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 flex items-end justify-center gap-[3px] opacity-[0.25] overflow-hidden mix-blend-screen z-0" style={{ filter: 'drop-shadow(0 0 15px rgba(77,219,255,0.6))' }}>
+          {Array.from({ length: 40 }, (_, i) => (
+            <div
               key={i}
-              className="w-[3px] bg-[#4ddbff]"
-              animate={{
-                height: [bar.height * 0.3, bar.height, bar.height * 0.5, bar.height * 0.8, bar.height * 0.3],
-              }}
-              transition={{
-                duration: bar.duration,
-                repeat: Infinity,
-                delay: bar.delay,
-                ease: 'easeInOut',
+              className="w-[3px] bg-[#4ddbff] waveform-bar-css"
+              style={{
+                animationDelay: `${i * 0.06}s`,
+                animationDuration: `${0.8 + (i % 7) * 0.1}s`,
+                height: `${10 + (i % 5) * 12}px`,
               }}
             />
           ))}

@@ -132,19 +132,20 @@ input[type="range"].slider::-moz-range-thumb {
   z-index: 1;
 }
 
-/* Subtle noise grain overlay */
+/* Subtle noise grain overlay — using a tiny base64 noise image for perf */
 .bg-grain {
   position: relative;
 }
 
-.bg-grain::before {
+.bg-grain::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.015;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAElBMVEUAAAAAAAAAAAAAAAAAAAAAAADgKxmiAAAABnRSTlMFBQUFBQUl/GnOAAAASklEQVQ4y2MQhAKBBi4GBkYBBi5GRkYFBi5GJqYGBi5GFhYGRrhMAwMjI0wGLsPIyMDAxcjIwMDVwMDAJcDAwCXAJMDQIMDAAABqXQ4KWC3KTAAAAABJRU5ErkJggg==");
+  opacity: 0.02;
   pointer-events: none;
   z-index: 1;
+  mix-blend-mode: overlay;
 }
 
 /* Terminal glass card */
@@ -342,17 +343,17 @@ a, button {
   }
 }
 
-/* Hero logo glow */
+/* Hero logo glow — simplified to avoid expensive filter compositing */
 .hero-logo-glow {
   animation: logoGlow 4s ease-in-out infinite alternate;
 }
 
 @keyframes logoGlow {
   0% {
-    filter: drop-shadow(0 0 20px rgba(77, 219, 255, 0.1)) drop-shadow(0 0 60px rgba(77, 219, 255, 0.02));
+    filter: drop-shadow(0 0 20px rgba(77, 219, 255, 0.1));
   }
   100% {
-    filter: drop-shadow(0 0 40px rgba(77, 219, 255, 0.25)) drop-shadow(0 0 80px rgba(153, 234, 255, 0.08)) drop-shadow(0 0 120px rgba(77, 219, 255, 0.03));
+    filter: drop-shadow(0 0 40px rgba(77, 219, 255, 0.25));
   }
 }
 
@@ -397,12 +398,72 @@ a, button {
   }
 }
 
-/* Animation performance hints */
-.hero-logo-glow {
-  will-change: filter;
+/* ═══════════════════════════════════════════════
+   CSS-only waveform bars (replaces 80 Framer Motion divs)
+   ═══════════════════════════════════════════════ */
+@keyframes waveform-css {
+  0%, 100% { transform: scaleY(0.3); }
+  25% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
+  75% { transform: scaleY(0.8); }
 }
 
-/* Smooth page transitions */
-section {
+.waveform-bar-css {
+  transform-origin: bottom;
+  animation: waveform-css 1s ease-in-out infinite;
   will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════
+   CSS-only section divider animations
+   ═══════════════════════════════════════════════ */
+@keyframes divider-node-pulse {
+  0%, 100% { opacity: 0.3; box-shadow: 0 0 0px rgba(77,219,255,0); }
+  50% { opacity: 1; box-shadow: 0 0 8px rgba(77,219,255,0.4); }
+}
+
+@keyframes divider-pulse-left {
+  0% { transform: translateX(-10%); }
+  100% { transform: translateX(600%); }
+}
+
+@keyframes divider-pulse-right {
+  0% { transform: translateX(10%); }
+  100% { transform: translateX(-600%); }
+}
+
+@keyframes divider-center-breathe {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+.section-divider-node {
+  animation: divider-node-pulse 3s ease-in-out infinite;
+}
+
+.section-divider-node-delayed {
+  animation-delay: 1.5s;
+}
+
+.section-divider-pulse-left {
+  animation: divider-pulse-left 3s linear infinite;
+  animation-delay: 0s;
+}
+
+.section-divider-pulse-left {
+  animation: divider-pulse-left 5s linear infinite;
+}
+
+.section-divider-pulse-right {
+  animation: divider-pulse-right 5s linear infinite;
+  animation-delay: 1s;
+}
+
+.section-divider-center {
+  animation: divider-center-breathe 4s ease-in-out infinite;
+}
+
+/* Smooth page transitions — only on specific elements, not all sections */
+.bg-grid::before {
+  will-change: auto;
 }

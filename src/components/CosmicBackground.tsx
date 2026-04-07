@@ -1,107 +1,123 @@
 'use client';
 
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 export default function CosmicBackground() {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: 0.5, y: 0.5 });
+  const smoothMouseRef = useRef({ x: 0.5, y: 0.5 });
+  const rafRef = useRef<number>(0);
 
-  const springConfig = { damping: 50, stiffness: 80, mass: 1 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    mouseRef.current.x = e.clientX / window.innerWidth;
+    mouseRef.current.y = e.clientY / window.innerHeight;
+  }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { alpha: true })!;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    // Generate particles once
+    const particles = Array.from({ length: 25 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 1.5 + 0.5,
+      baseOpacity: Math.random() * 0.3 + 0.1,
+      speed: Math.random() * 0.0008 + 0.0004,
+      phase: Math.random() * Math.PI * 2,
+    }));
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.scale(dpr, dpr);
+      // Reposition particles on resize
+      particles.forEach(p => {
+        p.x = Math.random() * width;
+        p.y = Math.random() * height;
+      });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-  // Pre-compute random positions for particles (stable across renders)
-  const particles = useMemo(() => 
-    Array.from({ length: 30 }, () => ({
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      size: Math.random() * 1.5 + 0.5,
-      opacity: Math.random() * 0.3 + 0.1,
-      duration: Math.random() * 8 + 6,
-      delay: Math.random() * 5,
-    })), []
-  );
+    const draw = (time: number) => {
+      // Smooth mouse follow
+      smoothMouseRef.current.x += (mouseRef.current.x - smoothMouseRef.current.x) * 0.03;
+      smoothMouseRef.current.y += (mouseRef.current.y - smoothMouseRef.current.y) * 0.03;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Semi-transparent dark overlay
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
+      ctx.fillRect(0, 0, width, height);
+
+      // Gradient orbs that follow mouse (subtle)
+      const mx = smoothMouseRef.current.x;
+      const my = smoothMouseRef.current.y;
+
+      // Orb 1
+      const ox1 = width * 0.1 + (mx - 0.5) * 30;
+      const oy1 = height * 0.2 + (my - 0.5) * 30;
+      const grad1 = ctx.createRadialGradient(ox1, oy1, 0, ox1, oy1, 300);
+      grad1.addColorStop(0, 'rgba(77, 219, 255, 0.04)');
+      grad1.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, width, height);
+
+      // Orb 2
+      const ox2 = width * 0.9 + (mx - 0.5) * -20;
+      const oy2 = height * 0.8 + (my - 0.5) * -20;
+      const grad2 = ctx.createRadialGradient(ox2, oy2, 0, ox2, oy2, 250);
+      grad2.addColorStop(0, 'rgba(153, 234, 255, 0.03)');
+      grad2.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, width, height);
+
+      // Mouse glow
+      const gx = mx * width;
+      const gy = my * height;
+      const gradMouse = ctx.createRadialGradient(gx, gy, 0, gx, gy, 300);
+      gradMouse.addColorStop(0, 'rgba(77, 219, 255, 0.04)');
+      gradMouse.addColorStop(1, 'transparent');
+      ctx.fillStyle = gradMouse;
+      ctx.fillRect(0, 0, width, height);
+
+      // Particles (twinkling dots)
+      const t = time * 0.001;
+      for (const p of particles) {
+        const opacity = p.baseOpacity + Math.sin(t * p.speed * 1000 + p.phase) * p.baseOpacity * 0.5;
+        ctx.fillStyle = `rgba(77, 219, 255, ${opacity})`;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    rafRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [handleMouseMove]);
 
   return (
-    <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none will-change-transform">
-      {/* Layer 1: Deep black base, made highly transparent to reveal video */}
-      <div className="absolute inset-0 bg-[#0a0a0a]/20" />
-
-      {/* Layer 2: Subtle gradient accents */}
-      <div className="absolute inset-0 opacity-30">
-        <motion.div
-          className="absolute rounded-full blur-[120px] opacity-20"
-          style={{
-            width: '600px',
-            height: '600px',
-            left: '10%',
-            top: '20%',
-            background: 'radial-gradient(circle, rgba(77, 219, 255, 0.15) 0%, transparent 70%)',
-            x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * 30),
-            y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * 30),
-          }}
-        />
-        <motion.div
-          className="absolute rounded-full blur-[120px] opacity-15"
-          style={{
-            width: '500px',
-            height: '500px',
-            right: '10%',
-            bottom: '20%',
-            background: 'radial-gradient(circle, rgba(153, 234, 255, 0.12) 0%, transparent 70%)',
-            x: useTransform(smoothX, value => (value / (typeof window !== 'undefined' ? window.innerWidth : 1920) - 0.5) * -20),
-            y: useTransform(smoothY, value => (value / (typeof window !== 'undefined' ? window.innerHeight : 1080) - 0.5) * -20),
-          }}
-        />
-      </div>
-
-      {/* Layer 3: Floating tiny dots (stars → data points) */}
-      <div className="absolute inset-0">
-        {particles.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute bg-[#4ddbff]"
-            style={{
-              left: p.left,
-              top: p.top,
-              width: p.size,
-              height: p.size,
-              opacity: p.opacity,
-            }}
-            animate={{
-              opacity: [p.opacity, p.opacity * 2, p.opacity],
-            }}
-            transition={{
-              duration: p.duration,
-              repeat: Infinity,
-              delay: p.delay,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Layer 4: Mouse-following glow */}
-      <motion.div
-        className="absolute w-[600px] h-[600px] rounded-full opacity-15"
-        style={{
-          background: 'radial-gradient(circle, rgba(77, 219, 255, 0.08) 0%, transparent 70%)',
-          left: -300,
-          top: -300,
-          x: smoothX,
-          y: smoothY,
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: -50 }}
+    />
   );
 }

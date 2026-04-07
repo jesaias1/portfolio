@@ -10,7 +10,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['framer-motion', 'react-icons'],
+    optimizePackageImports: ['framer-motion', 'react-icons', 'three', '@react-three/drei', '@react-three/fiber'],
   },
   eslint: {
     ignoreDuringBuilds: true,

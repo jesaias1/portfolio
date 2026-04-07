@@ -89,10 +89,10 @@ function LogoModel({ mousePos }: { mousePos: React.RefObject<{ x: number; y: num
 
   return (
     <Float
-      speed={1.5}
-      rotationIntensity={0.3}
-      floatIntensity={0.5}
-      floatingRange={[-0.05, 0.05]}
+      speed={1.2}
+      rotationIntensity={0.2}
+      floatIntensity={0.3}
+      floatingRange={[-0.03, 0.03]}
     >
       <group
         ref={groupRef}
@@ -220,7 +220,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     >
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 45 }}
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
         gl={{
           antialias: true,
           alpha: true,

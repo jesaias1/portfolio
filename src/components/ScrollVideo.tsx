@@ -9,9 +9,9 @@ export default function ScrollVideo() {
     const v = videoRef.current;
     if (!v) return;
 
-    // Start playing slowly as soon as media is ready
+    // Start playing at a fixed slow rate
     const tryPlay = () => {
-      v.playbackRate = 0.5;
+      v.playbackRate = 0.85;
       v.play().catch(() => {});
     };
 
@@ -21,28 +21,31 @@ export default function ScrollVideo() {
       v.addEventListener('canplay', tryPlay, { once: true });
     }
 
-    // Slightly speed up / slow down based on scroll velocity for a subtle
-    // "driven by scrolling" feel — without ever seeking (which causes frame skips).
+    // Throttled scroll-velocity based rate adjustment
+    // Only update playback rate every ~100ms to avoid thrashing
     let lastY = window.scrollY;
-    let lastT = performance.now();
+    let lastUpdate = 0;
     let rafId: number;
 
     const BASE_RATE = 0.85;
     const MAX_RATE = 1.5;
 
     const tick = (now: number) => {
-      const dy = window.scrollY - lastY;
-      const dt = Math.max(1, now - lastT); // ms
-      const velocity = Math.abs(dy) / dt; // px/ms
+      // Only recalculate every 100ms
+      if (now - lastUpdate > 100) {
+        const dy = Math.abs(window.scrollY - lastY);
+        const velocity = dy / Math.max(1, now - lastUpdate);
+        const rate = Math.min(MAX_RATE, BASE_RATE + velocity * 0.8);
 
-      // Map velocity → playback rate
-      const boosted = BASE_RATE + velocity * 0.8;
-      const rate = Math.min(MAX_RATE, boosted);
+        // Only update if rate changed significantly (avoid constant property writes)
+        if (Math.abs(v.playbackRate - rate) > 0.05) {
+          v.playbackRate = rate;
+        }
 
-      v.playbackRate = rate;
+        lastY = window.scrollY;
+        lastUpdate = now;
+      }
 
-      lastY = window.scrollY;
-      lastT = now;
       rafId = requestAnimationFrame(tick);
     };
 
@@ -55,12 +58,20 @@ export default function ScrollVideo() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-screen pointer-events-none -z-[60] overflow-hidden bg-black">
+    <div className="fixed inset-0 w-full h-screen pointer-events-none overflow-hidden bg-black" style={{ zIndex: -60 }}>
       {/* Background video — loops natively */}
       <video
         ref={videoRef}
         src="/video/website%20bg.mp4"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', willChange: 'transform', position: 'absolute', top: 0, left: 0, opacity: 0.85 }}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          opacity: 0.85,
+        }}
         className="contrast-[1.2] brightness-[0.45]"
         playsInline
         muted
