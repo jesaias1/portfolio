@@ -4,10 +4,9 @@ import { useEffect, useRef, useCallback } from 'react';
 
 export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -100, y: -100 });
-  const dotPos = useRef({ x: -100, y: -100 });
-  const glowPos = useRef({ x: -100, y: -100 });
+  const ringPos = useRef({ x: -100, y: -100 });
   const rafRef = useRef<number>(0);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -21,23 +20,37 @@ export default function CustomCursor() {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
+    // Track hover state for interactive elements
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"], input, textarea, select, label[for]')) {
+        ringRef.current?.classList.add('cursor-ring-hover');
+      }
+    };
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"], input, textarea, select, label[for]')) {
+        ringRef.current?.classList.remove('cursor-ring-hover');
+      }
+    };
+
+    document.addEventListener('mouseover', handleMouseOver, { passive: true });
+    document.addEventListener('mouseout', handleMouseOut, { passive: true });
+
     const tick = () => {
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
 
-      // Dot follows fast
-      dotPos.current.x += (mx - dotPos.current.x) * 0.35;
-      dotPos.current.y += (my - dotPos.current.y) * 0.35;
-
-      // Glow follows slower
-      glowPos.current.x += (mx - glowPos.current.x) * 0.1;
-      glowPos.current.y += (my - glowPos.current.y) * 0.1;
-
+      // Dot follows instantly
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${dotPos.current.x - 6}px, ${dotPos.current.y - 6}px, 0)`;
+        dotRef.current.style.transform = `translate3d(${mx - 3}px, ${my - 3}px, 0)`;
       }
-      if (glowRef.current) {
-        glowRef.current.style.transform = `translate3d(${glowPos.current.x - 96}px, ${glowPos.current.y - 96}px, 0)`;
+
+      // Ring follows with lag (lerp 0.1)
+      ringPos.current.x += (mx - ringPos.current.x) * 0.1;
+      ringPos.current.y += (my - ringPos.current.y) * 0.1;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${ringPos.current.x - 16}px, ${ringPos.current.y - 16}px, 0)`;
       }
 
       rafRef.current = requestAnimationFrame(tick);
@@ -48,6 +61,8 @@ export default function CustomCursor() {
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
     };
   }, [handleMouseMove]);
 
@@ -61,23 +76,30 @@ export default function CustomCursor() {
       {/* Main cursor dot */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-3 h-3 pointer-events-none mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none"
         style={{
-          zIndex: 99999,
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          zIndex: 10001,
           backgroundColor: '#4ddbff',
-          boxShadow: '0 0 8px rgba(77, 219, 255, 0.6), 0 0 20px rgba(77, 219, 255, 0.2)',
+          boxShadow: '0 0 8px #4ddbff',
           willChange: 'transform',
         }}
       />
 
-      {/* Trailing glow */}
+      {/* Concentric cursor ring */}
       <div
-        ref={glowRef}
-        className="fixed top-0 left-0 w-48 h-48 rounded-full pointer-events-none"
+        ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none cursor-ring"
         style={{
-          zIndex: 9998,
-          background: 'radial-gradient(circle, rgba(77, 219, 255, 0.06) 0%, rgba(153, 234, 255, 0.03) 40%, transparent 70%)',
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
+          border: '1px solid rgba(77, 219, 255, 0.5)',
+          zIndex: 10000,
           willChange: 'transform',
+          transition: 'width 0.3s cubic-bezier(.23,1,.32,1), height 0.3s cubic-bezier(.23,1,.32,1), border-color 0.3s',
         }}
       />
     </>

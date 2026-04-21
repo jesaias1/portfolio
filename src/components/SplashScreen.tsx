@@ -258,8 +258,22 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           </div>
         </div>
 
+        {/* Skip button */}
+        <button
+          onClick={() => {
+            if (!completedRef.current) {
+              completedRef.current = true;
+              setIsExiting(true);
+              setTimeout(onComplete, 500);
+            }
+          }}
+          className="absolute bottom-6 right-6 font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors z-10 cursor-pointer"
+        >
+          skip →
+        </button>
+
         {/* Corner decoration */}
-        <div className="absolute bottom-4 right-4 font-mono text-[10px] text-gray-700">
+        <div className="absolute bottom-4 left-4 font-mono text-[10px] text-gray-700">
           portfolio v2.0.0
         </div>
       </motion.div>

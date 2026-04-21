@@ -467,3 +467,45 @@ a, button {
 .bg-grid::before {
   will-change: auto;
 }
+
+/* ═══════════════════════════════════════════════
+   CRT Scanlines — fixed full-page overlay
+   (Claude design: subtle repeating linear-gradient)
+   ═══════════════════════════════════════════════ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   Cursor ring hover state
+   ═══════════════════════════════════════════════ */
+.cursor-ring-hover {
+  width: 48px !important;
+  height: 48px !important;
+  border-color: #4ddbff !important;
+  margin-left: -8px;
+  margin-top: -8px;
+}
+
+/* ═══════════════════════════════════════════════
+   Scroll indicator pulse
+   ═══════════════════════════════════════════════ */
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.scroll-pulse {
+  animation: scrollPulse 2s ease-in-out infinite;
+}

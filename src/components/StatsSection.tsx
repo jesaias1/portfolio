@@ -71,7 +71,14 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
   useEffect(() => {
     springValue.on('change', (latest) => {
       if (ref.current) {
-        ref.current.textContent = `${stat.prefix || ''}${Math.floor(latest)}${stat.suffix || ''}`;
+        const rounded = Math.floor(latest);
+        ref.current.textContent = `${stat.prefix || ''}${rounded}${stat.suffix || ''}`;
+        // Flicker effect during counting — random brief opacity dip
+        if (rounded < stat.value && Math.random() > 0.85) {
+          ref.current.style.opacity = '0.4';
+        } else {
+          ref.current.style.opacity = '1';
+        }
       }
     });
   }, [springValue, stat]);

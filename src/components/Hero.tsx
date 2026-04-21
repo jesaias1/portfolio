@@ -215,7 +215,7 @@ export default function Hero() {
             className="flex flex-col items-center gap-2"
           >
             <span className="text-xs font-mono text-gray-600 tracking-widest">SCROLL</span>
-            <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent" />
+            <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent scroll-pulse" />
           </motion.div>
         </motion.div>
       </section>

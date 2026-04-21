@@ -10,6 +10,7 @@ import CustomCursor from '@/components/CustomCursor';
 import ScrollProgress from '@/components/ScrollProgress';
 import SplashScreen from '@/components/SplashScreen';
 import CosmicBackground from '@/components/CosmicBackground';
+import GlitchFlash from '@/components/GlitchFlash';
 import ScrollVideo from '@/components/ScrollVideo';
 import SectionDivider from '@/components/SectionDivider';
 import ServicesSection from '@/components/ServicesSection';
@@ -51,6 +52,7 @@ export default function Home() {
             <CosmicBackground />
             <CustomCursor />
             <ScrollProgress />
+            <GlitchFlash />
             <Navigation />
             <Hero />
             <SectionDivider />
