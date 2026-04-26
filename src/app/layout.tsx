@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import SoundController from '@/components/SoundController';
 import SmoothScroll from '@/components/SmoothScroll';
 
+
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
   variable: '--font-display',
@@ -20,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://jesaias.dk'),
   title: "Jesaias — Creative Developer",
-  description: "Portfolio of Jesaias — Creative Developer, Audio Engineer, and Digital Craftsman. Full-stack web apps, VST plugins, After Effects extensions, and more.",
-  keywords: ["portfolio", "web developer", "full-stack", "audio", "VST", "Jesaias", "creative developer", "react", "next.js"],
+  description: "Portfolio of Jesaias — Creative Developer and Software Engineer. Full-stack web apps, real-time systems, creative tools, and more.",
+  keywords: ["portfolio", "web developer", "full-stack", "software engineer", "Jesaias", "creative developer", "react", "next.js"],
   authors: [{ name: "Jesaias" }],
   openGraph: {
     type: 'website',
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     url: 'https://jesaias.dk',
     siteName: 'Jesaias — Creative Developer',
     title: 'Jesaias — Creative Developer',
-    description: 'Creating digital experiences that transcend boundaries. Fullstack development, Audio and Design.',
+    description: 'Creating digital experiences that transcend boundaries. Full-stack development, software engineering, and design.',
     images: [
       {
         url: '/og-image.png',
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Jesaias — Creative Developer',
-    description: 'Creative Developer, Audio Engineer, and Digital Craftsman.',
+    description: 'Creative Developer and Software Engineer. Building premium digital experiences.',
     images: ['/og-image.png'],
   },
   robots: {
@@ -74,8 +75,8 @@ export default function RootLayout({
               "@type": "Person",
               "name": "Jesaias",
               "url": "https://jesaias.dk",
-              "jobTitle": "Creative Developer & Audio Engineer",
-              "description": "Creative Developer specializing in Full-stack web development, VST plugins, and Audio software engineering.",
+              "jobTitle": "Creative Developer & Software Engineer",
+              "description": "Creative Developer specializing in full-stack web development, real-time systems, and modern software engineering.",
               "sameAs": [
                 "https://github.com/jesaias1",
                 "https://linkedin.com"
@@ -83,6 +84,7 @@ export default function RootLayout({
             })
           }}
         />
+
         <SmoothScroll>
           <div className="bg-grid bg-grain">
             {children}

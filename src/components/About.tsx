@@ -138,7 +138,7 @@ export default function About() {
                     Passionate developer building everything from <span className="text-white">web apps</span> and{' '}
                     <span className="text-white">multiplayer games</span> to{' '}
                     <span className="text-white">VST plugins</span> and{' '}
-                    <span className="text-white">After Effects extensions</span>.
+                    <span className="text-white">creative dev tools</span>.
                   </p>
                   <p>
                     My mission is to transform complex ideas into 

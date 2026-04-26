@@ -9,7 +9,6 @@ import Contact from '@/components/Contact';
 import CustomCursor from '@/components/CustomCursor';
 import ScrollProgress from '@/components/ScrollProgress';
 import SplashScreen from '@/components/SplashScreen';
-import CosmicBackground from '@/components/CosmicBackground';
 import GlitchFlash from '@/components/GlitchFlash';
 import ScrollVideo from '@/components/ScrollVideo';
 import SectionDivider from '@/components/SectionDivider';
@@ -49,7 +48,6 @@ export default function Home() {
       {(!showSplash && mounted) && (
           <main className="relative">
             <ScrollVideo />
-            <CosmicBackground />
             <CustomCursor />
             <ScrollProgress />
             <GlitchFlash />
@@ -84,7 +82,7 @@ export default function Home() {
                       className="h-6 w-auto opacity-60"
                     />
                     <p className="font-mono text-xs text-gray-600 leading-relaxed max-w-xs">
-                      Creative developer building digital experiences at the intersection of code, audio, and design.
+                      Creative developer building digital experiences at the intersection of code, creativity, and design.
                     </p>
                   </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 const Logo3D = dynamic(() => import('./Logo3D'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center">
       <div className="text-[#4ddbff] font-mono text-sm animate-pulse" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
         loading_3d_engine...
       </div>
@@ -22,6 +22,8 @@ const Logo3D = dynamic(() => import('./Logo3D'), {
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
+  const introInView = useInView(introRef, { once: true, margin: '-80px' });
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [subtitleText, setSubtitleText] = useState('');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
@@ -56,10 +58,11 @@ export default function Hero() {
     offset: ["start start", "end start"]
   });
   
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const logoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const logoScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85]);
+  const logoY = useTransform(scrollYProgress, [0, 1], [0, 120]);
 
-  const fullSubtitle = '> creative_developer --fullstack --audio --design';
+  const fullSubtitle = '> creative_developer --fullstack --systems --design';
 
   // Global keyboard shortcut
   useEffect(() => {
@@ -76,137 +79,64 @@ export default function Hero() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Trigger subtitle typing when intro section scrolls into view
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setSubtitleVisible(true);
-      let charIndex = 0;
-      const typeInterval = setInterval(() => {
-        charIndex++;
-        setSubtitleText(fullSubtitle.slice(0, charIndex));
-        if (charIndex >= fullSubtitle.length) {
-          clearInterval(typeInterval);
-        }
-      }, 35);
-      return () => clearInterval(typeInterval);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    if (introInView && !subtitleVisible) {
+      const timer = setTimeout(() => {
+        setSubtitleVisible(true);
+        let charIndex = 0;
+        const typeInterval = setInterval(() => {
+          charIndex++;
+          setSubtitleText(fullSubtitle.slice(0, charIndex));
+          if (charIndex >= fullSubtitle.length) {
+            clearInterval(typeInterval);
+          }
+        }, 35);
+        return () => clearInterval(typeInterval);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [introInView, subtitleVisible]);
 
   return (
     <>
+      {/* ═══════════════════════════════════════════════
+          HERO — Full viewport, 3D logo only
+          ═══════════════════════════════════════════════ */}
       <section 
         ref={heroRef}
         id="home" 
-        className="min-h-screen flex items-center justify-center relative"
-        style={{ overflow: 'clip' }}
+        className="h-screen flex items-center justify-center relative"
       >
-        {/* Audio waveform background visualization — CSS-only */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 flex items-end justify-center gap-[3px] opacity-[0.25] overflow-hidden mix-blend-screen z-0" style={{ filter: 'drop-shadow(0 0 15px rgba(77,219,255,0.6))' }}>
-          {Array.from({ length: 40 }, (_, i) => (
-            <div
-              key={i}
-              className="w-[3px] bg-[#4ddbff] waveform-bar-css"
-              style={{
-                animationDelay: `${i * 0.06}s`,
-                animationDuration: `${0.8 + (i % 7) * 0.1}s`,
-                height: `${10 + (i % 5) * 12}px`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Main Content */}
-        <motion.div 
-          className="w-full relative z-10 px-4"
-          style={{ opacity, y }}
+        {/* 3D Logo — renders as fullscreen fixed canvas, controlled by scroll opacity */}
+        <motion.div
+          style={{ opacity: logoOpacity, scale: logoScale }}
+          className="fixed inset-0 z-20 pointer-events-none"
         >
-          <div className="flex flex-col items-center -mt-8 md:-mt-16">
-            {/* 3D Interactive Logo — z-30 so it renders ABOVE the text layer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, ease: [0.6, 0.05, 0.01, 0.9] }}
-              className="hero-logo-glow w-full flex justify-center -mb-2 sm:-mb-4 md:-mb-6 lg:-mb-8 relative z-30 pointer-events-none"
-              style={{ isolation: 'isolate' }}
-            >
-              <div className="relative w-full max-w-[800px] h-[180px] sm:h-[220px] md:h-[260px] lg:h-[300px] pointer-events-none flex items-center justify-center">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[350px] sm:h-[420px] md:h-[500px] lg:h-[580px] pointer-events-auto" style={{ zIndex: 30 }}>
-                  <Logo3D className="w-full h-full" />
-                  {/* Glitch scan-line overlay */}
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    animate={{
-                      opacity: [0, 0.08, 0, 0, 0.05, 0],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      repeatDelay: 3,
-                    }}
-                    style={{
-                      background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Content that gets overlapped — z-20 sits beneath the logo's z-30 */}
-            <div className="relative z-20 flex flex-col items-center pt-8">
-              {/* Typing subtitle */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: subtitleVisible ? 1 : 0 }}
-                className="h-8 flex items-center justify-center mt-1"
-              >
-                <span 
-                  className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
-                  style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
-                >
-                  {subtitleText}
-                  <span className="cursor-blink ml-0.5">▌</span>
-                </span>
-              </motion.div>
-
-              {/* Tagline */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 2.5 }}
-                className="text-xl md:text-2xl text-gray-200 font-light tracking-[0.15em] max-w-2xl mx-auto text-center mt-2"
-                style={{ textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 30px rgba(0,0,0,0.8), 0 0 20px rgba(77, 219, 255, 0.15)' }}
-              >
-                Creating digital experiences that transcend boundaries
-              </motion.p>
-            </div>
-
-            {/* CTA Buttons — terminal commands */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 md:mt-12 relative z-40 pointer-events-auto"
-            >
-              <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
-                ./root_access
-              </TerminalButton>
-              <TerminalButton onClick={() => handleNavClick('#projects')} variant="outline">
-                ./view_projects
-              </TerminalButton>
-              <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
-                ./contact
-              </TerminalButton>
-            </motion.div>
-
-          </div>
+          <Logo3D />
+          {/* Glitch scan-line overlay — fullscreen to match */}
+          <motion.div
+            className="fixed inset-0 pointer-events-none z-21"
+            animate={{
+              opacity: [0, 0.08, 0, 0, 0.05, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              repeatDelay: 3,
+            }}
+            style={{
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
+              mixBlendMode: 'screen',
+            }}
+          />
         </motion.div>
 
-        {/* Scroll indicator — absolute so it doesn't affect centering */}
+        {/* Scroll indicator — anchored to bottom of hero */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 3.5 }}
+          transition={{ delay: 2 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         >
           <motion.div
@@ -218,6 +148,58 @@ export default function Hero() {
             <div className="w-px h-8 bg-gradient-to-b from-[#4ddbff]/50 to-transparent scroll-pulse" />
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          INTRO — Scroll-triggered reveal below the fold
+          ═══════════════════════════════════════════════ */}
+      <section className="relative py-24 md:py-32" ref={introRef}>
+        <div className="flex flex-col items-center px-4">
+          {/* Typing subtitle — triggers when scrolled into view */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={introInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="h-8 flex items-center justify-center"
+          >
+            <span 
+              className="font-mono text-[11px] sm:text-sm md:text-base text-[#4ddbff] tracking-wider"
+              style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
+            >
+              {subtitleText}
+              {subtitleVisible && <span className="cursor-blink ml-0.5">▌</span>}
+            </span>
+          </motion.div>
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+            animate={introInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+            transition={{ duration: 1, delay: 0.4, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="text-xl md:text-3xl lg:text-4xl text-gray-200 font-light tracking-[0.1em] max-w-3xl mx-auto text-center mt-6"
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 30px rgba(0,0,0,0.8), 0 0 20px rgba(77, 219, 255, 0.15)' }}
+          >
+            Creating digital experiences that transcend boundaries
+          </motion.p>
+
+          {/* CTA Buttons — terminal commands */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={introInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 md:mt-14 relative z-40 pointer-events-auto"
+          >
+            <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
+              ./root_access
+            </TerminalButton>
+            <TerminalButton onClick={() => handleNavClick('#projects')} variant="outline">
+              ./view_projects
+            </TerminalButton>
+            <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
+              ./contact
+            </TerminalButton>
+          </motion.div>
+        </div>
       </section>
 
       <TerminalOverlay 

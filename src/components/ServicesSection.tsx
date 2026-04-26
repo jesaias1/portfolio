@@ -20,11 +20,11 @@ const services = [
     features: ['WebSocket', 'Real-time Sync', 'Leaderboards', 'Cross-platform'],
   },
   {
-    icon: '♪',
-    title: 'Audio Engineering',
-    command: './build --audio',
-    description: 'VST plugins and sound design for production',
-    features: ['C++ / JUCE', 'VST3 Plugins', 'DSP Algorithms', 'Audio Processing'],
+    icon: '⚙',
+    title: 'Software Engineering',
+    command: './build --software',
+    description: 'Scalable backend systems and cloud infrastructure',
+    features: ['Python / Node.js', 'REST & GraphQL APIs', 'CI/CD Pipelines', 'System Architecture'],
   },
   {
     icon: '◆',
