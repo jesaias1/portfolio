@@ -6,7 +6,6 @@ import {
   Clone,
   Environment,
   Float,
-  MeshTransmissionMaterial,
   useGLTF,
   useTexture,
 } from '@react-three/drei';
@@ -99,45 +98,20 @@ function LogoMaterial({
   isLowEnd: boolean;
   glassProps: typeof GLASS_DEFAULTS;
 }) {
-  if (isLowEnd) {
-    return (
-      <meshPhysicalMaterial
-        color="#9eefff"
-        transmission={1}
-        roughness={0.1}
-        thickness={0.75}
-        ior={1.45}
-        transparent
-        opacity={0.82}
-        envMapIntensity={1.2}
-        clearcoat={1}
-        clearcoatRoughness={0.08}
-        metalness={0}
-        attenuationColor="#83eaff"
-        attenuationDistance={2.4}
-        side={THREE.FrontSide}
-      />
-    );
-  }
-
   return (
-    <MeshTransmissionMaterial
-      backside
-      samples={glassProps.samples}
-      thickness={glassProps.thickness}
-      roughness={glassProps.roughness}
-      transmission={1}
-      ior={glassProps.ior}
-      chromaticAberration={glassProps.chromaticAberration}
-      anisotropicBlur={glassProps.anisotropicBlur}
-      distortion={glassProps.distortion}
-      distortionScale={glassProps.distortionScale}
-      temporalDistortion={glassProps.temporalDistortion}
+    <meshPhysicalMaterial
+      color="#4ec8f0"
+      roughness={isLowEnd ? 0.1 : glassProps.roughness}
+      metalness={0}
       clearcoat={1}
-      color="#d8f0ff"
-      attenuationColor="#0040c0"
-      attenuationDistance={5}
-      envMapIntensity={5}
+      clearcoatRoughness={isLowEnd ? 0.08 : 0}
+      transmission={isLowEnd ? 0.2 : 0.35}
+      thickness={isLowEnd ? 1.0 : glassProps.thickness * 6}
+      ior={glassProps.ior}
+      envMapIntensity={isLowEnd ? 2 : 4.5}
+      attenuationColor="#1878b8"
+      attenuationDistance={4}
+      side={THREE.FrontSide}
     />
   );
 }
