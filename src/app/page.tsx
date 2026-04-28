@@ -117,7 +117,7 @@ export default function Home() {
                         github
                       </a>
                       <a
-                        href="https://linkedin.com"
+                        href="https://www.linkedin.com/in/jesaias/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
@@ -126,7 +126,7 @@ export default function Home() {
                         linkedin
                       </a>
                       <a
-                        href="https://instagram.com/linasjesaias"
+                        href="https://www.instagram.com/linasjesaias/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"

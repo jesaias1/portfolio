@@ -79,7 +79,8 @@ export default function RootLayout({
               "description": "Creative Developer specializing in full-stack web development, real-time systems, and modern software engineering.",
               "sameAs": [
                 "https://github.com/jesaias1",
-                "https://linkedin.com"
+                "https://www.linkedin.com/in/jesaias/",
+                "https://www.instagram.com/linasjesaias/"
               ]
             })
           }}
