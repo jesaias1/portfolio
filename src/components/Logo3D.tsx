@@ -6,17 +6,11 @@ import {
   Clone,
   Environment,
   Float,
+  MeshTransmissionMaterial,
   useGLTF,
   useTexture,
 } from '@react-three/drei';
-import {
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Vignette,
-  Noise,
-} from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Leva, useControls } from 'leva';
 import * as THREE from 'three';
 
@@ -56,7 +50,7 @@ function useInteractionProfile() {
     const isMobile = isMobileUA || isMobileSize;
     const hw = navigator.hardwareConcurrency || 8;
     return {
-      isLowEnd: isMobile || hw < 4,
+      isLowEnd: isMobile || hw <= 4,
       isMobile,
       prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       showLeva: false,
@@ -73,7 +67,7 @@ function useInteractionProfile() {
       const hw = navigator.hardwareConcurrency || 8;
       const params = new URLSearchParams(window.location.search);
       setProfile({
-        isLowEnd: isMobile || hw < 4,
+        isLowEnd: isMobile || hw <= 4,
         isMobile,
         prefersReducedMotion: motionQuery.matches,
         showLeva: ENABLE_LEVA_PANEL && process.env.NODE_ENV === 'development' && params.has('debug'),
@@ -94,24 +88,53 @@ function useInteractionProfile() {
 function LogoMaterial({
   isLowEnd,
   glassProps,
+  envTexture,
 }: {
   isLowEnd: boolean;
   glassProps: typeof GLASS_DEFAULTS;
+  envTexture: THREE.Texture;
 }) {
+  if (isLowEnd) {
+    return (
+      <meshPhysicalMaterial
+        color="#4ec8f0"
+        roughness={0.1}
+        metalness={0}
+        clearcoat={1}
+        clearcoatRoughness={0.08}
+        transmission={0.25}
+        thickness={1.2}
+        ior={1.45}
+        envMapIntensity={2}
+        attenuationColor="#1878b8"
+        attenuationDistance={4}
+        side={THREE.FrontSide}
+      />
+    );
+  }
+
+  // Liquid glass: refracts through bg-environment.png without an expensive scene re-render.
+  // temporalDistortion slowly animates the refraction pattern for the liquid ripple effect.
   return (
-    <meshPhysicalMaterial
-      color="#4ec8f0"
-      roughness={isLowEnd ? 0.1 : glassProps.roughness}
-      metalness={0}
-      clearcoat={1}
-      clearcoatRoughness={isLowEnd ? 0.08 : 0}
-      transmission={isLowEnd ? 0.2 : 0.35}
-      thickness={isLowEnd ? 1.0 : glassProps.thickness * 6}
+    <MeshTransmissionMaterial
+      buffer={envTexture}
+      backside
+      samples={glassProps.samples}
+      thickness={glassProps.thickness}
+      roughness={glassProps.roughness}
+      transmission={1}
       ior={glassProps.ior}
-      envMapIntensity={isLowEnd ? 2 : 4.5}
-      attenuationColor="#1878b8"
-      attenuationDistance={4}
-      side={THREE.FrontSide}
+      chromaticAberration={glassProps.chromaticAberration}
+      anisotropicBlur={0.05}
+      distortion={glassProps.distortion}
+      distortionScale={glassProps.distortionScale}
+      temporalDistortion={glassProps.temporalDistortion}
+      clearcoat={1}
+      clearcoatRoughness={0}
+      color="#b8e0ff"
+      attenuationColor="#0848a8"
+      attenuationDistance={3}
+      envMapIntensity={8}
     />
   );
 }
@@ -131,6 +154,7 @@ function LogoModel({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(MODEL_PATH);
+  const envTexture = useTexture('/bg-environment.png');
 
   const { center, scaleFactor } = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene);
@@ -175,7 +199,7 @@ function LogoModel({
           receiveShadow
           inject={(object) =>
             object instanceof THREE.Mesh ? (
-              <LogoMaterial isLowEnd={isLowEnd} glassProps={glassProps} />
+              <LogoMaterial isLowEnd={isLowEnd} glassProps={glassProps} envTexture={envTexture} />
             ) : null
           }
         />
@@ -206,6 +230,7 @@ function PostProcessing({
 }) {
   if (isLowEnd) return null;
 
+  // CA and noise are handled by MeshTransmissionMaterial; just bloom here.
   return (
     <EffectComposer multisampling={0} enableNormalPass={false} autoClear={false}>
       <Bloom
@@ -214,13 +239,6 @@ function PostProcessing({
         luminanceSmoothing={bloomProps.luminanceSmoothing}
         mipmapBlur
       />
-      <ChromaticAberration
-        offset={[0.0008, 0.0008]}
-        radialModulation={false}
-        modulationOffset={0}
-      />
-      <Vignette eskil={false} offset={0.1} darkness={0.7} />
-      <Noise opacity={0.025} blendFunction={BlendFunction.OVERLAY} />
     </EffectComposer>
   );
 }
@@ -385,7 +403,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
       <Leva hidden={!showLeva} collapsed />
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 45 }}
-        dpr={isMobile ? 1 : [1, 2]}
+        dpr={isMobile ? 1 : [1, 1.5]}
         gl={{
           antialias: true,
           alpha: true,
