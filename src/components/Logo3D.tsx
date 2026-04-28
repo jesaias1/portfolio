@@ -19,15 +19,15 @@ const BASE_Y_ROTATION = Math.PI / 2;
 const ENABLE_LEVA_PANEL = false;
 
 const GLASS_DEFAULTS = {
-  samples: 8,
-  thickness: 0.25,
-  roughness: 0,
-  ior: 1.55,
-  chromaticAberration: 0.07,
-  anisotropicBlur: 0,
-  distortion: 0.2,
-  distortionScale: 0.25,
-  temporalDistortion: 0.02,
+  samples: 6,
+  thickness: 0.45,
+  roughness: 0.02,
+  ior: 1.5,
+  chromaticAberration: 0.08,
+  anisotropicBlur: 0.05,
+  distortion: 0.3,
+  distortionScale: 0.4,
+  temporalDistortion: 0.08,
 };
 
 const BLOOM_DEFAULTS = {
@@ -88,11 +88,9 @@ function useInteractionProfile() {
 function LogoMaterial({
   isLowEnd,
   glassProps,
-  envTexture,
 }: {
   isLowEnd: boolean;
   glassProps: typeof GLASS_DEFAULTS;
-  envTexture: THREE.Texture;
 }) {
   if (isLowEnd) {
     return (
@@ -113,11 +111,11 @@ function LogoMaterial({
     );
   }
 
-  // Liquid glass: refracts through bg-environment.png without an expensive scene re-render.
-  // temporalDistortion slowly animates the refraction pattern for the liquid ripple effect.
+  // Glass refracts through the near-black sphere in the scene (invisible via screen-blend).
+  // IBL (scene.environment from bg-environment.png) provides the sun specular highlight.
+  // temporalDistortion slowly ripples the liquid effect each frame.
   return (
     <MeshTransmissionMaterial
-      buffer={envTexture}
       backside
       samples={glassProps.samples}
       thickness={glassProps.thickness}
@@ -125,16 +123,16 @@ function LogoMaterial({
       transmission={1}
       ior={glassProps.ior}
       chromaticAberration={glassProps.chromaticAberration}
-      anisotropicBlur={0.05}
+      anisotropicBlur={glassProps.anisotropicBlur}
       distortion={glassProps.distortion}
       distortionScale={glassProps.distortionScale}
       temporalDistortion={glassProps.temporalDistortion}
       clearcoat={1}
       clearcoatRoughness={0}
-      color="#b8e0ff"
-      attenuationColor="#0848a8"
-      attenuationDistance={3}
-      envMapIntensity={8}
+      color="#50c0ff"
+      attenuationColor="#0840b0"
+      attenuationDistance={2}
+      envMapIntensity={10}
     />
   );
 }
@@ -154,7 +152,6 @@ function LogoModel({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(MODEL_PATH);
-  const envTexture = useTexture('/bg-environment.png');
 
   const { center, scaleFactor } = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene);
@@ -199,7 +196,7 @@ function LogoModel({
           receiveShadow
           inject={(object) =>
             object instanceof THREE.Mesh ? (
-              <LogoMaterial isLowEnd={isLowEnd} glassProps={glassProps} envTexture={envTexture} />
+              <LogoMaterial isLowEnd={isLowEnd} glassProps={glassProps} />
             ) : null
           }
         />
@@ -298,6 +295,16 @@ function LogoScene({
       <pointLight position={[0, -3, 2]} intensity={0.5} color="#0d6b8a" distance={10} />
 
       <SceneEnvironment isLowEnd={isLowEnd} />
+
+      {/* Near-black sphere gives MeshTransmissionMaterial a dark interior to refract through.
+          #010203 ≈ (0.004, 0.008, 0.012) — screen-blend contribution is imperceptible,
+          so the HTML video still shows through while the glass gets its liquid-glass look. */}
+      {!isLowEnd && (
+        <mesh>
+          <sphereGeometry args={[25, 16, 16]} />
+          <meshBasicMaterial color="#010203" side={THREE.BackSide} />
+        </mesh>
+      )}
 
       <LogoModel
         mousePos={mousePos}
