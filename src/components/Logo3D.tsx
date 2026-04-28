@@ -385,9 +385,9 @@ export default function Logo3D({ className = '' }: { className?: string }) {
       <Leva hidden={!showLeva} collapsed />
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 45 }}
-        dpr={isMobile ? 1 : [1, 1.2]}
+        dpr={isMobile ? 1 : [1, 2]}
         gl={{
-          antialias: !isMobile,
+          antialias: true,
           alpha: true,
           powerPreference: isMobile ? 'low-power' : 'high-performance',
         }}
