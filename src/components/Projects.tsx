@@ -103,13 +103,13 @@ export default function Projects() {
   );
 }
 
-function ProjectRow({ 
-  project, 
+function ProjectRow({
+  project,
   index,
   onClick,
   isReversed
-}: { 
-  project: Project; 
+}: {
+  project: Project;
   index: number;
   onClick: () => void;
   isReversed: boolean;
@@ -118,7 +118,7 @@ function ProjectRow({
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const isInView = useInView(containerRef, { amount: 0.6 });
+  const isInView = useInView(containerRef, { amount: 0.5 });
 
   const { play } = useSound();
 
@@ -129,17 +129,25 @@ function ProjectRow({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const shouldShowVideo = isMobile ? isInView : isHovered;
+
   useEffect(() => {
-    if (videoRef.current) {
-      const shouldPlay = isMobile ? isInView : isHovered;
-      if (shouldPlay) {
-        videoRef.current.play().catch(() => {});
-      } else {
-        videoRef.current.pause();
-        if (!isMobile) videoRef.current.currentTime = 0;
-      }
+    const video = videoRef.current;
+    if (!video) return;
+    if (shouldShowVideo) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
     }
-  }, [isHovered, isInView, isMobile]);
+  }, [shouldShowVideo]);
+
+  const openSite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (project.link) {
+      play('click');
+      window.open(project.link, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <motion.div
@@ -152,11 +160,13 @@ function ProjectRow({
       }}
       onMouseEnter={() => { setIsHovered(true); play('hover'); }}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => { onClick(); play('click'); }}
-      className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer group`}
+      className="grid md:grid-cols-2 gap-8 md:gap-12 items-center group"
     >
-      {/* Image */}
-      <div className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#4ddbff]/30 transition-all duration-500 ${isReversed ? 'md:order-2' : ''}`}>
+      {/* Thumbnail — click goes to live site */}
+      <div
+        onClick={openSite}
+        className={`relative aspect-video overflow-hidden border border-white/5 group-hover:border-[#4ddbff]/30 transition-all duration-500 cursor-pointer ${isReversed ? 'md:order-2' : ''}`}
+      >
         <Parallax offset={20} className="w-full h-full">
           <div className="relative w-full h-full">
             <Image
@@ -164,21 +174,17 @@ function ProjectRow({
               alt={project.title}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-all duration-700 group-hover:scale-110"
-              style={{
-                filter: isHovered ? 'none' : 'grayscale(60%) brightness(0.7)',
-              }}
+              className="object-cover transition-all duration-700 group-hover:scale-105"
+              style={{ filter: shouldShowVideo ? 'none' : 'grayscale(60%) brightness(0.7)' }}
             />
           </div>
         </Parallax>
 
-        {/* Video on hover */}
+        {/* Video — always mounted, shown via CSS opacity for smooth instant reveal */}
         {project.video && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0 z-10"
+          <div
+            className="absolute inset-0 z-10 transition-opacity duration-700"
+            style={{ opacity: shouldShowVideo ? 1 : 0 }}
           >
             <video
               ref={videoRef}
@@ -186,56 +192,39 @@ function ProjectRow({
               loop
               muted
               playsInline
+              preload="metadata"
               className="w-full h-full object-cover"
             />
-          </motion.div>
+          </div>
         )}
-        
-        {/* Overlay scan effect on hover */}
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
+
+        {/* Bottom gradient + scan line — fades in with video */}
+        <div
+          className="absolute inset-0 z-20 transition-opacity duration-300 pointer-events-none"
+          style={{ opacity: isHovered ? 1 : 0 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent" />
-          
-          {/* Scan line animation */}
-          <motion.div
-            className="absolute left-0 right-0 h-px bg-[#4ddbff]/30"
-            animate={isHovered ? {
-              top: ['0%', '100%'],
-            } : {}}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          />
-        </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/70 via-transparent to-transparent" />
+        </div>
 
         {/* Project number */}
-        <div className="absolute top-4 right-4 font-mono text-xs text-white/20 group-hover:text-[#4ddbff]/50 transition-all">
+        <div className="absolute top-4 right-4 z-30 font-mono text-xs text-white/20 group-hover:text-[#4ddbff]/50 transition-all">
           [{String(index + 1).padStart(2, '0')}]
         </div>
       </div>
 
       {/* Info */}
       <div className={`space-y-4 ${isReversed ? 'md:order-1' : ''}`}>
-        {/* Title */}
         <div>
-          <h3 className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300">
-             <RevealText text={project.title} delay={0.2} />
+          <h3 className="text-2xl md:text-4xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300">
+            <RevealText text={project.title} delay={0.2} />
           </h3>
           <div className="w-12 h-px bg-[#4ddbff]/30 mt-3 group-hover:w-24 transition-all duration-500" />
         </div>
 
-        {/* Description */}
-        <p className="text-gray-400 leading-relaxed">
+        <p className="text-gray-400 leading-relaxed text-sm md:text-base">
           {project.description}
         </p>
 
-        {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {project.tags.slice(0, 5).map((tag) => (
             <span
@@ -247,14 +236,26 @@ function ProjectRow({
           ))}
         </div>
 
-        {/* View prompt */}
-        <motion.div 
-          className="font-mono text-xs text-gray-600 group-hover:text-[#4ddbff]/70 transition-colors pt-2"
-          animate={isHovered ? { x: [0, 3, 0] } : {}}
-          transition={{ duration: 0.5, repeat: Infinity }}
-        >
-          {'>'} view --details
-        </motion.div>
+        {/* Action buttons */}
+        <div className="flex items-center gap-3 pt-2">
+          {project.link && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => { e.stopPropagation(); play('click'); }}
+              className="font-mono text-xs px-4 py-2 bg-[#4ddbff]/10 border border-[#4ddbff]/30 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/60 transition-all"
+            >
+              {'>'} ./visit_site
+            </a>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick(); play('click'); }}
+            className="font-mono text-xs text-gray-600 hover:text-[#4ddbff]/70 transition-colors"
+          >
+            {'>'} ./details
+          </button>
+        </div>
       </div>
     </motion.div>
   );
