@@ -6,7 +6,6 @@ import {
   Clone,
   Environment,
   Float,
-  MeshTransmissionMaterial,
   useGLTF,
   useTexture,
 } from '@react-three/drei';
@@ -18,17 +17,6 @@ const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
 const ENABLE_LEVA_PANEL = false;
 
-const GLASS_DEFAULTS = {
-  samples: 6,
-  thickness: 0.45,
-  roughness: 0.02,
-  ior: 1.5,
-  chromaticAberration: 0.08,
-  anisotropicBlur: 0.05,
-  distortion: 0.3,
-  distortionScale: 0.4,
-  temporalDistortion: 0.08,
-};
 
 const BLOOM_DEFAULTS = {
   intensity: 0.6,
@@ -85,13 +73,7 @@ function useInteractionProfile() {
   return profile;
 }
 
-function LogoMaterial({
-  isLowEnd,
-  glassProps,
-}: {
-  isLowEnd: boolean;
-  glassProps: typeof GLASS_DEFAULTS;
-}) {
+function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
   if (isLowEnd) {
     return (
       <meshPhysicalMaterial
@@ -111,28 +93,20 @@ function LogoMaterial({
     );
   }
 
-  // Glass refracts through the near-black sphere in the scene (invisible via screen-blend).
-  // IBL (scene.environment from bg-environment.png) provides the sun specular highlight.
-  // temporalDistortion slowly ripples the liquid effect each frame.
   return (
-    <MeshTransmissionMaterial
-      backside
-      samples={glassProps.samples}
-      thickness={glassProps.thickness}
-      roughness={glassProps.roughness}
-      transmission={1}
-      ior={glassProps.ior}
-      chromaticAberration={glassProps.chromaticAberration}
-      anisotropicBlur={glassProps.anisotropicBlur}
-      distortion={glassProps.distortion}
-      distortionScale={glassProps.distortionScale}
-      temporalDistortion={glassProps.temporalDistortion}
+    <meshPhysicalMaterial
+      color="#4ec8f0"
+      roughness={0}
+      metalness={0}
       clearcoat={1}
       clearcoatRoughness={0}
-      color="#50c0ff"
-      attenuationColor="#0840b0"
-      attenuationDistance={2}
-      envMapIntensity={10}
+      transmission={0.15}
+      thickness={1.2}
+      ior={1.5}
+      envMapIntensity={5}
+      attenuationColor="#1070c0"
+      attenuationDistance={3}
+      side={THREE.FrontSide}
     />
   );
 }
@@ -142,13 +116,11 @@ function LogoModel({
   isLowEnd,
   isMobile,
   prefersReducedMotion,
-  glassProps,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
-  glassProps: typeof GLASS_DEFAULTS;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(MODEL_PATH);
@@ -196,7 +168,7 @@ function LogoModel({
           receiveShadow
           inject={(object) =>
             object instanceof THREE.Mesh ? (
-              <LogoMaterial isLowEnd={isLowEnd} glassProps={glassProps} />
+              <LogoMaterial isLowEnd={isLowEnd} />
             ) : null
           }
         />
@@ -227,7 +199,6 @@ function PostProcessing({
 }) {
   if (isLowEnd) return null;
 
-  // CA and noise are handled by MeshTransmissionMaterial; just bloom here.
   return (
     <EffectComposer multisampling={0} enableNormalPass={false} autoClear={false}>
       <Bloom
@@ -276,14 +247,12 @@ function LogoScene({
   isLowEnd,
   isMobile,
   prefersReducedMotion,
-  glassProps = GLASS_DEFAULTS,
   bloomProps = BLOOM_DEFAULTS,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
-  glassProps?: typeof GLASS_DEFAULTS;
   bloomProps?: typeof BLOOM_DEFAULTS;
 }) {
   return (
@@ -296,25 +265,11 @@ function LogoScene({
 
       <SceneEnvironment isLowEnd={isLowEnd} />
 
-      {/* Near-black sphere gives MeshTransmissionMaterial a dark interior to refract through.
-          #010203 ≈ (0.004, 0.008, 0.012) — screen-blend contribution is imperceptible,
-          so the HTML video still shows through while the glass gets its liquid-glass look. */}
-      {!isLowEnd && (
-        <mesh>
-          <sphereGeometry args={[25, 16, 16]} />
-          <meshBasicMaterial color="#010203" side={THREE.BackSide} />
-        </mesh>
-      )}
-
       <LogoModel
         mousePos={mousePos}
         isLowEnd={isLowEnd}
         isMobile={isMobile}
         prefersReducedMotion={prefersReducedMotion}
-        glassProps={{
-          ...glassProps,
-          samples: isLowEnd ? 4 : glassProps.samples,
-        }}
       />
       <PostProcessing isLowEnd={isLowEnd} bloomProps={bloomProps} />
     </>
@@ -343,19 +298,6 @@ export default function Logo3D({ className = '' }: { className?: string }) {
   const mousePos = useRef({ x: 0, y: 0 });
   const { isLowEnd, isMobile, prefersReducedMotion, showLeva } = useInteractionProfile();
 
-  const glassControls = useControls('Glass', {
-    thickness: { value: GLASS_DEFAULTS.thickness, min: 0, max: 3, step: 0.01 },
-    roughness: { value: GLASS_DEFAULTS.roughness, min: 0, max: 1, step: 0.01 },
-    ior: { value: GLASS_DEFAULTS.ior, min: 1, max: 2.5, step: 0.01 },
-    chromaticAberration: {
-      value: GLASS_DEFAULTS.chromaticAberration,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-    distortion: { value: GLASS_DEFAULTS.distortion, min: 0, max: 1, step: 0.01 },
-  });
-
   const bloomControls = useControls('Bloom', {
     intensity: { value: BLOOM_DEFAULTS.intensity, min: 0, max: 3, step: 0.05 },
     luminanceThreshold: {
@@ -366,7 +308,6 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     },
   });
 
-  const glassProps = { ...GLASS_DEFAULTS, ...glassControls };
   const bloomProps = { ...BLOOM_DEFAULTS, ...bloomControls };
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
@@ -424,7 +365,6 @@ export default function Logo3D({ className = '' }: { className?: string }) {
             isLowEnd={isLowEnd}
             isMobile={isMobile}
             prefersReducedMotion={prefersReducedMotion}
-            glassProps={glassProps}
             bloomProps={bloomProps}
           />
         </Suspense>
