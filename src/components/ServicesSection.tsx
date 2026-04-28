@@ -40,7 +40,7 @@ export default function ServicesSection() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section ref={sectionRef} id="services" className="py-32 relative">
+    <section ref={sectionRef} id="services" className="py-20 md:py-32 relative">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <motion.div
@@ -96,7 +96,7 @@ export default function ServicesSection() {
                 </div>
 
                 {/* Card body */}
-                <div className="p-6">
+                <div className="p-4 md:p-6">
                   <div className="flex items-start gap-4 mb-4">
                     <span className="text-2xl text-[#4ddbff]/60 font-mono mt-1 group-hover:text-[#4ddbff] transition-colors duration-500" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
                       {service.icon}

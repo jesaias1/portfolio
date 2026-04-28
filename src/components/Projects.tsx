@@ -40,7 +40,7 @@ export default function Projects() {
 
   return (
     <>
-      <section ref={sectionRef} id="projects" className="py-32 relative overflow-hidden">
+      <section ref={sectionRef} id="projects" className="py-20 md:py-32 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           {/* Section header — terminal style */}
           <motion.div
@@ -65,7 +65,7 @@ export default function Projects() {
           </motion.div>
 
           {/* Projects — full-width stacked layout */}
-          <div className="space-y-24">
+          <div className="space-y-14 md:space-y-24">
             {projects.map((project, index) => (
               <ProjectRow
                 key={project.id}
@@ -144,7 +144,7 @@ function ProjectRow({
   return (
     <motion.div
       ref={containerRef}
-      initial={{ opacity: 0, x: isReversed ? 80 : -80 }}
+      initial={{ opacity: 0, x: isReversed ? 40 : -40 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
       onAnimationStart={() => {

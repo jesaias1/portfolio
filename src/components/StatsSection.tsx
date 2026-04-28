@@ -24,7 +24,7 @@ export default function StatsSection() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section ref={sectionRef} className="py-24 relative overflow-hidden">
+    <section ref={sectionRef} className="py-16 md:py-24 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Terminal-style header */}
         <motion.div
@@ -88,7 +88,7 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="relative border border-white/5 hover:border-[#4ddbff]/20 bg-[#0c0c0c]/50 p-6 text-center group transition-all duration-500 hover:shadow-[0_0_25px_rgba(77,219,255,0.04)]"
+      className="relative border border-white/5 hover:border-[#4ddbff]/20 bg-[#0c0c0c]/50 p-4 md:p-6 text-center group transition-all duration-500 hover:shadow-[0_0_25px_rgba(77,219,255,0.04)]"
     >
       {/* Top glow line on hover */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/0 group-hover:via-[#4ddbff]/30 to-transparent transition-all duration-700" />

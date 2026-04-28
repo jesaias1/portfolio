@@ -28,7 +28,7 @@ export default function About() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="about" className="py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="about" className="py-20 md:py-32 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <motion.div
@@ -109,7 +109,7 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <div className="border border-white/5 p-6 space-y-3 font-mono text-sm">
+              <div className="border border-white/5 p-4 md:p-6 space-y-3 font-mono text-sm">
                 <div className="text-[#4ddbff] text-xs tracking-wider mb-4" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
                   SYSTEM DIAGNOSTICS
                 </div>
@@ -158,7 +158,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="border border-white/5 p-6">
+          <div className="border border-white/5 p-4 md:p-6">
             <div className="text-[#4ddbff] text-xs tracking-wider mb-6 font-mono" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
               TECH STACK ANALYSIS
             </div>

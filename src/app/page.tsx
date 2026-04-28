@@ -65,13 +65,13 @@ export default function Home() {
             <Contact />
             
             {/* Footer — premium terminal style */}
-            <footer className="relative py-16 border-t border-white/5">
+            <footer className="relative py-10 md:py-16 border-t border-white/5">
               {/* Top glow line */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/30 to-transparent" />
               
               <div className="max-w-6xl mx-auto px-6">
                 {/* Upper footer */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8 md:mb-12">
                   {/* Branding */}
                   <div className="space-y-4">
                     <Image

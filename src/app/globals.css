@@ -186,11 +186,15 @@ input[type="range"].slider::-moz-range-thumb {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.05) 2px,
-    rgba(0, 0, 0, 0.05) 4px
+    rgba(0, 0, 0, 0.02) 2px,
+    rgba(0, 0, 0, 0.02) 4px
   );
   pointer-events: none;
   z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .scanlines::after { display: none; }
 }
 
 /* Typing cursor blink */
@@ -468,24 +472,7 @@ a, button {
   will-change: auto;
 }
 
-/* ═══════════════════════════════════════════════
-   CRT Scanlines — fixed full-page overlay
-   (Claude design: subtle repeating linear-gradient)
-   ═══════════════════════════════════════════════ */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-}
+/* CRT full-page overlay removed — was making everything less clean */
 
 /* ═══════════════════════════════════════════════
    Cursor ring hover state

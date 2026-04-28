@@ -114,22 +114,6 @@ export default function Hero() {
           className="fixed inset-0 z-20 pointer-events-none"
         >
           <Logo3D />
-          {/* Glitch scan-line overlay — fullscreen to match */}
-          <motion.div
-            className="fixed inset-0 pointer-events-none z-21"
-            animate={{
-              opacity: [0, 0.08, 0, 0, 0.05, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              repeatDelay: 3,
-            }}
-            style={{
-              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(77, 219, 255, 0.03) 2px, rgba(77, 219, 255, 0.03) 4px)',
-              mixBlendMode: 'screen',
-            }}
-          />
         </motion.div>
 
         {/* Scroll indicator — anchored to bottom of hero */}
