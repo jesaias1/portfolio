@@ -42,19 +42,22 @@ export async function POST(request: Request) {
         },
       });
 
+      const esc = (s: string) =>
+        s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
       const mailOptions = {
-        from: process.env.EMAIL_USER, // Sender address (your app email)
-        to: 'sunglazzez@gmail.com',   // Receiver address (hardcoded as requested)
-        replyTo: email,               // Reply to the user's email
+        from: process.env.EMAIL_USER,
+        to: 'sunglazzez@gmail.com',
+        replyTo: email,
         subject: `New Message from Portfolio: ${name}`,
         text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
         html: `
           <h3>New Message from Portfolio</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Name:</strong> ${esc(name)}</p>
+          <p><strong>Email:</strong> ${esc(email)}</p>
           <p><strong>Message:</strong></p>
           <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #4ddbff;">
-            ${message.replace(/\n/g, '<br>')}
+            ${esc(message).replace(/\n/g, '<br>')}
           </blockquote>
         `,
       };

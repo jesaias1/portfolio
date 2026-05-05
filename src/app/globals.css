@@ -450,11 +450,6 @@ a, button {
 }
 
 .section-divider-pulse-left {
-  animation: divider-pulse-left 3s linear infinite;
-  animation-delay: 0s;
-}
-
-.section-divider-pulse-left {
   animation: divider-pulse-left 5s linear infinite;
 }
 

@@ -69,11 +69,10 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
   }, [isInView, stat.value, motionValue]);
 
   useEffect(() => {
-    springValue.on('change', (latest) => {
+    const unsub = springValue.on('change', (latest) => {
       if (ref.current) {
         const rounded = Math.floor(latest);
         ref.current.textContent = `${stat.prefix || ''}${rounded}${stat.suffix || ''}`;
-        // Flicker effect during counting — random brief opacity dip
         if (rounded < stat.value && Math.random() > 0.85) {
           ref.current.style.opacity = '0.4';
         } else {
@@ -81,6 +80,7 @@ function StatCard({ stat, index, isInView }: { stat: Stat; index: number; isInVi
         }
       }
     });
+    return unsub;
   }, [springValue, stat]);
 
   return (
