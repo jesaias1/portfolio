@@ -336,9 +336,34 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
+    // Gyroscope: map device tilt to logo rotation
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma === null || e.beta === null) return;
+      mousePos.current.x = THREE.MathUtils.clamp(e.gamma / 45, -1, 1);
+      mousePos.current.y = THREE.MathUtils.clamp((e.beta - 45) / 45, -1, 1);
+    };
+
+    // iOS 13+ requires explicit permission from a user gesture; Android is automatic
+    const tryGyro = () => {
+      const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+      if (typeof DOE.requestPermission === 'function') {
+        DOE.requestPermission()
+          .then((state) => {
+            if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+          })
+          .catch(() => {});
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+
+    window.addEventListener('touchstart', tryGyro, { once: true });
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('deviceorientation', handleOrientation);
+      window.removeEventListener('touchstart', tryGyro);
     };
   }, [prefersReducedMotion, updatePointer]);
 
@@ -357,7 +382,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
           alpha: true,
           powerPreference: isMobile ? 'low-power' : 'high-performance',
         }}
-        style={{ background: 'transparent', mixBlendMode: 'screen', pointerEvents: 'auto' }}
+        style={{ background: 'transparent', mixBlendMode: 'screen', pointerEvents: 'none' }}
       >
         <Suspense fallback={<LoadingFallback prefersReducedMotion={prefersReducedMotion} />}>
           <LogoScene
