@@ -18,7 +18,7 @@ async function main() {
 
   await prisma.project.upsert({
     where: { id: 'ordbomben-001' },
-    update: {},
+    update: { order: 3 },
     create: {
       id: 'ordbomben-001',
       title: 'Ordbomben',
@@ -28,13 +28,13 @@ async function main() {
       tags: JSON.stringify(['Next.js', 'WebSocket', 'PostgreSQL', 'Real-time', 'Multiplayer']),
       link: 'https://www.ordbomben.dk',
       featured: true,
-      order: 1,
+      order: 3,
     },
   })
 
   await prisma.project.upsert({
     where: { id: 'lettus-002' },
-    update: {},
+    update: { order: 4 },
     create: {
       id: 'lettus-002',
       title: 'Lettus',
@@ -44,13 +44,13 @@ async function main() {
       tags: JSON.stringify(['React', 'TypeScript', 'Game Logic', 'PWA', 'Mobile First']),
       link: 'https://www.lettus.fun',
       featured: true,
-      order: 2,
+      order: 4,
     },
   })
 
   await prisma.project.upsert({
     where: { id: 'dump-003' },
-    update: {},
+    update: { order: 5 },
     create: {
       id: 'dump-003',
       title: 'dump.media',
@@ -60,7 +60,7 @@ async function main() {
       tags: JSON.stringify(['Next.js', 'Stripe', 'Audio Player', 'E-commerce', 'Subscriptions']),
       link: 'https://www.dump.media',
       featured: true,
-      order: 3,
+      order: 5,
     },
   })
 
@@ -73,7 +73,7 @@ async function main() {
       image: '/projects/midium.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
       featured: true,
-      order: 4,
+      order: 1,
     },
     create: {
       id: 'midium-004',
@@ -83,7 +83,7 @@ async function main() {
       image: '/projects/midium.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
       featured: true,
-      order: 4,
+      order: 1,
     },
   })
 
@@ -96,7 +96,7 @@ async function main() {
       image: '/projects/abyx.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
       featured: true,
-      order: 5,
+      order: 2,
     },
     create: {
       id: 'abyx-005',
@@ -106,7 +106,7 @@ async function main() {
       image: '/projects/abyx.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
       featured: true,
-      order: 5,
+      order: 2,
     },
   })
 
