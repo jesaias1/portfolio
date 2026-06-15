@@ -64,6 +64,50 @@ async function main() {
     },
   })
 
+  await prisma.project.upsert({
+    where: { id: 'midium-004' },
+    update: {
+      title: 'MIDIUM',
+      description: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
+      longDesc: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
+      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
+      featured: true,
+      order: 4,
+    },
+    create: {
+      id: 'midium-004',
+      title: 'MIDIUM',
+      description: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
+      longDesc: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
+      image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
+      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
+      featured: true,
+      order: 4,
+    },
+  })
+
+  await prisma.project.upsert({
+    where: { id: 'abyx-005' },
+    update: {
+      title: 'ABYX',
+      description: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
+      longDesc: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
+      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
+      featured: true,
+      order: 5,
+    },
+    create: {
+      id: 'abyx-005',
+      title: 'ABYX',
+      description: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
+      longDesc: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
+      image: 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800',
+      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
+      featured: true,
+      order: 5,
+    },
+  })
+
   await prisma.about.upsert({
     where: { id: 'main' },
     update: {},
