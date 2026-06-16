@@ -112,6 +112,17 @@
   max-width: 680px;
 }
 
+.audio-hero {
+  grid-template-columns: minmax(480px, 0.9fr) minmax(420px, 1fr);
+  justify-content: center;
+  min-height: calc(100svh - 76px);
+  padding-block: clamp(30px, 4vw, 60px);
+}
+
+.audio-hero__copy {
+  max-width: 760px;
+}
+
 .audio-kicker {
   margin-bottom: 16px;
   color: var(--product-accent);
@@ -125,10 +136,11 @@
 .audio-hero h1,
 .product-hero h1 {
   max-width: 780px;
-  font-size: clamp(56px, 8vw, 126px);
+  font-size: clamp(54px, 6.2vw, 104px);
   font-weight: 700;
-  line-height: 0.9;
+  line-height: 0.92;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 .audio-hero p,
@@ -146,6 +158,11 @@
 .audio-hero__copy > p:not(.audio-kicker),
 .product-hero__copy > p {
   margin-top: 26px;
+}
+
+.audio-hero__copy > p:not(.audio-kicker) {
+  max-width: 690px;
+  margin-top: 20px;
 }
 
 .audio-actions {
@@ -207,6 +224,7 @@
 
 .audio-actions--hero {
   gap: 14px;
+  margin-top: 26px;
 }
 
 .audio-text-link {
@@ -1003,6 +1021,57 @@
 
   .product-detail-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 981px) and (max-height: 920px) {
+  .audio-hero {
+    grid-template-columns: minmax(460px, 0.92fr) minmax(400px, 1fr);
+    gap: clamp(28px, 4vw, 64px);
+    padding-block: clamp(24px, 3.2vw, 44px);
+  }
+
+  .audio-hero h1 {
+    max-width: 760px;
+    font-size: clamp(66px, 5.45vw, 96px);
+    line-height: 0.93;
+  }
+
+  .audio-hero p {
+    font-size: clamp(16px, 1.25vw, 20px);
+  }
+
+  .audio-kicker {
+    margin-bottom: 12px;
+  }
+
+  .audio-hero__copy > p:not(.audio-kicker) {
+    margin-top: 18px;
+  }
+
+  .audio-actions--hero {
+    margin-top: 22px;
+  }
+
+  .mechanic {
+    gap: 10px;
+  }
+
+  .mechanic__panel {
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .mechanic__panel--midium svg {
+    height: clamp(218px, 29vh, 260px);
+  }
+
+  .mechanic__panel--abyx {
+    min-height: clamp(150px, 21vh, 190px);
+  }
+
+  .signal-bars {
+    height: clamp(92px, 15vh, 122px);
   }
 }
 
