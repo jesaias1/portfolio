@@ -37,6 +37,10 @@ export function HeroMechanic() {
             <span className="controller__button controller__button--red" />
             <span className="controller__button controller__button--yellow" />
             <span className="controller__button controller__button--green" />
+            <span className="controller__trigger controller__trigger--left" />
+            <span className="controller__trigger controller__trigger--right" />
+            <span className="controller__beam controller__beam--one" />
+            <span className="controller__beam controller__beam--two" />
             <span className="controller__pulse controller__pulse--one" />
             <span className="controller__pulse controller__pulse--two" />
           </div>

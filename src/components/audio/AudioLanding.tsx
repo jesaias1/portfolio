@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
 import { AudioNav } from "@/components/audio/AudioNav";
 import { HeroMechanic } from "@/components/audio/HeroMechanic";
 import { audioProducts, audioSite } from "@/data/audio-products";
@@ -16,11 +17,11 @@ export function AudioLanding() {
           <p className="audio-kicker">{audioSite.brand}</p>
           <h1 id="audio-hero-title">{audioSite.tagline}</h1>
           <p>{audioSite.description}</p>
-          <div className="audio-actions">
-            <Link href="/audio/midium" className="audio-button audio-button--dark">
+          <div className="audio-actions audio-actions--hero">
+            <Link href="/audio/midium" className="audio-button audio-button--neutral">
               Explore MIDIUM
             </Link>
-            <Link href="/audio/abyx" className="audio-button audio-button--light">
+            <Link href="/audio/abyx" className="audio-button audio-button--neutral">
               Explore ABYX
             </Link>
           </div>
@@ -81,14 +82,11 @@ function ProductShowcase({
       aria-labelledby={`${product.slug}-title`}
       style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as React.CSSProperties}
     >
-      <div className="product-showcase__media">
-        <Image
-          src={product.assets.screenshot}
-          alt={`${product.name} interface screenshot`}
-          width={1200}
-          height={760}
-          sizes="(max-width: 900px) 100vw, 58vw"
-          className="product-shot"
+      <div id={`${product.slug}-video`} className="product-showcase__media">
+        <AutoAdVideo
+          label={`${product.name} silent advertisement`}
+          poster={product.assets.screenshot}
+          src={product.assets.video}
         />
       </div>
       <div className="product-showcase__copy">
@@ -108,7 +106,9 @@ function ProductShowcase({
             sizes="(max-width: 700px) 60vw, 260px"
           />
         ) : null}
-        <h2 id={`${product.slug}-title`}>{product.name}</h2>
+        <h2 id={`${product.slug}-title`} className={product.assets.logo ? "sr-only" : undefined}>
+          {product.name}
+        </h2>
         <h3>{product.headline}</h3>
         <p>{product.shortCopy}</p>
         <ol className="workflow-list">
@@ -130,17 +130,6 @@ function ProductShowcase({
             {product.resourceLabel}
           </Link>
         </div>
-      </div>
-      <div id={`${product.slug}-video`} className="product-showcase__video">
-        <video
-          controls
-          playsInline
-          preload="metadata"
-          poster={product.assets.screenshot}
-          aria-label={`${product.name} video advertisement`}
-        >
-          <source src={product.assets.video} type="video/mp4" />
-        </video>
       </div>
     </section>
   );

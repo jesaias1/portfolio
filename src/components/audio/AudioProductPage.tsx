@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
 import { AudioFooter } from "@/components/audio/AudioLanding";
 import { AudioNav } from "@/components/audio/AudioNav";
 import { audioProducts, type AudioProduct } from "@/data/audio-products";
@@ -32,7 +33,9 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
               priority
             />
           ) : null}
-          <h1 id="product-title">{product.name}</h1>
+          <h1 id="product-title" className={product.assets.logo ? "sr-only" : undefined}>
+            {product.name}
+          </h1>
           <h2>{product.headline}</h2>
           <p>{product.longCopy}</p>
           <div className="audio-actions">
@@ -62,9 +65,13 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           <h2 id="demo-title">The workflow in motion.</h2>
           <p>{product.shortCopy}</p>
         </div>
-        <video controls playsInline preload="metadata" poster={product.assets.screenshot}>
-          <source src={product.assets.video} type="video/mp4" />
-        </video>
+        <div className="interface-demo__film">
+          <AutoAdVideo
+            label={`${product.name} silent advertisement`}
+            poster={product.assets.screenshot}
+            src={product.assets.video}
+          />
+        </div>
       </section>
 
       <section className="product-detail-grid" aria-label={`${product.name} product details`}>

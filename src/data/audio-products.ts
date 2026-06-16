@@ -164,7 +164,7 @@ export const audioProducts: AudioProduct[] = [
     labels: ["VST3", "STANDALONE", "WINDOWS", "XBOX", "PLAYSTATION", "FREE BETA"],
     assets: {
       screenshot: "/audio/products/abyx-screenshot.png",
-      video: "/projects/videos/abyx.mp4",
+      video: "/audio/products/abyx-ad.mp4",
       logo: "/audio/products/abyx-logo.png",
     },
     urls: {
