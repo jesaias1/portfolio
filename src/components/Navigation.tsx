@@ -25,6 +25,7 @@ export default function Navigation() {
   const navItems = [
     { name: 'services', href: '#services' },
     { name: 'projects', href: '#projects' },
+    { name: 'music software', href: '/audio' },
     { name: 'about', href: '#about' },
     { name: 'contact', href: '#contact' },
   ];

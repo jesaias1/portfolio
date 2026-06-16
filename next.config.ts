@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -12,8 +12,8 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['framer-motion', 'react-icons', 'three', '@react-three/drei', '@react-three/fiber'],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  turbopack: {
+    root: process.cwd(),
   },
   poweredByHeader: false,
 };
