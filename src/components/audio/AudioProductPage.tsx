@@ -7,6 +7,7 @@ import { audioProducts, type AudioProduct } from "@/data/audio-products";
 
 export function AudioProductPage({ product }: { product: AudioProduct }) {
   const related = audioProducts.find((item) => item.slug !== product.slug);
+  const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
 
   return (
     <main
@@ -47,15 +48,23 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             </a>
           </div>
         </div>
-        <div className="product-hero__image">
-          <Image
-            src={product.assets.screenshot}
-            alt={`${product.name} interface screenshot`}
-            width={1300}
-            height={820}
-            priority
-            sizes="(max-width: 900px) 100vw, 58vw"
-          />
+        <div className={`product-hero__image${heroVideo ? " product-hero__image--video" : ""}`}>
+          {heroVideo ? (
+            <AutoAdVideo
+              label={`${product.name} silent product advertisement`}
+              poster={product.assets.screenshot}
+              src={heroVideo}
+            />
+          ) : (
+            <Image
+              src={product.assets.screenshot}
+              alt={`${product.name} interface screenshot`}
+              width={1300}
+              height={820}
+              priority
+              sizes="(max-width: 900px) 100vw, 58vw"
+            />
+          )}
         </div>
       </section>
 

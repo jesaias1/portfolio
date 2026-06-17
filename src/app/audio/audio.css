@@ -297,6 +297,10 @@
   gap: clamp(12px, 1.4vw, 18px);
 }
 
+.mechanic__panel--abyx .mechanic__label {
+  grid-column: 1 / -1;
+}
+
 .controller__body {
   position: relative;
   width: min(360px, 100%);
@@ -468,15 +472,17 @@
 
 .signal-bars {
   display: flex;
+  grid-column: 1 / -1;
   height: clamp(96px, 17svh, 132px);
   align-items: end;
-  gap: 7px;
-  border-left: 1px solid var(--audio-line);
-  padding-left: 22px;
+  justify-content: space-between;
+  gap: clamp(5px, 1.1vw, 13px);
+  border-top: 1px solid var(--audio-line);
+  padding-top: 18px;
 }
 
 .signal-bars span {
-  width: 6px;
+  width: clamp(5px, 0.65vw, 8px);
   height: 32px;
   background: rgba(240, 240, 236, 0.72);
   animation: signal-bars 1.4s ease-in-out infinite;
@@ -537,6 +543,11 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+.product-hero__image--video {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
 }
 
 .audio-ad-video {
