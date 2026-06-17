@@ -8,6 +8,7 @@ import { audioProducts, type AudioProduct } from "@/data/audio-products";
 export function AudioProductPage({ product }: { product: AudioProduct }) {
   const related = audioProducts.find((item) => item.slug !== product.slug);
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
+  const isAbyx = product.slug === "abyx";
 
   return (
     <main
@@ -39,13 +40,42 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           </h1>
           <h2>{product.headline}</h2>
           <p>{product.longCopy}</p>
+          {isAbyx ? (
+            <p className="trial-note">
+              Free to try for 30 days, then enter a license key to keep using it.
+              One $10 purchase unlocks ABYX standalone + VST3.
+            </p>
+          ) : null}
           <div className="audio-actions">
-            <a href={product.urls.download} className="audio-button audio-button--dark">
-              Download for Windows
-            </a>
-            <a href={product.urls.watch} className="audio-button audio-button--light">
-              Watch {product.name}
-            </a>
+            {isAbyx ? (
+              <>
+                <a
+                  href={product.urls.download}
+                  className="audio-button audio-button--dark"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download Free 30-Day Trial
+                </a>
+                <a
+                  href={product.urls.buyLicense}
+                  className="audio-button audio-button--light"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Buy License Key
+                </a>
+              </>
+            ) : (
+              <>
+                <a href={product.urls.download} className="audio-button audio-button--dark">
+                  Download for Windows
+                </a>
+                <a href={product.urls.watch} className="audio-button audio-button--light">
+                  Watch {product.name}
+                </a>
+              </>
+            )}
           </div>
         </div>
         <div className={`product-hero__image${heroVideo ? " product-hero__image--video" : ""}`}>
@@ -112,24 +142,26 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </ul>
       </section>
 
-      <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
-        <div>
-          <p className="audio-kicker">{product.commerce.statusLabel}</p>
-          <h2 id="download-title">{product.commerce.priceLabel}.</h2>
-          <p>
-            Download URLs are configured in one product data file and can later point to
-            GitHub Releases, pay-what-you-want pages or a full storefront.
-          </p>
-        </div>
-        <div className="audio-actions">
-          <a href={product.urls.download} className="audio-button audio-button--dark">
-            Download
-          </a>
-          <a href={product.urls.support} className="audio-button audio-button--light">
-            Support link
-          </a>
-        </div>
-      </section>
+      {!isAbyx ? (
+        <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
+          <div>
+            <p className="audio-kicker">{product.commerce.statusLabel}</p>
+            <h2 id="download-title">{product.commerce.priceLabel}.</h2>
+            <p>
+              Download URLs are configured in one product data file and can later point to
+              GitHub Releases, pay-what-you-want pages or a full storefront.
+            </p>
+          </div>
+          <div className="audio-actions">
+            <a href={product.urls.download} className="audio-button audio-button--dark">
+              Download
+            </a>
+            <a href={product.urls.support} className="audio-button audio-button--light">
+              Support link
+            </a>
+          </div>
+        </section>
+      ) : null}
 
       <section className="limitations" aria-labelledby="limitations-title">
         <h2 id="limitations-title">Known beta limitations</h2>

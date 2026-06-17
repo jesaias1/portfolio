@@ -162,6 +162,14 @@
   margin-top: 26px;
 }
 
+.product-hero__copy .trial-note {
+  max-width: 620px;
+  margin-top: 18px;
+  color: var(--audio-ink);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.5;
+}
+
 .audio-hero__copy > p:not(.audio-kicker) {
   max-width: 600px;
   margin-top: 18px;

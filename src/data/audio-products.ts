@@ -23,6 +23,7 @@ export type AudioProduct = {
   };
   urls: {
     download: string;
+    buyLicense?: string;
     watch: string;
     resource: string;
     support: string;
@@ -159,23 +160,24 @@ export const audioProducts: AudioProduct[] = [
     accent: "#f0f0ec",
     accentSoft: "rgba(240, 240, 236, 0.14)",
     identity: "physical",
-    labels: ["VST3", "STANDALONE", "WINDOWS", "XBOX", "PLAYSTATION", "FREE BETA"],
+    labels: ["VST3", "STANDALONE", "WINDOWS", "XBOX", "PLAYSTATION", "$10", "30-DAY TRIAL"],
     assets: {
       screenshot: "/audio/products/abyx-screenshot.png",
       video: ["/audio/products/abyx-ad.mp4", "/projects/videos/abyx.mp4"],
       logo: "/audio/products/abyx-logo.png",
     },
     urls: {
-      download: `${releaseBaseUrl}/abyx-v1.0.0-windows-beta.zip`,
+      download: "https://jesaias.lemonsqueezy.com/checkout/buy/4b3e9cd5-e5ef-44d4-821f-0beb83df4b48",
+      buyLicense: "https://jesaias.lemonsqueezy.com/checkout/buy/58bd7308-585b-4de2-a446-d596288d7298",
       watch: "#abyx-video",
       resource: "/audio/abyx",
       support: "#support",
       donation: "#support-development",
     },
     commerce: {
-      mode: "free-with-donation",
-      statusLabel: "Free beta",
-      priceLabel: "Free during beta",
+      mode: "demo-plus-full",
+      statusLabel: "30-day trial",
+      priceLabel: "$10 license key",
     },
     currentVersion: {
       version: "1.0.0 beta",
@@ -214,14 +216,15 @@ export const audioProducts: AudioProduct[] = [
       "Xbox and PlayStation style controllers",
     ],
     installation: [
-      "Download and extract the Windows beta ZIP.",
+      "Download the free 30-day trial package from Lemon Squeezy.",
       "Connect a supported controller before launching ABYX.",
       "Run ABYX.exe for the standalone app or copy ABYX.vst3 to your VST3 plugin folder.",
+      "After the trial, enter your license key to keep using ABYX standalone and VST3.",
     ],
     betaLimitations: [
       "Controller detection can vary by driver and connection type.",
       "Mac builds are not part of the initial beta target.",
-      "The download host can change while beta distribution is being finalized.",
+      "The license flow is being introduced during the public Windows beta.",
     ],
   },
 ];
