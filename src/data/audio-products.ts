@@ -18,7 +18,7 @@ export type AudioProduct = {
   labels: string[];
   assets: {
     screenshot: string;
-    video: string;
+    video: string | string[];
     logo?: string;
   };
   urls: {
@@ -28,7 +28,6 @@ export type AudioProduct = {
     support: string;
     donation: string;
   };
-  resourceLabel: string;
   commerce: {
     mode: CommerceMode;
     statusLabel: string;
@@ -92,11 +91,10 @@ export const audioProducts: AudioProduct[] = [
     urls: {
       download: `${releaseBaseUrl}/midium-v0.1.0-windows-beta.zip`,
       watch: "#midium-video",
-      resource: "/audio/midium#changelog",
+      resource: "/audio/midium",
       support: "#support",
       donation: "#support-development",
     },
-    resourceLabel: "Release notes",
     commerce: {
       mode: "free-with-donation",
       statusLabel: "Free beta",
@@ -164,17 +162,16 @@ export const audioProducts: AudioProduct[] = [
     labels: ["VST3", "STANDALONE", "WINDOWS", "XBOX", "PLAYSTATION", "FREE BETA"],
     assets: {
       screenshot: "/audio/products/abyx-screenshot.png",
-      video: "/audio/products/abyx-ad.mp4",
+      video: ["/audio/products/abyx-ad.mp4", "/projects/videos/abyx.mp4"],
       logo: "/audio/products/abyx-logo.png",
     },
     urls: {
       download: `${releaseBaseUrl}/abyx-v1.0.0-windows-beta.zip`,
       watch: "#abyx-video",
-      resource: "/audio/abyx#controller-support",
+      resource: "/audio/abyx",
       support: "#support",
       donation: "#support-development",
     },
-    resourceLabel: "Controller support",
     commerce: {
       mode: "free-with-donation",
       statusLabel: "Free beta",

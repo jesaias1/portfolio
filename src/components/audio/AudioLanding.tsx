@@ -29,12 +29,6 @@ export function AudioLanding() {
         <HeroMechanic />
       </section>
 
-      <section className="catalogue-strip" aria-label="Product catalogue">
-        <span>Current instruments</span>
-        <strong>MIDIUM / ABYX</strong>
-        <span>Built for Windows VST3 and standalone workflows</span>
-      </section>
-
       <ProductShowcase product={midium} direction="left" />
       <ProductShowcase product={abyx} direction="right" />
 
@@ -96,20 +90,22 @@ function ProductShowcase({
           ))}
         </div>
         <p className="audio-kicker">{product.kicker}</p>
-        {product.assets.logo ? (
-          <Image
-            src={product.assets.logo}
-            alt={`${product.name} logo`}
-            width={320}
-            height={160}
-            className="product-logo"
-            sizes="(max-width: 700px) 60vw, 260px"
-          />
-        ) : null}
-        <h2 id={`${product.slug}-title`} className={product.assets.logo ? "sr-only" : undefined}>
-          {product.name}
-        </h2>
-        <h3>{product.headline}</h3>
+        <Link href={`/audio/${product.slug}`} className="product-title-link">
+          {product.assets.logo ? (
+            <Image
+              src={product.assets.logo}
+              alt={`${product.name} logo`}
+              width={320}
+              height={160}
+              className="product-logo"
+              sizes="(max-width: 700px) 60vw, 260px"
+            />
+          ) : null}
+          <h2 id={`${product.slug}-title`} className={product.assets.logo ? "sr-only" : undefined}>
+            {product.name}
+          </h2>
+          <h3>{product.headline}</h3>
+        </Link>
         <p>{product.shortCopy}</p>
         <ol className="workflow-list">
           {product.workflow.map((item) => (
@@ -123,11 +119,8 @@ function ProductShowcase({
           <a href={product.urls.download} className="audio-button audio-button--dark">
             Download for Windows
           </a>
-          <a href={product.urls.watch} className="audio-button audio-button--light">
-            Watch {product.name}
-          </a>
-          <Link href={product.urls.resource} className="audio-text-link">
-            {product.resourceLabel}
+          <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
+            View {product.name} page
           </Link>
         </div>
       </div>

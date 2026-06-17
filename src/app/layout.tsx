@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
-import SoundController from '@/components/SoundController';
 import SmoothScroll from '@/components/SmoothScroll';
 
 
@@ -91,7 +90,6 @@ export default function RootLayout({
             {children}
           </div>
         </SmoothScroll>
-        <SoundController />
         <Toaster 
           position="bottom-right"
           toastOptions={{

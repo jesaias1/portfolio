@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useState } from "react";
 
 type AutoAdVideoProps = {
   label: string;
   poster: string;
-  src: string;
+  src: string | string[];
 };
 
 export function AutoAdVideo({ label, poster, src }: AutoAdVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sources = Array.isArray(src) ? src : [src];
+  const activeSrc = sources[activeIndex] ?? sources[0];
+  const hasPlaylist = sources.length > 1;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -22,24 +27,31 @@ export function AutoAdVideo({ label, poster, src }: AutoAdVideoProps) {
       });
     };
 
+    video.load();
     attemptPlay();
     video.addEventListener("canplay", attemptPlay, { once: true });
     return () => video.removeEventListener("canplay", attemptPlay);
-  }, []);
+  }, [activeSrc]);
+
+  const handleEnded = () => {
+    if (!hasPlaylist) return;
+    setActiveIndex((index) => (index + 1) % sources.length);
+  };
 
   return (
     <video
       ref={videoRef}
       autoPlay
       muted
-      loop
+      loop={!hasPlaylist}
+      onEnded={handleEnded}
       playsInline
       preload="metadata"
       poster={poster}
       className="audio-ad-video"
       aria-label={label}
     >
-      <source src={src} type="video/mp4" />
+      <source src={activeSrc} type="video/mp4" />
     </video>
   );
 }

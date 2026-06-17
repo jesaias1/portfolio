@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 type SoundType = 'hover' | 'click' | 'success' | 'on' | 'error' | 'typing';
+type BrowserAudioWindow = Window &
+  typeof globalThis & {
+    webkitAudioContext?: typeof AudioContext;
+  };
 
-// Module-scoped singleton for ambient audio to prevent multiple loops
-let globalAmbientAudio: HTMLAudioElement | null = null;
+// Module-scoped singleton for interaction sound effects.
 let globalGainNode: GainNode | null = null;
 let globalAudioContext: AudioContext | null = null;
 
@@ -18,14 +21,12 @@ export function useSound() {
     return false;
   });
   
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(globalAudioContext);
-
   const initAudio = useCallback(() => {
     if (typeof window === 'undefined') return;
 
-    // 1. Web Audio Context (SFX)
     if (!globalAudioContext) {
-      const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      const audioWindow = window as BrowserAudioWindow;
+      const Ctx = audioWindow.AudioContext || audioWindow.webkitAudioContext;
       if (Ctx) {
         const ctx = new Ctx();
         const gainNode = ctx.createGain();
@@ -34,69 +35,22 @@ export function useSound() {
         
         globalGainNode = gainNode;
         globalAudioContext = ctx;
-        setAudioContext(ctx);
-      }
-    }
-
-    // 2. Ambient Music (Singleton)
-    if (!globalAmbientAudio) {
-      const audio = new Audio('/audio/background.mp3');
-      audio.loop = true;
-      audio.volume = 0.5; // Increased from 0.3 for better audibility
-      globalAmbientAudio = audio;
-
-      // Media Session API for mobile/OS control
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: 'Portfolio Ambient',
-          artist: 'Jesaias',
-          album: 'Next-Level Experience',
-          artwork: [{ src: '/og-image.png', sizes: '512x512', type: 'image/png' }]
-        });
-
-        navigator.mediaSession.setActionHandler('play', () => {
-          globalAmbientAudio?.play();
-        });
-        navigator.mediaSession.setActionHandler('pause', () => {
-          globalAmbientAudio?.pause();
-        });
-        navigator.mediaSession.setActionHandler('stop', () => {
-          globalAmbientAudio?.pause();
-          if (globalAmbientAudio) globalAmbientAudio.currentTime = 0;
-        });
       }
     }
     
-    // CRITICAL: Force resume/play during user interaction for Safari/iOS
+    // Force resume during user interaction for Safari/iOS.
     if (globalAudioContext?.state === 'suspended' && !isMuted) {
       globalAudioContext.resume().catch(() => {});
     }
-
-    if (globalAmbientAudio && !isMuted && globalAmbientAudio.paused) {
-      globalAmbientAudio.play().catch(() => {});
-    }
   }, [isMuted]);
 
-  // Handle Mute & Visibility Sync
+  // Handle mute and visibility sync for generated SFX only.
   useEffect(() => {
     localStorage.setItem('jesaias-muted', JSON.stringify(isMuted));
 
     const syncAudio = () => {
       const isHidden = document.hidden;
-      
-      // Ambient Sync
-      if (globalAmbientAudio) {
-        globalAmbientAudio.muted = isMuted;
-        if (isMuted || isHidden) {
-          globalAmbientAudio.pause();
-          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
-        } else if (globalAmbientAudio.paused) {
-           globalAmbientAudio.play().catch(() => {});
-           if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-        }
-      }
 
-      // SFX Sync
       if (globalAudioContext) {
         if (isMuted || isHidden) {
           globalAudioContext.suspend().catch(() => {});
@@ -117,7 +71,7 @@ export function useSound() {
     const handleInteraction = () => {
       initAudio();
       // Only remove if initialized
-      if (globalAudioContext || globalAmbientAudio) {
+      if (globalAudioContext) {
         ['click', 'touchstart', 'keydown'].forEach(evt => 
           window.removeEventListener(evt, handleInteraction)
         );
@@ -227,7 +181,7 @@ export function useSound() {
         osc.stop(now + 0.02);
         break;
     }
-  }, [isMuted, audioContext]);
+  }, [isMuted]);
 
   return { play, isMuted, toggleMute, initAudio };
 }
