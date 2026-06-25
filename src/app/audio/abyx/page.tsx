@@ -8,14 +8,14 @@ const product = getAudioProduct("abyx");
 export const metadata: Metadata = {
   title: "ABYX - Jesaias Audio",
   description:
-    "Turn Xbox and PlayStation controllers into musical instruments with ABYX, a Windows VST3 and standalone gamepad-to-music instrument.",
+    "Turn Xbox and PlayStation controllers into musical instruments with ABYX, a VST3 gamepad-to-music instrument with a Windows standalone app.",
   alternates: {
     canonical: "/audio/abyx",
   },
   openGraph: {
     title: "ABYX - Your controller is now a musical instrument.",
     description:
-      "A Windows VST3 and standalone gamepad music instrument for assigning sounds, instruments and effects to a controller.",
+      "A VST3 gamepad music instrument with a Windows standalone app for assigning sounds, instruments and effects to a controller.",
     url: "https://jesaias.dk/audio/abyx",
     images: [
       {

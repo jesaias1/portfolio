@@ -124,7 +124,7 @@ function ProductShowcase({
             target={hasLicenseCheckout ? "_blank" : undefined}
             rel={hasLicenseCheckout ? "noopener noreferrer" : undefined}
           >
-            {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download for Windows"}
+            {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download"}
           </a>
           <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
             View {product.name} page
@@ -166,11 +166,12 @@ function SupportSection() {
   return (
     <section id="support" className="support-band" aria-labelledby="support-title">
       <div>
-        <p className="audio-kicker">Windows-only trials</p>
+        <p className="audio-kicker">30-day trials</p>
         <h2 id="support-title">Try each plugin for 30 days.</h2>
         <p>
-          MIDIUM and ABYX are currently available for Windows only as standalone apps
-          and VST3 plugins. After the trial, a $10 license key unlocks each plugin.
+          MIDIUM and ABYX include VST3 plugins for compatible DAWs, plus standalone
+          apps currently available for Windows. After the trial, a $10 license key
+          unlocks each plugin.
         </p>
       </div>
       <div className="audio-actions">
@@ -200,7 +201,7 @@ export function AudioFooter() {
     <footer className="audio-footer">
       <div>
         <strong>{audioSite.brand}</strong>
-        <p>Independent Windows music software by Jesaias.</p>
+        <p>Independent music software by Jesaias.</p>
         <p>{audioSite.origin}</p>
       </div>
       <nav aria-label="Audio footer">

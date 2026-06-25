@@ -8,14 +8,14 @@ const product = getAudioProduct("midium");
 export const metadata: Metadata = {
   title: "MIDIUM - Jesaias Audio",
   description:
-    "Draw MIDI and shape ideas directly with MIDIUM, a Windows VST3 and standalone visual MIDI instrument.",
+    "Draw MIDI and shape ideas directly with MIDIUM, a VST3 visual MIDI instrument with a Windows standalone app.",
   alternates: {
     canonical: "/audio/midium",
   },
   openGraph: {
     title: "MIDIUM - Draw MIDI. Shape ideas directly.",
     description:
-      "A Windows VST3 and standalone visual MIDI instrument for creating melodies, basslines, drums and patterns by drawing.",
+      "A VST3 visual MIDI instrument with a Windows standalone app for creating melodies, basslines, drums and patterns by drawing.",
     url: "https://jesaias.dk/audio/midium",
     images: [
       {

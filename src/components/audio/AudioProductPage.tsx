@@ -66,7 +66,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             ) : (
               <>
                 <a href={product.urls.download} className="audio-button audio-button--dark">
-                  Download for Windows
+                  Download
                 </a>
                 <a href={product.urls.watch} className="audio-button audio-button--light">
                   Watch {product.name}
