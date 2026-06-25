@@ -69,6 +69,8 @@ function ProductShowcase({
   product: (typeof audioProducts)[number];
   direction: "left" | "right";
 }) {
+  const hasLicenseCheckout = Boolean(product.urls.buyLicense);
+
   return (
     <section
       id={`download-${product.slug}`}
@@ -116,8 +118,13 @@ function ProductShowcase({
           ))}
         </ol>
         <div className="audio-actions">
-          <a href={product.urls.download} className="audio-button audio-button--dark">
-            Download for Windows
+          <a
+            href={product.urls.download}
+            className="audio-button audio-button--dark"
+            target={hasLicenseCheckout ? "_blank" : undefined}
+            rel={hasLicenseCheckout ? "noopener noreferrer" : undefined}
+          >
+            {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download for Windows"}
           </a>
           <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
             View {product.name} page
@@ -159,19 +166,29 @@ function SupportSection() {
   return (
     <section id="support" className="support-band" aria-labelledby="support-title">
       <div>
-        <p className="audio-kicker">Beta access</p>
-        <h2 id="support-title">Free during beta.</h2>
+        <p className="audio-kicker">Windows-only trials</p>
+        <h2 id="support-title">Try each plugin for 30 days.</h2>
         <p>
-          Download and use the complete beta version. Support future development if you
-          enjoy it.
+          MIDIUM and ABYX are currently available for Windows only as standalone apps
+          and VST3 plugins. After the trial, a $10 license key unlocks each plugin.
         </p>
       </div>
       <div className="audio-actions">
-        <a href={audioProducts[0].urls.download} className="audio-button audio-button--dark">
-          Download free
+        <a
+          href={audioProducts[0].urls.download}
+          className="audio-button audio-button--dark"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Try MIDIUM
         </a>
-        <a href={audioSite.urls.donation} className="audio-button audio-button--light">
-          Support development
+        <a
+          href={audioProducts[1].urls.download}
+          className="audio-button audio-button--light"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Try ABYX
         </a>
       </div>
     </section>
@@ -183,7 +200,7 @@ export function AudioFooter() {
     <footer className="audio-footer">
       <div>
         <strong>{audioSite.brand}</strong>
-        <p>Independent music software by Jesaias.</p>
+        <p>Independent Windows music software by Jesaias.</p>
         <p>{audioSite.origin}</p>
       </div>
       <nav aria-label="Audio footer">

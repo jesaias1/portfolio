@@ -33,6 +33,8 @@ export type AudioProduct = {
     mode: CommerceMode;
     statusLabel: string;
     priceLabel: string;
+    trialLabel?: string;
+    trialNote?: string;
   };
   currentVersion: {
     version: string;
@@ -49,14 +51,11 @@ export type AudioProduct = {
   betaLimitations: string[];
 };
 
-const releaseBaseUrl =
-  "https://github.com/jesaias1/portfolio/releases/download/audio-beta-2026-06-17";
-
 export const audioSite = {
   brand: "JESAIAS AUDIO",
   tagline: "Tools that make music feel playable.",
   description:
-    "Independent music software for drawing, performing and discovering new ideas.",
+    "Independent Windows music software for drawing, performing and discovering new ideas.",
   origin: "Copenhagen, Denmark",
   urls: {
     home: "/audio",
@@ -84,22 +83,26 @@ export const audioProducts: AudioProduct[] = [
     accent: "#00d9ff",
     accentSoft: "rgba(0, 217, 255, 0.18)",
     identity: "fluid",
-    labels: ["VST3", "STANDALONE", "WINDOWS", "FREE BETA"],
+    labels: ["VST3", "STANDALONE", "WINDOWS ONLY", "$10", "30-DAY TRIAL"],
     assets: {
       screenshot: "/audio/products/midium-screenshot.png",
       video: "/projects/videos/midium.mp4",
     },
     urls: {
-      download: `${releaseBaseUrl}/midium-v0.1.0-windows-beta.zip`,
+      download: "https://jesaias.lemonsqueezy.com/checkout/buy/cf61954c-2b62-4161-a08f-2d6f96f549e5",
+      buyLicense: "https://jesaias.lemonsqueezy.com/checkout/buy/5b2c568d-8e84-4b1e-873f-bb093aea0463",
       watch: "#midium-video",
       resource: "/audio/midium",
       support: "#support",
       donation: "#support-development",
     },
     commerce: {
-      mode: "free-with-donation",
-      statusLabel: "Free beta",
-      priceLabel: "Free during beta",
+      mode: "demo-plus-full",
+      statusLabel: "30-day trial",
+      priceLabel: "$10 license key",
+      trialLabel: "Download Free 30-Day Trial",
+      trialNote:
+        "Free to try for 30 days, then enter a license key to keep using it. One $10 purchase unlocks MIDIUM standalone + VST3 for Windows.",
     },
     currentVersion: {
       version: "0.1.0 beta",
@@ -132,20 +135,21 @@ export const audioProducts: AudioProduct[] = [
       "MIDI drag-and-drop/export workflow",
     ],
     compatibility: [
-      "Windows",
+      "Windows only for now",
       "VST3 compatible hosts",
       "Standalone application",
       "MIDI export for DAW workflows",
     ],
     installation: [
-      "Download and extract the Windows beta ZIP.",
+      "Download the free 30-day Windows trial package from Lemon Squeezy.",
       "Run MIDIUM.exe for the standalone app or copy MIDIUM.vst3 to your VST3 plugin folder.",
       "Rescan plugins in your DAW, then open MIDIUM as an instrument.",
+      "After the trial, enter your license key to keep using MIDIUM standalone and VST3.",
     ],
     betaLimitations: [
-      "Windows builds are the current release target.",
+      "Windows builds are the only current release target.",
       "Preset and host compatibility may change during beta.",
-      "The download host can change while beta distribution is being finalized.",
+      "The license flow is being introduced during the public Windows beta.",
     ],
   },
   {
@@ -160,7 +164,7 @@ export const audioProducts: AudioProduct[] = [
     accent: "#f0f0ec",
     accentSoft: "rgba(240, 240, 236, 0.14)",
     identity: "physical",
-    labels: ["VST3", "STANDALONE", "WINDOWS", "XBOX", "PLAYSTATION", "$10", "30-DAY TRIAL"],
+    labels: ["VST3", "STANDALONE", "WINDOWS ONLY", "XBOX", "PLAYSTATION", "$10", "30-DAY TRIAL"],
     assets: {
       screenshot: "/audio/products/abyx-screenshot.png",
       video: ["/audio/products/abyx-ad.mp4", "/projects/videos/abyx.mp4"],
@@ -178,6 +182,9 @@ export const audioProducts: AudioProduct[] = [
       mode: "demo-plus-full",
       statusLabel: "30-day trial",
       priceLabel: "$10 license key",
+      trialLabel: "Download Free 30-Day Trial",
+      trialNote:
+        "Free to try for 30 days, then enter a license key to keep using it. One $10 purchase unlocks ABYX standalone + VST3 for Windows.",
     },
     currentVersion: {
       version: "1.0.0 beta",
@@ -210,20 +217,20 @@ export const audioProducts: AudioProduct[] = [
       "Performance capture for DAW-centered workflows",
     ],
     compatibility: [
-      "Windows",
+      "Windows only for now",
       "VST3 compatible hosts",
       "Standalone application",
       "Xbox and PlayStation style controllers",
     ],
     installation: [
-      "Download the free 30-day trial package from Lemon Squeezy.",
+      "Download the free 30-day Windows trial package from Lemon Squeezy.",
       "Connect a supported controller before launching ABYX.",
       "Run ABYX.exe for the standalone app or copy ABYX.vst3 to your VST3 plugin folder.",
       "After the trial, enter your license key to keep using ABYX standalone and VST3.",
     ],
     betaLimitations: [
       "Controller detection can vary by driver and connection type.",
-      "Mac builds are not part of the initial beta target.",
+      "Windows builds are the only current release target; Mac builds are not available yet.",
       "The license flow is being introduced during the public Windows beta.",
     ],
   },

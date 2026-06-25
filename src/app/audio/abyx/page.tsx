@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ABYX - Your controller is now a musical instrument.",
     description:
-      "Assign sounds, instruments and effects to a gamepad and perform music physically.",
+      "A Windows VST3 and standalone gamepad music instrument for assigning sounds, instruments and effects to a controller.",
     url: "https://jesaias.dk/audio/abyx",
     images: [
       {

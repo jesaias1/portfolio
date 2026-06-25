@@ -8,7 +8,7 @@ import { audioProducts, type AudioProduct } from "@/data/audio-products";
 export function AudioProductPage({ product }: { product: AudioProduct }) {
   const related = audioProducts.find((item) => item.slug !== product.slug);
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
-  const isAbyx = product.slug === "abyx";
+  const hasLicenseCheckout = Boolean(product.urls.buyLicense);
 
   return (
     <main
@@ -40,14 +40,11 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           </h1>
           <h2>{product.headline}</h2>
           <p>{product.longCopy}</p>
-          {isAbyx ? (
-            <p className="trial-note">
-              Free to try for 30 days, then enter a license key to keep using it.
-              One $10 purchase unlocks ABYX standalone + VST3.
-            </p>
+          {product.commerce.trialNote ? (
+            <p className="trial-note">{product.commerce.trialNote}</p>
           ) : null}
           <div className="audio-actions">
-            {isAbyx ? (
+            {hasLicenseCheckout ? (
               <>
                 <a
                   href={product.urls.download}
@@ -55,7 +52,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Download Free 30-Day Trial
+                  {product.commerce.trialLabel ?? "Download Free Trial"}
                 </a>
                 <a
                   href={product.urls.buyLicense}
@@ -142,7 +139,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </ul>
       </section>
 
-      {!isAbyx ? (
+      {!hasLicenseCheckout ? (
         <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
           <div>
             <p className="audio-kicker">{product.commerce.statusLabel}</p>

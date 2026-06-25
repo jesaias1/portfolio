@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MIDIUM - Draw MIDI. Shape ideas directly.",
     description:
-      "A visual MIDI instrument for creating melodies, basslines, drums and patterns by drawing.",
+      "A Windows VST3 and standalone visual MIDI instrument for creating melodies, basslines, drums and patterns by drawing.",
     url: "https://jesaias.dk/audio/midium",
     images: [
       {
