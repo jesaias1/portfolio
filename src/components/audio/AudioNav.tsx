@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { audioProducts, audioSite } from "@/data/audio-products";
 
 export function AudioNav() {
   return (
@@ -17,6 +18,16 @@ export function AudioNav() {
           className="audio-nav__mark"
         />
       </Link>
+      <nav className="audio-nav__links" aria-label="Audio site">
+        {audioProducts.map((product) => (
+          <Link key={product.slug} href={`/audio/${product.slug}`}>
+            {product.name}
+          </Link>
+        ))}
+        <Link href="/audio#updates">Updates</Link>
+        <Link href="/audio#support">Support</Link>
+        <a href={audioSite.urls.contact}>Contact</a>
+      </nav>
     </header>
   );
 }
