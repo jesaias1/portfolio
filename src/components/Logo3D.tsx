@@ -130,9 +130,9 @@ function CursorGlow({
     const proximity = THREE.MathUtils.clamp(1 - distance / 1.15, 0, 1);
     const motionScale = prefersReducedMotion ? 0 : 1;
 
-    const targetOpacity = 0.08 + proximity * (isLowEnd ? 0.1 : 0.2) * motionScale;
-    const targetLight = 0.2 + proximity * (isLowEnd ? 0.7 : 1.25) * motionScale;
-    const targetScale = 4.7 + proximity * 0.55;
+    const targetOpacity = 0.12 + proximity * (isLowEnd ? 0.14 : 0.28) * motionScale;
+    const targetLight = 0.35 + proximity * (isLowEnd ? 0.95 : 1.65) * motionScale;
+    const targetScale = 4.85 + proximity * 0.7;
 
     materialRef.current.opacity = THREE.MathUtils.lerp(
       materialRef.current.opacity,
@@ -158,13 +158,13 @@ function CursorGlow({
 
   return (
     <>
-      <sprite ref={spriteRef} position={[0, 0.02, -0.7]} scale={[4.7, 2.25, 1]}>
+      <sprite ref={spriteRef} position={[0, 0.02, -0.7]} scale={[4.85, 2.32, 1]}>
         <spriteMaterial
           ref={materialRef}
           map={glowTexture}
           color="#4ddbff"
           transparent
-          opacity={0.08}
+          opacity={0.12}
           depthWrite={false}
           depthTest={false}
           blending={THREE.AdditiveBlending}
@@ -175,7 +175,7 @@ function CursorGlow({
         ref={lightRef}
         position={[0.25, 0.2, 2.4]}
         color="#4ddbff"
-        intensity={0.2}
+        intensity={0.35}
         distance={6}
         decay={2}
       />
@@ -337,6 +337,8 @@ function LoadingFallback({ prefersReducedMotion }: { prefersReducedMotion: boole
 export default function Logo3D({ className = '' }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0, active: false });
+  const orientationBase = useRef<{ beta: number; gamma: number } | null>(null);
+  const orientationPermissionRequested = useRef(false);
   const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
@@ -373,13 +375,27 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     // Gyroscope: map device tilt to logo rotation
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma === null || e.beta === null) return;
-      mousePos.current.x = THREE.MathUtils.clamp(e.gamma / 45, -1, 1);
-      mousePos.current.y = THREE.MathUtils.clamp((e.beta - 45) / 45, -1, 1);
+      if (!orientationBase.current) {
+        orientationBase.current = { beta: e.beta, gamma: e.gamma };
+      }
+
+      const gammaDelta = e.gamma - orientationBase.current.gamma;
+      const betaDelta = e.beta - orientationBase.current.beta;
+
+      mousePos.current.x = THREE.MathUtils.clamp(gammaDelta / 28, -1, 1);
+      mousePos.current.y = THREE.MathUtils.clamp(-betaDelta / 28, -1, 1);
       mousePos.current.active = true;
+    };
+
+    const resetOrientationBase = () => {
+      orientationBase.current = null;
     };
 
     // iOS 13+ requires explicit permission from a user gesture; Android is automatic
     const tryGyro = () => {
+      if (orientationPermissionRequested.current) return;
+      orientationPermissionRequested.current = true;
+
       const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
       if (typeof DOE.requestPermission === 'function') {
         DOE.requestPermission()
@@ -393,6 +409,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     };
 
     window.addEventListener('touchstart', tryGyro, { once: true });
+    window.addEventListener('orientationchange', resetOrientationBase);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -400,6 +417,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
       window.removeEventListener('touchstart', tryGyro);
+      window.removeEventListener('orientationchange', resetOrientationBase);
     };
   }, [prefersReducedMotion, updatePointer]);
 
