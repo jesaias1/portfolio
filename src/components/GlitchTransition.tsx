@@ -3,6 +3,17 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
+const GLITCH_SLICES = [
+  'inset(12% 0 68% 0)',
+  'inset(28% 0 52% 0)',
+  'inset(44% 0 38% 0)',
+  'inset(8% 0 76% 0)',
+  'inset(58% 0 24% 0)',
+  'inset(72% 0 12% 0)',
+  'inset(36% 0 48% 0)',
+  'inset(18% 0 62% 0)',
+];
+
 export default function GlitchTransition() {
   const [key, setKey] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -47,7 +58,7 @@ export default function GlitchTransition() {
               initial={{ clipPath: 'inset(100% 0 0 0)', opacity: 0 }}
               animate={{ 
                 clipPath: [
-                  `inset(${Math.random() * 80}% 0 ${Math.random() * 80}% 0)`,
+                  GLITCH_SLICES[i],
                   `inset(0 0 0 0)`
                 ],
                 opacity: [0, 0.1, 0]

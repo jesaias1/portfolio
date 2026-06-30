@@ -35,16 +35,16 @@ export default function Contact() {
       });
 
       if (response.ok) {
-        toast.success('[✓] Message sent!');
+        toast.success('[ok] Message sent!');
         play('success');
         setIsSuccess(true);
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error('[✗] Error. Try again.');
+        toast.error('[error] Try again.');
         play('error');
       }
-    } catch (error) {
-      toast.error('[✗] Network error. Try again.');
+    } catch {
+      toast.error('[error] Network error. Try again.');
       play('error');
     } finally {
       setIsSubmitting(false);
@@ -69,7 +69,7 @@ export default function Contact() {
             <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
           </div>
           <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            Let's Talk
+            Let&apos;s Talk
           </h2>
           <p className="text-gray-500 font-mono text-sm">
             {'>'} init --new-project --collaborate
@@ -127,7 +127,7 @@ export default function Contact() {
                   className="text-[#4ddbff]"
                   style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.4)' }}
                 >
-                  [✓] message_sent.log — Message received!
+                  [ok] message_sent.log - Message received!
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -218,7 +218,7 @@ export default function Contact() {
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       >
-                        ⟳
+                        ...
                       </motion.span>
                       sending...
                     </span>

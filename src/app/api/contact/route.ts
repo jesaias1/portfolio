@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     return NextResponse.json(contact);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch contact data' }, { status: 500 });
   }
 }

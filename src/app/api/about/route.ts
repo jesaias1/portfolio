@@ -13,7 +13,7 @@ export async function GET() {
       ...about,
       skills: JSON.parse(about.skills),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch about data' }, { status: 500 });
   }
 }

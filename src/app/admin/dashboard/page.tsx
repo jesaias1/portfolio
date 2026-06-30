@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,7 +82,7 @@ export default function AdminDashboard() {
       setProjects(await projectsRes.json());
       setAbout(await aboutRes.json());
       setContact(await contactRes.json());
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch data');
     }
   };
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
       } else {
         toast.error('Kunne ikke slette projekt');
       }
-    } catch (error) {
+    } catch {
       toast.error('Der opstod en fejl');
     } finally {
       setIsDeleting(null);
@@ -366,9 +367,11 @@ function ProjectsTab({
                         >
                           <HiMenu className="text-xl" />
                         </div>
-                        <img
+                        <Image
                           src={project.image}
                           alt={project.title}
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all"
                         />
                         <div className="flex-1">
@@ -439,7 +442,7 @@ function AboutTab({ data, onUpdate }: { data: AboutData; onUpdate: () => void })
       } else {
         toast.error('Kunne ikke opdatere');
       }
-    } catch (error) {
+    } catch {
       toast.error('Der opstod en fejl');
     } finally {
       setIsSaving(false);
@@ -536,7 +539,7 @@ function ContactTab({ data, onUpdate }: { data: ContactData; onUpdate: () => voi
       } else {
         toast.error('Kunne ikke opdatere');
       }
-    } catch (error) {
+    } catch {
       toast.error('Der opstod en fejl');
     } finally {
       setIsSaving(false);
@@ -660,7 +663,7 @@ function ProjectModal({
       } else {
         toast.error('Kunne ikke gemme projekt');
       }
-    } catch (error) {
+    } catch {
       toast.error('Der opstod en fejl');
     } finally {
       setIsSaving(false);

@@ -19,29 +19,29 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://jesaias.dk'),
-  title: "Jesaias — Creative Developer",
-  description: "Portfolio of Jesaias — Creative Developer and Software Engineer. Full-stack web apps, real-time systems, creative tools, and more.",
+  title: "Jesaias - Creative Developer",
+  description: "Portfolio of Jesaias - Creative Developer and Software Engineer. Full-stack web apps, real-time systems, creative tools, and more.",
   keywords: ["portfolio", "web developer", "full-stack", "software engineer", "Jesaias", "creative developer", "react", "next.js"],
   authors: [{ name: "Jesaias" }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://jesaias.dk',
-    siteName: 'Jesaias — Creative Developer',
-    title: 'Jesaias — Creative Developer',
+    siteName: 'Jesaias - Creative Developer',
+    title: 'Jesaias - Creative Developer',
     description: 'Creating digital experiences that transcend boundaries. Full-stack development, software engineering, and design.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Jesaias — Creative Developer Portfolio Preview',
+        alt: 'Jesaias - Creative Developer Portfolio Preview',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Jesaias — Creative Developer',
+    title: 'Jesaias - Creative Developer',
     description: 'Creative Developer and Software Engineer. Building premium digital experiences.',
     images: ['/og-image.png'],
   },

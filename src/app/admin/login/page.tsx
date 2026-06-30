@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -31,7 +32,7 @@ export default function AdminLogin() {
         toast.success('Login vellykket!');
         router.push('/admin/dashboard');
       }
-    } catch (error) {
+    } catch {
       toast.error('Der opstod en fejl');
     } finally {
       setIsLoading(false);
@@ -91,7 +92,7 @@ export default function AdminLogin() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
                 className="w-full px-4 py-3 bg-black/40 border border-white/5 focus:border-[#4ddbff]/40 focus:outline-none transition-all font-mono text-sm"
-                placeholder="••••••••"
+                placeholder="********"
               />
             </div>
 
@@ -112,9 +113,9 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-10 text-center">
-            <a href="/" className="font-mono text-[10px] text-gray-600 hover:text-[#4ddbff] transition-colors uppercase tracking-widest group">
+            <Link href="/" className="font-mono text-[10px] text-gray-600 hover:text-[#4ddbff] transition-colors uppercase tracking-widest group">
               <span className="opacity-0 group-hover:opacity-100 transition-opacity">{'<'}</span> Exit To Terminal
-            </a>
+            </Link>
           </div>
         </div>
       </motion.div>

@@ -21,11 +21,18 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const hasVisited = localStorage.getItem('jesaias-visited');
-    if (!hasVisited) {
-      setShowSplash(true);
-    }
-    setMounted(true);
+    let cancelled = false;
+    const frame = window.requestAnimationFrame(() => {
+      if (cancelled) return;
+      const hasVisited = localStorage.getItem('jesaias-visited');
+      setShowSplash(!hasVisited);
+      setMounted(true);
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   const handleSplashComplete = () => {
@@ -153,7 +160,7 @@ export default function Home() {
                     </div>
 
                     <span className="font-mono text-[10px] text-gray-700">
-                      © {new Date().getFullYear()} jesaias.dk — all rights reserved
+                      (c) {new Date().getFullYear()} jesaias.dk - all rights reserved
                     </span>
 
                     <div className="flex items-center gap-3">
@@ -164,7 +171,7 @@ export default function Home() {
                         href="/admin/login" 
                         className="opacity-15 hover:opacity-100 transition-opacity text-xs"
                       >
-                        •
+                        .
                       </a>
                     </div>
                   </div>

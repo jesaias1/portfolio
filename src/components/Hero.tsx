@@ -154,7 +154,7 @@ export default function Hero() {
               style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}
             >
               {subtitleText}
-              {subtitleVisible && <span className="cursor-blink ml-0.5">▌</span>}
+              {subtitleVisible && <span className="cursor-blink ml-0.5">|</span>}
             </span>
           </motion.div>
 

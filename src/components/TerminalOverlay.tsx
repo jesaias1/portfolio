@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useSound } from '@/hooks/use-sound';
-import { signIn } from 'next-auth/react';
 
 interface TerminalOverlayProps {
   isOpen: boolean;
@@ -52,7 +51,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         window.dispatchEvent(new CustomEvent('glitch-trigger'));
         setTimeout(() => {
           onClose();
-          document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
         }, 400); // Sync with cover time
         break;
       case 'social':
@@ -64,29 +63,6 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
       case 'exit':
         setHistory(prev => [...prev, 'SHUTDOWN INITIATED...']);
         setTimeout(onClose, 500);
-        break;
-      case '/admin miebs112':
-      case 'admin miebs112':
-        setHistory(prev => [...prev, 'AUTHENTICATING...', 'ACCESSING CORE SYSTEM...']);
-        try {
-          const result = await signIn('credentials', {
-            email: 'lin4s@live.dk',
-            password: 'miebs112',
-            redirect: false,
-          });
-
-          if (result?.error) {
-            setHistory(prev => [...prev, 'ERR: Authentication failed. Invalid credentials.']);
-          } else {
-            setHistory(prev => [...prev, 'AUTH GRANTED.', 'REDIRECTING TO ADMIN DASHBOARD...']);
-            window.dispatchEvent(new CustomEvent('glitch-trigger'));
-            setTimeout(() => {
-              window.location.href = '/admin/dashboard';
-            }, 400);
-          }
-        } catch (error) {
-          setHistory(prev => [...prev, 'ERR: Connection to auth server failed.']);
-        }
         break;
       case 'root':
       case 'admin':

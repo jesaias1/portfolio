@@ -34,7 +34,7 @@ const TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '[init] Loading modules...', type: 'output', delay: 200 },
   { text: '[init] Compiling components...', type: 'output', delay: 300 },
   { text: '[init] Connecting to database...', type: 'output', delay: 250 },
-  { text: '[✓] All systems operational', type: 'success', delay: 400 },
+  { text: '[ok] All systems operational', type: 'success', delay: 400 },
   { text: '', type: 'blank', delay: 200 },
   { text: 'LOGO', type: 'ascii', delay: 100 },
   { text: '', type: 'blank', delay: 300 },
@@ -44,7 +44,7 @@ const TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '', type: 'blank', delay: 100 },
   { text: 'PROGRESS', type: 'progress', delay: 0 },
   { text: '', type: 'blank', delay: 200 },
-  { text: '[✓] Portfolio ready. Launching...', type: 'success', delay: 500 },
+  { text: '[ok] Portfolio ready. Launching...', type: 'success', delay: 500 },
 ];
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
@@ -59,7 +59,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   const processLine = useCallback((lineIndex: number) => {
     if (lineIndex >= TERMINAL_SEQUENCE.length) {
-      // All lines done — start exit
+      // All lines done; start exit
       setTimeout(() => {
         setIsExiting(true);
         setTimeout(() => {
@@ -150,7 +150,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     if (line.type === 'progress') {
       if (!showProgress) return null;
       const filled = Math.floor(progressValue / 4);
-      const bar = '█'.repeat(filled) + '░'.repeat(25 - filled);
+      const bar = '#'.repeat(filled) + '.'.repeat(25 - filled);
       return (
         <div key={index} className="font-mono text-sm text-gray-400">
           <span className="text-[#4ddbff]">[</span>
@@ -165,7 +165,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       return (
         <div key={index} className="font-mono text-sm">
           <span className="text-gray-500">{typedText}</span>
-          <span className="cursor-blink text-[#4ddbff] text-lg leading-none">▌</span>
+          <span className="cursor-blink text-[#4ddbff] text-lg leading-none">|</span>
         </div>
       );
     }
@@ -226,7 +226,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
             </div>
             <span className="text-xs text-gray-500 font-mono ml-2">
-              jesaias.dk — terminal
+              jesaias.dk - terminal
             </span>
             <span className="ml-auto text-[10px] text-gray-700 font-mono">
               bash
@@ -240,7 +240,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           >
             {/* Initial prompt */}
             <div className="font-mono text-sm text-gray-600 mb-2">
-              jesaias.dk — terminal v2.0
+              jesaias.dk - terminal v2.0
             </div>
             <div className="font-mono text-sm text-gray-600 mb-4">
               Type &apos;help&apos; for available commands.
@@ -252,7 +252,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             {visibleLines === 0 && (
               <div className="font-mono text-sm">
                 <span className="text-gray-500">jesaias@dk:~$ </span>
-                <span className="cursor-blink text-[#4ddbff] text-lg leading-none">▌</span>
+                <span className="cursor-blink text-[#4ddbff] text-lg leading-none">|</span>
               </div>
             )}
           </div>
@@ -269,7 +269,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           }}
           className="absolute bottom-6 right-6 font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors z-10 cursor-pointer"
         >
-          skip →
+          {'skip ->'}
         </button>
 
         {/* Corner decoration */}

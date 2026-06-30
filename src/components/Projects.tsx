@@ -1,41 +1,31 @@
 'use client';
 
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
-import { HiExternalLink, HiCode, HiX } from 'react-icons/hi';
+import { HiExternalLink, HiCode } from 'react-icons/hi';
 import Parallax from './Parallax';
 import { useSound } from '@/hooks/use-sound';
 import RevealText from './RevealText';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  tags: string[];
-  link?: string;
-  github?: string;
-  featured: boolean;
-  longDesc?: string;
-  video?: string | null;
-}
+import { fallbackProjects, type PortfolioProject } from '@/data/projects';
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
 
   useEffect(() => {
     fetch('/api/projects')
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setProjects(data); })
-      .catch(console.error);
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch projects');
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setProjects(data);
+      })
+      .catch(() => {
+        setProjects(fallbackProjects);
+      });
   }, []);
 
   return (
@@ -80,13 +70,7 @@ export default function Projects() {
           {/* Empty state */}
           {projects.length === 0 && (
             <div className="text-center py-20">
-              <motion.div
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="font-mono text-sm text-gray-600"
-              >
-                Loading projects...
-              </motion.div>
+              <div className="font-mono text-sm text-gray-600">Projects unavailable.</div>
             </div>
           )}
         </div>
@@ -109,7 +93,7 @@ function ProjectRow({
   onClick,
   isReversed
 }: {
-  project: Project;
+  project: PortfolioProject;
   index: number;
   onClick: () => void;
   isReversed: boolean;
@@ -261,7 +245,7 @@ function ProjectRow({
   );
 }
 
-function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+function ProjectModal({ project, onClose }: { project: PortfolioProject; onClose: () => void }) {
   const { play } = useSound();
   
   useEffect(() => {
