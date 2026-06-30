@@ -15,7 +15,7 @@ const BASE_Y_ROTATION = Math.PI / 2;
 
 useGLTF.preload(MODEL_PATH);
 
-type MotionInput = React.RefObject<{ x: number; y: number }>;
+type MotionInput = React.RefObject<{ x: number; y: number; active: boolean }>;
 
 function useInteractionProfile() {
   const [profile, setProfile] = useState(() => {
@@ -62,7 +62,7 @@ function useInteractionProfile() {
 function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
   return (
     <meshPhysicalMaterial
-      color={isLowEnd ? '#d8f7ff' : '#dff7fb'}
+      color={isLowEnd ? '#c9f7ff' : '#d2fbff'}
       roughness={isLowEnd ? 0.18 : 0.13}
       metalness={0}
       clearcoat={1}
@@ -74,12 +74,112 @@ function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
       ior={1.44}
       reflectivity={0.58}
       specularIntensity={0.85}
-      specularColor="#f4fdff"
+      specularColor="#dffbff"
       envMapIntensity={isLowEnd ? 1.55 : 2}
-      attenuationColor="#d9f8ff"
+      attenuationColor="#a8f2ff"
       attenuationDistance={2.35}
       side={THREE.FrontSide}
     />
+  );
+}
+
+function CursorGlow({
+  mousePos,
+  isLowEnd,
+  prefersReducedMotion,
+}: {
+  mousePos: MotionInput;
+  isLowEnd: boolean;
+  prefersReducedMotion: boolean;
+}) {
+  const spriteRef = useRef<THREE.Sprite>(null);
+  const materialRef = useRef<THREE.SpriteMaterial>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
+
+  const glowTexture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+
+    if (context) {
+      const gradient = context.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gradient.addColorStop(0, 'rgba(77, 219, 255, 0.95)');
+      gradient.addColorStop(0.18, 'rgba(77, 219, 255, 0.38)');
+      gradient.addColorStop(0.55, 'rgba(77, 219, 255, 0.12)');
+      gradient.addColorStop(1, 'rgba(77, 219, 255, 0)');
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 256, 256);
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  }, []);
+
+  useEffect(() => {
+    return () => glowTexture.dispose();
+  }, [glowTexture]);
+
+  useFrame(() => {
+    if (!spriteRef.current || !materialRef.current || !lightRef.current) return;
+
+    const distance = mousePos.current.active
+      ? Math.hypot(mousePos.current.x * 0.85, mousePos.current.y * 1.15)
+      : 1.4;
+    const proximity = THREE.MathUtils.clamp(1 - distance / 1.15, 0, 1);
+    const motionScale = prefersReducedMotion ? 0 : 1;
+
+    const targetOpacity = 0.08 + proximity * (isLowEnd ? 0.1 : 0.2) * motionScale;
+    const targetLight = 0.2 + proximity * (isLowEnd ? 0.7 : 1.25) * motionScale;
+    const targetScale = 4.7 + proximity * 0.55;
+
+    materialRef.current.opacity = THREE.MathUtils.lerp(
+      materialRef.current.opacity,
+      targetOpacity,
+      0.08
+    );
+    lightRef.current.intensity = THREE.MathUtils.lerp(
+      lightRef.current.intensity,
+      targetLight,
+      0.08
+    );
+    spriteRef.current.scale.x = THREE.MathUtils.lerp(
+      spriteRef.current.scale.x,
+      targetScale,
+      0.08
+    );
+    spriteRef.current.scale.y = THREE.MathUtils.lerp(
+      spriteRef.current.scale.y,
+      targetScale * 0.48,
+      0.08
+    );
+  });
+
+  return (
+    <>
+      <sprite ref={spriteRef} position={[0, 0.02, -0.7]} scale={[4.7, 2.25, 1]}>
+        <spriteMaterial
+          ref={materialRef}
+          map={glowTexture}
+          color="#4ddbff"
+          transparent
+          opacity={0.08}
+          depthWrite={false}
+          depthTest={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </sprite>
+      <pointLight
+        ref={lightRef}
+        position={[0.25, 0.2, 2.4]}
+        color="#4ddbff"
+        intensity={0.2}
+        distance={6}
+        decay={2}
+      />
+    </>
   );
 }
 
@@ -201,6 +301,11 @@ function LogoScene({
       <pointLight position={[0, -3, 2]} intensity={0.18} color="#80eaff" distance={10} />
 
       <SceneEnvironment isLowEnd={isLowEnd} />
+      <CursorGlow
+        mousePos={mousePos}
+        isLowEnd={isLowEnd}
+        prefersReducedMotion={prefersReducedMotion}
+      />
 
       <LogoModel
         mousePos={mousePos}
@@ -231,7 +336,7 @@ function LoadingFallback({ prefersReducedMotion }: { prefersReducedMotion: boole
 
 export default function Logo3D({ className = '' }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: 0, y: 0 });
+  const mousePos = useRef({ x: 0, y: 0, active: false });
   const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
@@ -247,6 +352,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
       -1,
       1
     );
+    mousePos.current.active = true;
   }, []);
 
   useEffect(() => {
@@ -256,8 +362,12 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches[0]) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
     };
+    const handleMouseLeave = () => {
+      mousePos.current.active = false;
+    };
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseout', handleMouseLeave);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     // Gyroscope: map device tilt to logo rotation
@@ -265,6 +375,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
       if (e.gamma === null || e.beta === null) return;
       mousePos.current.x = THREE.MathUtils.clamp(e.gamma / 45, -1, 1);
       mousePos.current.y = THREE.MathUtils.clamp((e.beta - 45) / 45, -1, 1);
+      mousePos.current.active = true;
     };
 
     // iOS 13+ requires explicit permission from a user gesture; Android is automatic
@@ -285,6 +396,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseout', handleMouseLeave);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
       window.removeEventListener('touchstart', tryGyro);
