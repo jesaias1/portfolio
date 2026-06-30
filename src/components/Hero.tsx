@@ -60,8 +60,6 @@ export default function Hero() {
   
   const logoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const logoScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85]);
-  const logoY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-
   const fullSubtitle = '> creative_developer --fullstack --systems --design';
 
   // Global keyboard shortcut
@@ -108,10 +106,15 @@ export default function Hero() {
         id="home" 
         className="h-screen flex items-center justify-center relative"
       >
-        {/* 3D Logo — renders as fullscreen fixed canvas, controlled by scroll opacity */}
+        {/* 3D Logo — fills the hero without a fixed canvas layer, avoiding scroll compositor glitches */}
         <motion.div
-          style={{ opacity: logoOpacity, scale: logoScale }}
-          className="fixed inset-0 z-20 pointer-events-none"
+          style={{
+            opacity: logoOpacity,
+            scale: logoScale,
+            willChange: 'opacity, transform',
+            backfaceVisibility: 'hidden',
+          }}
+          className="absolute inset-0 z-20 pointer-events-none"
         >
           <Logo3D />
         </motion.div>

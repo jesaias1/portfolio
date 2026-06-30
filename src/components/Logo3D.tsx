@@ -1,28 +1,17 @@
 'use client';
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Clone,
   Environment,
   Float,
   useGLTF,
-  useTexture,
 } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { Leva, useControls } from 'leva';
 import * as THREE from 'three';
 
 const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
-const ENABLE_LEVA_PANEL = false;
-
-
-const BLOOM_DEFAULTS = {
-  intensity: 0.6,
-  luminanceThreshold: 0.2,
-  luminanceSmoothing: 0.9,
-};
 
 useGLTF.preload(MODEL_PATH);
 
@@ -31,7 +20,7 @@ type MotionInput = React.RefObject<{ x: number; y: number }>;
 function useInteractionProfile() {
   const [profile, setProfile] = useState(() => {
     if (typeof window === 'undefined') {
-      return { isLowEnd: false, isMobile: false, prefersReducedMotion: false, showLeva: false };
+      return { isLowEnd: false, isMobile: false, prefersReducedMotion: false };
     }
     const isMobileUA = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isMobileSize = window.innerWidth <= 768;
@@ -41,7 +30,6 @@ function useInteractionProfile() {
       isLowEnd: isMobile || hw <= 4,
       isMobile,
       prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      showLeva: false,
     };
   });
 
@@ -53,12 +41,10 @@ function useInteractionProfile() {
     const update = () => {
       const isMobile = isMobileUA || mobileQuery.matches;
       const hw = navigator.hardwareConcurrency || 8;
-      const params = new URLSearchParams(window.location.search);
       setProfile({
         isLowEnd: isMobile || hw <= 4,
         isMobile,
         prefersReducedMotion: motionQuery.matches,
-        showLeva: ENABLE_LEVA_PANEL && process.env.NODE_ENV === 'development' && params.has('debug'),
       });
     };
 
@@ -74,38 +60,24 @@ function useInteractionProfile() {
 }
 
 function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
-  if (isLowEnd) {
-    return (
-      <meshPhysicalMaterial
-        color="#4ec8f0"
-        roughness={0.1}
-        metalness={0}
-        clearcoat={1}
-        clearcoatRoughness={0.08}
-        transmission={0.25}
-        thickness={1.2}
-        ior={1.45}
-        envMapIntensity={2}
-        attenuationColor="#1878b8"
-        attenuationDistance={4}
-        side={THREE.FrontSide}
-      />
-    );
-  }
-
   return (
     <meshPhysicalMaterial
-      color="#4ec8f0"
-      roughness={0}
+      color={isLowEnd ? '#d8f7ff' : '#dff7fb'}
+      roughness={isLowEnd ? 0.18 : 0.13}
       metalness={0}
       clearcoat={1}
-      clearcoatRoughness={0}
-      transmission={0.15}
-      thickness={1.2}
-      ior={1.5}
-      envMapIntensity={5}
-      attenuationColor="#1070c0"
-      attenuationDistance={3}
+      clearcoatRoughness={isLowEnd ? 0.08 : 0.05}
+      transmission={isLowEnd ? 0.52 : 0.58}
+      transparent
+      opacity={0.94}
+      thickness={isLowEnd ? 0.72 : 0.86}
+      ior={1.44}
+      reflectivity={0.58}
+      specularIntensity={0.85}
+      specularColor="#f4fdff"
+      envMapIntensity={isLowEnd ? 1.55 : 2}
+      attenuationColor="#d9f8ff"
+      attenuationDistance={2.35}
       side={THREE.FrontSide}
     />
   );
@@ -125,14 +97,29 @@ function LogoModel({
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(MODEL_PATH);
 
+  const preparedScene = useMemo(() => {
+    const clone = scene.clone(true);
+
+    clone.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+
+      object.geometry = object.geometry.clone();
+      object.geometry.computeVertexNormals();
+      object.castShadow = true;
+      object.receiveShadow = true;
+    });
+
+    return clone;
+  }, [scene]);
+
   const { center, scaleFactor } = useMemo(() => {
-    const box = new THREE.Box3().setFromObject(scene);
+    const box = new THREE.Box3().setFromObject(preparedScene);
     const size = box.getSize(new THREE.Vector3());
     const c = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
     // Smaller scale on mobile so logo fits within narrow viewports
-    return { center: c, scaleFactor: (isMobile ? 2.8 : 4.2) / maxDim };
-  }, [scene, isMobile]);
+    return { center: c, scaleFactor: (isMobile ? 2.15 : 3.2) / maxDim };
+  }, [preparedScene, isMobile]);
 
   useFrame(() => {
     if (!groupRef.current || prefersReducedMotion) return;
@@ -157,12 +144,12 @@ function LogoModel({
         scale={scaleFactor}
         position={[
           -center.x * scaleFactor,
-          (-center.y * scaleFactor) + 0.25,
+          (-center.y * scaleFactor) + (isMobile ? 0.08 : 0),
           -center.z * scaleFactor,
         ]}
       >
         <Clone
-          object={scene}
+          object={preparedScene}
           deep="geometriesOnly"
           castShadow
           receiveShadow
@@ -180,66 +167,18 @@ function LogoModel({
 
   return (
     <Float
-      speed={1.5}
-      rotationIntensity={isLowEnd ? 0.2 : 0.4}
-      floatIntensity={isLowEnd ? 0.3 : 0.6}
-      floatingRange={isLowEnd ? [-0.015, 0.015] : [-0.03, 0.03]}
+      speed={1.05}
+      rotationIntensity={isLowEnd ? 0.1 : 0.18}
+      floatIntensity={isLowEnd ? 0.14 : 0.28}
+      floatingRange={isLowEnd ? [-0.008, 0.008] : [-0.018, 0.018]}
     >
       {model}
     </Float>
   );
 }
 
-function PostProcessing({
-  isLowEnd,
-  bloomProps,
-}: {
-  isLowEnd: boolean;
-  bloomProps: typeof BLOOM_DEFAULTS;
-}) {
-  if (isLowEnd) return null;
-
-  return (
-    <EffectComposer multisampling={0} enableNormalPass={false} autoClear={false}>
-      <Bloom
-        intensity={bloomProps.intensity}
-        luminanceThreshold={bloomProps.luminanceThreshold}
-        luminanceSmoothing={bloomProps.luminanceSmoothing}
-        mipmapBlur
-      />
-    </EffectComposer>
-  );
-}
-
-// PMREM-processes the PNG for correct IBL specular reflections.
-// Clones the texture first so the mapping change doesn't affect the background sphere.
-function ImageEnvironment() {
-  const { scene, gl } = useThree();
-  const texture = useTexture('/bg-environment.png');
-
-  useEffect(() => {
-    const pmrem = new THREE.PMREMGenerator(gl);
-    pmrem.compileEquirectangularShader();
-    const clone = texture.clone();
-    clone.mapping = THREE.EquirectangularReflectionMapping;
-    clone.needsUpdate = true;
-    const envMap = pmrem.fromEquirectangular(clone).texture;
-    scene.environment = envMap;
-    pmrem.dispose();
-    clone.dispose();
-    return () => {
-      scene.environment = null;
-      envMap.dispose();
-    };
-  }, [texture, scene, gl]);
-
-  return null;
-}
-
-
 function SceneEnvironment({ isLowEnd }: { isLowEnd: boolean }) {
-  if (isLowEnd) return <Environment preset="night" environmentIntensity={1.5} />;
-  return <ImageEnvironment />;
+  return <Environment preset="studio" environmentIntensity={isLowEnd ? 0.95 : 1.2} />;
 }
 
 function LogoScene({
@@ -247,21 +186,19 @@ function LogoScene({
   isLowEnd,
   isMobile,
   prefersReducedMotion,
-  bloomProps = BLOOM_DEFAULTS,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
-  bloomProps?: typeof BLOOM_DEFAULTS;
 }) {
   return (
     <>
-      <ambientLight intensity={0.3} color="#cceeff" />
-      <directionalLight position={[5, 5, 5]} intensity={2.2} color="#dffbff" />
-      <directionalLight position={[-3, 2, 4]} intensity={0.8} color="#ffffff" />
-      <pointLight position={[0, 2, 3]} intensity={1.8} color="#a8e8ff" distance={12} />
-      <pointLight position={[0, -3, 2]} intensity={0.5} color="#0d6b8a" distance={10} />
+      <ambientLight intensity={0.12} color="#f6feff" />
+      <directionalLight position={[4, 5, 5]} intensity={0.72} color="#ffffff" />
+      <directionalLight position={[-4, 2, 3]} intensity={0.28} color="#d8f7ff" />
+      <pointLight position={[0, 2.5, 3]} intensity={0.52} color="#ffffff" distance={12} />
+      <pointLight position={[0, -3, 2]} intensity={0.18} color="#80eaff" distance={10} />
 
       <SceneEnvironment isLowEnd={isLowEnd} />
 
@@ -271,7 +208,6 @@ function LogoScene({
         isMobile={isMobile}
         prefersReducedMotion={prefersReducedMotion}
       />
-      <PostProcessing isLowEnd={isLowEnd} bloomProps={bloomProps} />
     </>
   );
 }
@@ -296,19 +232,7 @@ function LoadingFallback({ prefersReducedMotion }: { prefersReducedMotion: boole
 export default function Logo3D({ className = '' }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
-  const { isLowEnd, isMobile, prefersReducedMotion, showLeva } = useInteractionProfile();
-
-  const bloomControls = useControls('Bloom', {
-    intensity: { value: BLOOM_DEFAULTS.intensity, min: 0, max: 3, step: 0.05 },
-    luminanceThreshold: {
-      value: BLOOM_DEFAULTS.luminanceThreshold,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-  });
-
-  const bloomProps = { ...BLOOM_DEFAULTS, ...bloomControls };
+  const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
     if (!containerRef.current) return;
@@ -371,18 +295,29 @@ export default function Logo3D({ className = '' }: { className?: string }) {
     <div
       ref={containerRef}
       className={className}
-      style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 20 }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 20,
+        contain: 'layout paint size',
+        willChange: 'transform, opacity',
+      }}
     >
-      <Leva hidden={!showLeva} collapsed />
       <Canvas
-        camera={{ position: [0, 0, 5.5], fov: 45 }}
-        dpr={isMobile ? 1 : [1, 1.5]}
+        camera={{ position: [0, 0, 5.8], fov: 42 }}
+        dpr={isMobile ? [1.25, 1.5] : [1.5, 2]}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: isMobile ? 'low-power' : 'high-performance',
         }}
-        style={{ background: 'transparent', mixBlendMode: 'screen', pointerEvents: 'none' }}
+        onCreated={({ gl }) => {
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.08;
+        }}
+        style={{ background: 'transparent', pointerEvents: 'none' }}
       >
         <Suspense fallback={<LoadingFallback prefersReducedMotion={prefersReducedMotion} />}>
           <LogoScene
@@ -390,7 +325,6 @@ export default function Logo3D({ className = '' }: { className?: string }) {
             isLowEnd={isLowEnd}
             isMobile={isMobile}
             prefersReducedMotion={prefersReducedMotion}
-            bloomProps={bloomProps}
           />
         </Suspense>
       </Canvas>
