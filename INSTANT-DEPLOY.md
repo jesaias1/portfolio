@@ -65,7 +65,7 @@ Then redeploy!
 
 - **Portfolio:** `https://your-project.vercel.app`
 - **Admin:** `https://your-project.vercel.app/admin/login`
-- **Login:** `lin4s@live.dk` / `miebs112`
+- **Login:** use the values configured in `ADMIN_EMAIL` and `ADMIN_PASSWORD`
 
 ---
 
@@ -75,11 +75,11 @@ Set these in Vercel Dashboard → Settings → Environment Variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `DATABASE_URL` | `file:./dev.db` | SQLite database (for testing) |
+| `DATABASE_URL` | PostgreSQL connection string | Persistent production database |
 | `NEXTAUTH_URL` | `https://your-project.vercel.app` | Your Vercel URL |
 | `NEXTAUTH_SECRET` | Generated 32-char string | Auth secret key |
-| `ADMIN_EMAIL` | `lin4s@live.dk` | Your admin email |
-| `ADMIN_PASSWORD` | `miebs112` | Your admin password |
+| `ADMIN_EMAIL` | `your-admin-email@example.com` | Your admin email |
+| `ADMIN_PASSWORD` | A long unique password | Your admin password |
 
 ---
 
@@ -98,7 +98,7 @@ git push
 
 ## 🗄️ Using a Real Database (Production)
 
-SQLite (`file:./dev.db`) works for testing but isn't persistent on Vercel. For production:
+Use a persistent PostgreSQL database in production:
 
 ### Recommended: Vercel Postgres
 

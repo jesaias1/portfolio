@@ -104,9 +104,9 @@ The script will ask you to login:
    |------|-------|
    | `NEXTAUTH_SECRET` | [Click here to generate →](https://generate-secret.vercel.app/32) Copy & paste the result |
    | `NEXTAUTH_URL` | `https://your-project-name.vercel.app` (use YOUR actual URL from step 4) |
-   | `ADMIN_EMAIL` | `lin4s@live.dk` |
-   | `ADMIN_PASSWORD` | `miebs112` |
-   | `DATABASE_URL` | `file:./dev.db` |
+   | `ADMIN_EMAIL` | `your-admin-email@example.com` |
+   | `ADMIN_PASSWORD` | A long unique password |
+   | `DATABASE_URL` | PostgreSQL connection string |
 
 6. **Click "Save" after each one**
 
@@ -127,8 +127,8 @@ Your portfolio is now online at:
 - **Admin Panel:** `https://your-project-name.vercel.app/admin/login`
 
 **Login credentials:**
-- Email: `lin4s@live.dk`
-- Password: `miebs112`
+- Email: the value configured in `ADMIN_EMAIL`
+- Password: the value configured in `ADMIN_PASSWORD`
 
 ---
 

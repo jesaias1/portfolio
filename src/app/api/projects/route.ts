@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { fallbackProjects } from '@/data/projects';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -25,8 +26,19 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json(formattedProjects);
+    const locallyAddedProjects = fallbackProjects.filter(
+      (fallbackProject) =>
+        !formattedProjects.some(
+          (project) =>
+            project.id === fallbackProject.id ||
+            project.title.toLowerCase() === fallbackProject.title.toLowerCase()
+        )
+    );
+
+    return NextResponse.json([...locallyAddedProjects, ...formattedProjects]);
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
+    // The public portfolio remains usable in local previews and during a
+    // temporary database outage. This catalog includes new projects such as ORVO.
+    return NextResponse.json(fallbackProjects);
   }
 }

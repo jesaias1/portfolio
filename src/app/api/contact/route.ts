@@ -19,26 +19,32 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, message } = body;
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const email = typeof body.email === 'string' ? body.email.trim() : '';
+    const message = typeof body.message === 'string' ? body.message.trim() : '';
 
-    // Validate
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    if (
+      !name ||
+      !email ||
+      !message ||
+      name.length > 100 ||
+      email.length > 254 ||
+      message.length > 5000 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      return NextResponse.json({ error: 'Invalid contact form submission' }, { status: 400 });
     }
 
-    console.log('--- NEW CONTACT FORM SUBMISSION ---');
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Message:', message);
-    console.log('-----------------------------------');
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+    const contactToEmail = process.env.CONTACT_TO_EMAIL;
 
-    // Check for environment variables
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    if (emailUser && emailPass && contactToEmail) {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user: emailUser,
+          pass: emailPass,
         },
       });
 
@@ -46,8 +52,8 @@ export async function POST(request: Request) {
         s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: 'sunglazzez@gmail.com',
+        from: emailUser,
+        to: contactToEmail,
         replyTo: email,
         subject: `New Message from Portfolio: ${name}`,
         text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
@@ -63,15 +69,15 @@ export async function POST(request: Request) {
       };
 
       await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully via Nodemailer');
       return NextResponse.json({ success: true, message: 'Message sent via email' });
-    } else {
-      console.log('Email credentials missing (EMAIL_USER/EMAIL_PASS). Logged to console only.');
-      return NextResponse.json({ success: true, message: 'Message logged (email not configured)' });
     }
 
+    return NextResponse.json(
+      { error: 'Contact form is temporarily unavailable' },
+      { status: 503 }
+    );
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('Contact form request failed', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }

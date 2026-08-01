@@ -1,185 +1,176 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
-import Hero from '@/components/Hero';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import About from '@/components/About';
-import Projects from '@/components/Projects';
 import Contact from '@/components/Contact';
 import CustomCursor from '@/components/CustomCursor';
-import ScrollProgress from '@/components/ScrollProgress';
-import SplashScreen from '@/components/SplashScreen';
 import GlitchFlash from '@/components/GlitchFlash';
+import Hero from '@/components/Hero';
+import Navigation from '@/components/Navigation';
+import Projects from '@/components/Projects';
+import ScrollProgress from '@/components/ScrollProgress';
 import ScrollVideo from '@/components/ScrollVideo';
 import SectionDivider from '@/components/SectionDivider';
 import ServicesSection from '@/components/ServicesSection';
+import SplashScreen from '@/components/SplashScreen';
 import StatsSection from '@/components/StatsSection';
-import Image from 'next/image';
+
+const sitemap = ['services', 'projects', 'about', 'contact'];
+
+const socialLinks = [
+  { label: 'github', href: 'https://github.com/jesaias1' },
+  { label: 'linkedin', href: 'https://www.linkedin.com/in/jesaias/' },
+  { label: 'instagram', href: 'https://www.instagram.com/linasjesaias/' },
+];
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
-      if (cancelled) return;
-      const hasVisited = localStorage.getItem('jesaias-visited');
-      setShowSplash(!hasVisited);
-      setMounted(true);
+      setShowSplash(!window.localStorage.getItem('jesaias-visited'));
+      setIsReady(true);
     });
 
-    return () => {
-      cancelled = true;
-      window.cancelAnimationFrame(frame);
-    };
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
-  const handleSplashComplete = () => {
-    localStorage.setItem('jesaias-visited', 'true');
+  useEffect(() => {
+    document.body.style.overflow = showSplash ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showSplash]);
+
+  const completeSplash = () => {
+    window.localStorage.setItem('jesaias-visited', 'true');
     setShowSplash(false);
   };
 
-  useEffect(() => {
-    if (showSplash) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [showSplash]);
-
   return (
     <>
-      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-      
-      {(!showSplash && mounted) && (
-          <main className="relative">
-            <ScrollVideo />
-            <CustomCursor />
-            <ScrollProgress />
-            <GlitchFlash />
-            <Navigation />
-            <Hero />
-            <SectionDivider />
-            <ServicesSection />
-            <SectionDivider />
-            <Projects />
-            <SectionDivider />
-            <StatsSection />
-            <SectionDivider />
-            <About />
-            <SectionDivider />
-            <Contact />
-            
-            {/* Footer — premium terminal style */}
-            <footer className="relative py-10 md:py-16 border-t border-white/5">
-              {/* Top glow line */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/30 to-transparent" />
-              
-              <div className="max-w-6xl mx-auto px-6">
-                {/* Upper footer */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8 md:mb-12">
-                  {/* Branding */}
-                  <div className="space-y-4">
-                    <Image
-                      src="/logo.png"
-                      alt="Jesaias"
-                      width={100}
-                      height={35}
-                      className="h-6 w-auto opacity-60"
-                    />
-                    <p className="font-mono text-xs text-gray-600 leading-relaxed max-w-xs">
-                      Creative developer building digital experiences at the intersection of code, creativity, and design.
-                    </p>
-                  </div>
+      {showSplash && <SplashScreen onComplete={completeSplash} />}
 
-                  {/* Navigation */}
-                  <div className="space-y-3">
-                    <span className="font-mono text-[10px] text-[#4ddbff]/50 tracking-widest uppercase">Sitemap</span>
-                    <div className="grid grid-cols-2 gap-2">
-                      {['services', 'projects', 'about', 'contact'].map(item => (
-                        <a
-                          key={item}
-                          href={`#${item}`}
-                          className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                        >
-                          <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
-                          {item}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
+      {!showSplash && isReady && (
+        <main className="relative">
+          <ScrollVideo />
+          <CustomCursor />
+          <ScrollProgress />
+          <GlitchFlash />
+          <Navigation />
+          <Hero />
 
-                  {/* Social & Status */}
-                  <div className="space-y-3">
-                    <span className="font-mono text-[10px] text-[#4ddbff]/50 tracking-widest uppercase">Connect</span>
-                    <div className="flex flex-col gap-2">
-                      <a
-                        href="https://github.com/jesaias1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                      >
-                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
-                        github
-                      </a>
-                      <a
-                        href="https://www.linkedin.com/in/jesaias/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                      >
-                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
-                        linkedin
-                      </a>
-                      <a
-                        href="https://www.instagram.com/linasjesaias/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors"
-                      >
-                        <span className="text-[#4ddbff]/30 mr-1">{'>'}</span>
-                        instagram
-                      </a>
-                    </div>
-                  </div>
-                </div>
+          <SectionDivider />
+          <ServicesSection />
+          <SectionDivider />
+          <Projects />
+          <SectionDivider />
+          <StatsSection />
+          <SectionDivider />
+          <About />
+          <SectionDivider />
+          <Contact />
 
-                {/* Bottom bar */}
-                <div className="border-t border-white/5 pt-6">
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      {/* Heartbeat status dot */}
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ddbff] opacity-50" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4ddbff]" />
-                      </span>
-                      <span className="font-mono text-[10px] text-gray-700 tracking-wider">
-                        system_status: online
-                      </span>
-                    </div>
-
-                    <span className="font-mono text-[10px] text-gray-700">
-                      (c) {new Date().getFullYear()} jesaias.dk - all rights reserved
-                    </span>
-
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#4ddbff]/15 font-mono text-[10px]">
-                        process exited with code 0
-                      </span>
-                      <a 
-                        href="/admin/login" 
-                        className="opacity-15 hover:opacity-100 transition-opacity text-xs"
-                      >
-                        .
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </footer>
-          </main>
+          <Footer />
+        </main>
       )}
     </>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="relative border-t border-white/5 py-10 md:py-16">
+      <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/30 to-transparent" />
+
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-8 grid grid-cols-1 gap-8 md:mb-12 md:grid-cols-3 md:gap-12">
+          <div className="space-y-4">
+            <Image
+              src="/logo.png"
+              alt="Jesaias"
+              width={100}
+              height={35}
+              className="h-6 w-auto opacity-60"
+            />
+            <p className="max-w-xs font-mono text-xs leading-relaxed text-gray-600">
+              Creative developer building digital experiences at the intersection of code,
+              creativity, and design.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#4ddbff]/50">
+              Sitemap
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {sitemap.map((item) => (
+                <a
+                  key={item}
+                  href={`#${item}`}
+                  className="font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
+                >
+                  <span className="mr-1 text-[#4ddbff]/30">&gt;</span>
+                  {item}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#4ddbff]/50">
+              Connect
+            </span>
+            <div className="flex flex-col gap-2">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
+                >
+                  <span className="mr-1 text-[#4ddbff]/30">&gt;</span>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-white/5 pt-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ddbff] opacity-50" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ddbff]" />
+              </span>
+              <span className="font-mono text-[10px] tracking-wider text-gray-700">
+                system_status: online
+              </span>
+            </div>
+
+            <span className="font-mono text-[10px] text-gray-700">
+              (c) {new Date().getFullYear()} jesaias.dk - all rights reserved
+            </span>
+
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-[10px] text-[#4ddbff]/15">
+                process exited with code 0
+              </span>
+              <a
+                href="/admin/login"
+                aria-label="Open portfolio editor"
+                className="text-xs opacity-15 transition-opacity hover:opacity-100"
+              >
+                .
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }

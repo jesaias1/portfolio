@@ -59,7 +59,6 @@ export default function Hero() {
   });
   
   const logoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const logoScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85]);
   const fullSubtitle = '> creative_developer --fullstack --systems --design';
 
   // Global keyboard shortcut
@@ -110,9 +109,7 @@ export default function Hero() {
         <motion.div
           style={{
             opacity: logoOpacity,
-            scale: logoScale,
-            willChange: 'opacity, transform',
-            backfaceVisibility: 'hidden',
+            willChange: 'opacity',
           }}
           className="absolute inset-0 z-20 pointer-events-none"
         >

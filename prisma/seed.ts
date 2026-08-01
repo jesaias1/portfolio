@@ -4,21 +4,55 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  const hashedPassword = await bcrypt.hash('miebs112', 10)
+  const adminEmail = process.env.ADMIN_EMAIL?.trim()
+  const adminPassword = process.env.ADMIN_PASSWORD
+
+  if (!adminEmail || !adminPassword) {
+    throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set before running the seed script')
+  }
+
+  const hashedPassword = await bcrypt.hash(adminPassword, 10)
   
   await prisma.user.upsert({
-    where: { email: 'lin4s@live.dk' },
-    update: {},
+    where: { email: adminEmail },
+    update: {
+      password: hashedPassword,
+    },
     create: {
-      email: 'lin4s@live.dk',
+      email: adminEmail,
       password: hashedPassword,
       name: 'Linas Jesaias',
     },
   })
 
   await prisma.project.upsert({
+    where: { id: 'orvo-006' },
+    update: {
+      title: 'ORVO',
+      description: 'A sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.',
+      longDesc: 'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
+      image: '/projects/orvo.png',
+      tags: JSON.stringify(['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake']),
+      link: '/audio',
+      featured: true,
+      order: 1,
+    },
+    create: {
+      id: 'orvo-006',
+      title: 'ORVO',
+      description: 'A sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.',
+      longDesc: 'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
+      image: '/projects/orvo.png',
+      tags: JSON.stringify(['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake']),
+      link: '/audio',
+      featured: true,
+      order: 1,
+    },
+  })
+
+  await prisma.project.upsert({
     where: { id: 'ordbomben-001' },
-    update: { order: 3 },
+    update: { order: 5 },
     create: {
       id: 'ordbomben-001',
       title: 'Ordbomben',
@@ -28,13 +62,13 @@ async function main() {
       tags: JSON.stringify(['Next.js', 'WebSocket', 'PostgreSQL', 'Real-time', 'Multiplayer']),
       link: 'https://www.ordbomben.dk',
       featured: true,
-      order: 3,
+      order: 5,
     },
   })
 
   await prisma.project.upsert({
     where: { id: 'lettus-002' },
-    update: { order: 4 },
+    update: { order: 6 },
     create: {
       id: 'lettus-002',
       title: 'Lettus',
@@ -44,13 +78,13 @@ async function main() {
       tags: JSON.stringify(['React', 'TypeScript', 'Game Logic', 'PWA', 'Mobile First']),
       link: 'https://www.lettus.fun',
       featured: true,
-      order: 4,
+      order: 6,
     },
   })
 
   await prisma.project.upsert({
     where: { id: 'dump-003' },
-    update: { order: 5 },
+    update: { order: 7 },
     create: {
       id: 'dump-003',
       title: 'dump.media',
@@ -60,7 +94,7 @@ async function main() {
       tags: JSON.stringify(['Next.js', 'Stripe', 'Audio Player', 'E-commerce', 'Subscriptions']),
       link: 'https://www.dump.media',
       featured: true,
-      order: 5,
+      order: 7,
     },
   })
 
@@ -73,7 +107,7 @@ async function main() {
       image: '/projects/midium.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
       featured: true,
-      order: 1,
+      order: 2,
     },
     create: {
       id: 'midium-004',
@@ -83,7 +117,7 @@ async function main() {
       image: '/projects/midium.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
       featured: true,
-      order: 1,
+      order: 2,
     },
   })
 
@@ -96,7 +130,7 @@ async function main() {
       image: '/projects/abyx.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
       featured: true,
-      order: 2,
+      order: 3,
     },
     create: {
       id: 'abyx-005',
@@ -106,7 +140,32 @@ async function main() {
       image: '/projects/abyx.png',
       tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
       featured: true,
-      order: 2,
+      order: 3,
+    },
+  })
+
+  await prisma.project.upsert({
+    where: { id: 'kvizy-007' },
+    update: {
+      title: 'KVIZY',
+      description: 'A complete Danish pass-the-device quiz game for game nights, families, parties and friendly competition.',
+      longDesc: 'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
+      image: '/projects/kvizy.png',
+      tags: JSON.stringify(['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest']),
+      link: 'https://kvizy.dk',
+      featured: true,
+      order: 4,
+    },
+    create: {
+      id: 'kvizy-007',
+      title: 'KVIZY',
+      description: 'A complete Danish pass-the-device quiz game for game nights, families, parties and friendly competition.',
+      longDesc: 'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
+      image: '/projects/kvizy.png',
+      tags: JSON.stringify(['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest']),
+      link: 'https://kvizy.dk',
+      featured: true,
+      order: 4,
     },
   })
 

@@ -71,8 +71,8 @@ git push -u origin main
 ## 🔑 **LOGIN TIL ADMIN:**
 
 URL: `/admin/login`
-Email: `lin4s@live.dk`
-Password: `miebs112`
+Email: the value configured in `ADMIN_EMAIL`
+Password: the value configured in `ADMIN_PASSWORD`
 
 ---
 

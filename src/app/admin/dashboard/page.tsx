@@ -432,7 +432,7 @@ function AboutTab({ data, onUpdate }: { data: AboutData; onUpdate: () => void })
     try {
       const res = await fetch('/api/about/update', {
         method: 'PUT',
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -529,7 +529,7 @@ function ContactTab({ data, onUpdate }: { data: ContactData; onUpdate: () => voi
     try {
       const res = await fetch('/api/contact/update', {
         method: 'PUT',
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -653,7 +653,7 @@ function ProjectModal({
 
       const res = await fetch(url, {
         method,
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -720,7 +720,7 @@ function ProjectModal({
           <div>
             <label className="block text-sm mb-2 text-gray-400">Billede URL</label>
             <input
-              type="url"
+              type="text"
               value={formData.image}
               onChange={(e) => setFormData({ ...formData, image: e.target.value })}
               required

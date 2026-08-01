@@ -21,7 +21,19 @@ export default function Projects() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) setProjects(data);
+        if (Array.isArray(data) && data.length > 0) {
+          const APIProjects = data as PortfolioProject[];
+          const locallyAddedProjects = fallbackProjects.filter(
+            (fallbackProject) =>
+              !APIProjects.some(
+                (APIProject) =>
+                  APIProject.id === fallbackProject.id ||
+                  APIProject.title.toLowerCase() === fallbackProject.title.toLowerCase()
+              )
+          );
+
+          setProjects([...locallyAddedProjects, ...APIProjects]);
+        }
       })
       .catch(() => {
         setProjects(fallbackProjects);
