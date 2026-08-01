@@ -59,7 +59,7 @@ export default function Hero() {
   });
   
   const logoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const fullSubtitle = '> creative_developer --fullstack --systems --design';
+  const fullSubtitle = '> creative_developer --software --audio --games';
 
   // Global keyboard shortcut
   useEffect(() => {
@@ -103,8 +103,24 @@ export default function Hero() {
       <section 
         ref={heroRef}
         id="home" 
-        className="h-screen flex items-center justify-center relative"
+        className="relative flex h-screen min-h-[100svh] items-center justify-center overflow-hidden"
       >
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute left-1/2 top-[44%] h-[62vw] max-h-[760px] min-h-[420px] w-[62vw] max-w-[760px] min-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4ddbff]/[0.035] blur-3xl" />
+          <div className="absolute inset-x-[8vw] top-1/2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          <div className="absolute bottom-[12vh] left-1/2 h-[32vh] w-px bg-gradient-to-b from-transparent via-[#4ddbff]/10 to-transparent" />
+        </div>
+
+        <div className="pointer-events-none absolute left-5 top-24 z-30 font-mono text-[9px] uppercase leading-5 tracking-[0.16em] text-white/30 sm:left-8 sm:text-[10px] md:left-12">
+          <span className="block text-[#4ddbff]/70">Jesaias</span>
+          Creative developer
+        </div>
+
+        <div className="pointer-events-none absolute right-5 top-24 z-30 text-right font-mono text-[9px] uppercase leading-5 tracking-[0.16em] text-white/30 sm:right-8 sm:text-[10px] md:right-12">
+          <span className="block text-white/50">Copenhagen / DK</span>
+          Software · Sound · Play
+        </div>
+
         {/* 3D Logo — fills the hero without a fixed canvas layer, avoiding scroll compositor glitches */}
         <motion.div
           style={{
@@ -163,7 +179,7 @@ export default function Hero() {
             className="text-xl md:text-3xl lg:text-4xl text-gray-200 font-light tracking-[0.1em] max-w-3xl mx-auto text-center mt-6"
             style={{ textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 30px rgba(0,0,0,0.8), 0 0 20px rgba(77, 219, 255, 0.15)' }}
           >
-            Creating digital experiences that transcend boundaries
+            Code, sound and playful systems—built with intent.
           </motion.p>
 
           {/* CTA Buttons — terminal commands */}

@@ -22,7 +22,7 @@ export const fallbackProjects: PortfolioProject[] = [
     image: '/projects/orvo.png',
     video: null,
     tags: ['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake'],
-    link: '/audio',
+    link: '/audio/orvo',
     featured: true,
   },
   {

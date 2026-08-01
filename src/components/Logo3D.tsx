@@ -218,7 +218,7 @@ function LogoModel({
     const c = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
     // Smaller scale on mobile so logo fits within narrow viewports
-    return { center: c, scaleFactor: (isMobile ? 2.15 : 3.2) / maxDim };
+    return { center: c, scaleFactor: (isMobile ? 1.72 : 3.2) / maxDim };
   }, [preparedScene, isMobile]);
 
   useFrame(() => {

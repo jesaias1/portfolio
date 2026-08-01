@@ -32,9 +32,9 @@ export const metadata: Metadata = {
     description: 'Creating digital experiences that transcend boundaries. Full-stack development, software engineering, and design.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: '/og-portfolio-2026.png',
+        width: 1731,
+        height: 909,
         alt: 'Jesaias - Creative Developer Portfolio Preview',
       },
     ],
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Jesaias - Creative Developer',
     description: 'Creative Developer and Software Engineer. Building premium digital experiences.',
-    images: ['/og-image.png'],
+    images: ['/og-portfolio-2026.png'],
   },
   robots: {
     index: true,

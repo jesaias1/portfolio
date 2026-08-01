@@ -1,134 +1,84 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import RevealText from './RevealText';
+import { motion } from 'framer-motion';
 
 const services = [
   {
-    icon: '{}',
-    title: 'Web Applications',
-    command: './build --webapp',
-    description: 'Full-stack web apps with modern technologies',
-    features: ['React & Next.js', 'Node.js Backend', 'Database Design', 'API Integration'],
+    title: 'Web products',
+    description: 'Polished full-stack applications built around a clear idea and real users.',
+    capabilities: ['Next.js', 'APIs', 'Databases'],
   },
   {
-    icon: '⚡',
-    title: 'Real-time Systems',
-    command: './build --realtime',
-    description: 'Multiplayer games and real-time applications',
-    features: ['WebSocket', 'Real-time Sync', 'Leaderboards', 'Cross-platform'],
+    title: 'Interactive systems',
+    description: 'Games and real-time experiences where feedback, timing and flow matter.',
+    capabilities: ['Realtime', 'Multiplayer', 'PWA'],
   },
   {
-    icon: '⚙',
-    title: 'Software Engineering',
-    command: './build --software',
-    description: 'Scalable backend systems and cloud infrastructure',
-    features: ['Python / Node.js', 'REST & GraphQL APIs', 'CI/CD Pipelines', 'System Architecture'],
+    title: 'Audio software',
+    description: 'Creative instruments and music tools that make technical workflows feel playable.',
+    capabilities: ['C++', 'JUCE', 'VST3'],
   },
   {
-    icon: '◆',
-    title: 'Creative Tools',
-    command: './build --creative',
-    description: 'Extensions and tools for creative workflows',
-    features: ['After Effects SDK', 'Automation', 'UI/UX Design', 'Motion Graphics'],
+    title: 'Product engineering',
+    description: 'From rough concept to a reliable system with thoughtful interaction design.',
+    capabilities: ['Architecture', 'UX', 'Delivery'],
   },
 ];
 
 export default function ServicesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
-
   return (
-    <section ref={sectionRef} id="services" className="py-20 md:py-32 relative">
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+    <section id="services" className="relative py-16 md:py-20">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
+        <motion.header
+          initial={{ opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-16"
+          transition={{ duration: 0.65 }}
+          viewport={{ once: true, margin: '-80px' }}
+          className="mb-8 grid gap-4 border-b border-white/[0.08] pb-6 md:grid-cols-[1fr_auto] md:items-end"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
-              ~/services
-            </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
+          <div>
+            <div className="mb-3 flex items-center gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#4ddbff]">
+                What I build
+              </span>
+              <span className="h-px w-10 bg-[#4ddbff]/30" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-[-0.04em] text-white md:text-5xl">
+              Creative ideas, engineered properly.
+            </h2>
           </div>
-          <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            <RevealText text="Services" delay={0.1} />
-          </h2>
-          <p className="text-gray-500 font-mono text-sm">
-            {'>'} cat services.json --format=detailed
+          <p className="max-w-sm font-mono text-[10px] leading-5 text-gray-600 md:text-right">
+            From first interaction to the system underneath it.
           </p>
-        </motion.div>
+        </motion.header>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 border-l border-t border-white/[0.08] lg:grid-cols-4">
           {services.map((service, index) => (
-            <motion.div
+            <motion.article
               key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: index * 0.06 }}
+              viewport={{ once: true, margin: '-60px' }}
+              className="group min-h-[220px] border-b border-r border-white/[0.08] bg-[#0a0b0c]/55 p-4 transition-colors hover:bg-[#4ddbff]/[0.035] sm:p-5 md:min-h-[240px] md:p-6"
             >
-              <div className="relative border border-white/5 hover:border-[#4ddbff]/30 transition-all duration-500 bg-[#0c0c0c]/50 group-hover:shadow-[0_0_30px_rgba(77,219,255,0.05)]">
-                {/* Top glow line on hover */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/0 group-hover:via-[#4ddbff]/40 to-transparent transition-all duration-700" />
-                
-                {/* Corner accents */}
-                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#4ddbff]/0 group-hover:border-[#4ddbff]/30 transition-all duration-500" />
-
-                {/* Card header — terminal style */}
-                <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 bg-[#111]/80">
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#ff5f56]/60" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]/60" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#27c93f]/60" />
-                  </div>
-                  <span className="font-mono text-[10px] text-gray-600 ml-1 group-hover:text-[#4ddbff]/50 transition-colors duration-500">
-                    {service.command}
+              <span className="font-mono text-[9px] tracking-[0.14em] text-[#4ddbff]/55">
+                /{String(index + 1).padStart(2, '0')}
+              </span>
+              <h3 className="mt-7 text-lg font-semibold tracking-[-0.025em] text-white transition-colors group-hover:text-[#4ddbff] sm:text-xl">
+                {service.title}
+              </h3>
+              <p className="mt-3 text-xs leading-5 text-gray-500 sm:text-sm sm:leading-6">
+                {service.description}
+              </p>
+              <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1.5">
+                {service.capabilities.map((capability) => (
+                  <span key={capability} className="font-mono text-[8px] uppercase tracking-[0.1em] text-gray-700 sm:text-[9px]">
+                    {capability}
                   </span>
-                </div>
-
-                {/* Card body */}
-                <div className="p-4 md:p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <span className="text-2xl text-[#4ddbff]/60 font-mono mt-1 group-hover:text-[#4ddbff] transition-colors duration-500" style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.4)' }}>
-                      {service.icon}
-                    </span>
-                    <div>
-                      <h3 className="text-xl font-bold tracking-tight group-hover:text-[#4ddbff] transition-colors duration-300">
-                        {service.title}
-                      </h3>
-                      <p className="text-gray-500 text-sm mt-1">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Features as terminal output */}
-                  <div className="space-y-1.5 mt-4 font-mono text-xs">
-                    {service.features.map((feature, i) => (
-                      <motion.div
-                        key={feature}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.4, delay: index * 0.1 + i * 0.05 + 0.3 }}
-                        className="flex items-center gap-2 text-gray-500 group-hover:text-gray-400 transition-colors"
-                      >
-                        <span className="text-[#4ddbff]/50">▸</span>
-                        {feature}
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>

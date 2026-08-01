@@ -9,6 +9,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
   const related = audioProducts.find((item) => item.slug !== product.slug);
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
+  const isComingSoon = product.commerce.mode === "coming-soon";
 
   return (
     <main
@@ -44,7 +45,16 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             <p className="trial-note">{product.commerce.trialNote}</p>
           ) : null}
           <div className="audio-actions">
-            {hasLicenseCheckout ? (
+            {isComingSoon ? (
+              <>
+                <a href={`#${product.slug}-video`} className="audio-button audio-button--dark">
+                  Explore the interface
+                </a>
+                <Link href="/#contact" className="audio-button audio-button--light">
+                  Follow development
+                </Link>
+              </>
+            ) : hasLicenseCheckout ? (
               <>
                 <a
                   href={product.urls.download}
@@ -102,11 +112,27 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           <p>{product.shortCopy}</p>
         </div>
         <div className="interface-demo__film">
-          <AutoAdVideo
-            label={`${product.name} silent advertisement`}
-            poster={product.assets.screenshot}
-            src={product.assets.video}
-          />
+          {product.assets.video ? (
+            <AutoAdVideo
+              label={`${product.name} silent advertisement`}
+              poster={product.assets.screenshot}
+              src={product.assets.video}
+            />
+          ) : (
+            <div className="interface-placeholder" id="orvo-preview">
+              <Image
+                src={product.assets.screenshot}
+                alt={`${product.name} interface preview`}
+                width={1600}
+                height={1000}
+                sizes="(max-width: 900px) 100vw, 90vw"
+              />
+              <div className="interface-placeholder__label">
+                <span>Demo capture slot</span>
+                <strong>Your ORVO recording will replace this preview.</strong>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -139,7 +165,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </ul>
       </section>
 
-      {!hasLicenseCheckout ? (
+      {!hasLicenseCheckout && !isComingSoon ? (
         <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
           <div>
             <p className="audio-kicker">{product.commerce.statusLabel}</p>
@@ -157,6 +183,22 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
               Support link
             </a>
           </div>
+        </section>
+      ) : null}
+
+      {isComingSoon ? (
+        <section className="download-panel development-panel" aria-labelledby="development-title">
+          <div>
+            <p className="audio-kicker">In development</p>
+            <h2 id="development-title">The structure is ready for launch.</h2>
+            <p>
+              Product recordings, audio examples, compatibility details and the final download
+              link can be added here without rebuilding the page.
+            </p>
+          </div>
+          <Link href="/#contact" className="audio-button audio-button--light">
+            Ask about ORVO
+          </Link>
         </section>
       ) : null}
 

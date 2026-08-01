@@ -15,6 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: 'https://jesaias.dk/audio/orvo',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
       url: 'https://jesaias.dk/audio/midium',
       lastModified: new Date(),
       changeFrequency: 'monthly',
@@ -22,6 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: 'https://jesaias.dk/audio/abyx',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://jesaias.dk/projects/kvizy',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,

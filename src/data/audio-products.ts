@@ -3,10 +3,11 @@ export type CommerceMode =
   | "free-with-donation"
   | "pay-what-you-want"
   | "one-time-purchase"
-  | "demo-plus-full";
+  | "demo-plus-full"
+  | "coming-soon";
 
 export type AudioProduct = {
-  slug: "midium" | "abyx";
+  slug: "orvo" | "midium" | "abyx";
   name: string;
   kicker: string;
   headline: string;
@@ -14,11 +15,11 @@ export type AudioProduct = {
   longCopy: string;
   accent: string;
   accentSoft: string;
-  identity: "fluid" | "physical";
+  identity: "fluid" | "physical" | "transformative";
   labels: string[];
   assets: {
     screenshot: string;
-    video: string | string[];
+    video?: string | string[];
     logo?: string;
   };
   urls: {
@@ -71,6 +72,82 @@ export const audioSite = {
 };
 
 export const audioProducts: AudioProduct[] = [
+  {
+    slug: "orvo",
+    name: "ORVO",
+    kicker: "Sample transformation instrument",
+    headline: "Stretch sound until it becomes something else.",
+    shortCopy:
+      "ORVO turns a single sample into evolving clouds, elastic rhythms, tape movement and granular textures through a tactile performance interface.",
+    longCopy:
+      "Load a sound, choose a transformation engine and shape it with PULSE sequencing, drawn motion, four LFOs, macros and a complete effects rack. ORVO is designed for the moment a familiar sample needs to become an entirely new instrument.",
+    accent: "#77c8ff",
+    accentSoft: "rgba(119, 200, 255, 0.16)",
+    identity: "transformative",
+    labels: ["VST3", "C++20", "JUCE 8", "IN DEVELOPMENT"],
+    assets: {
+      screenshot: "/projects/orvo.png",
+    },
+    urls: {
+      download: "#orvo-preview",
+      watch: "#orvo-video",
+      resource: "/audio/orvo",
+      support: "#support",
+      donation: "#support-development",
+    },
+    commerce: {
+      mode: "coming-soon",
+      statusLabel: "Development preview",
+      priceLabel: "Release details coming later",
+      trialNote:
+        "ORVO is currently being refined. The page is ready for product recordings, release information and download links when the instrument is ready to share.",
+    },
+    currentVersion: {
+      version: "Development build",
+      date: "2026-08-02",
+      notes: [
+        "Four transformation engines: Cloud, Elastic, Tape and Grain.",
+        "PULSE gate sequencer with drawn modulation and four LFOs.",
+        "Macro controls and a complete filter, drive, delay and reverb chain.",
+      ],
+    },
+    workflow: [
+      {
+        title: "Load",
+        text: "Bring in any sample and define the playable region.",
+      },
+      {
+        title: "Transform",
+        text: "Move between stretching, tape, cloud and granular engines.",
+      },
+      {
+        title: "Perform",
+        text: "Animate the result with PULSE, LFOs, macros and effects.",
+      },
+    ],
+    features: [
+      "Cloud, Elastic, Tape and Grain transformation engines",
+      "Tempo-synced PULSE gate and motion sequencer",
+      "Four LFOs with flexible modulation routing",
+      "Melt, Pulse, Drift and Space performance macros",
+      "Filter, drive, delay and reverb effects rack",
+      "Rendered audio workflow for returning transformed sound to the DAW",
+    ],
+    compatibility: [
+      "VST3 compatible hosts",
+      "Built with C++20 and JUCE 8",
+      "Desktop release targets will be confirmed before launch",
+    ],
+    installation: [
+      "Public installation instructions will be added with the first release.",
+      "The finished page is prepared for a download package and versioned release notes.",
+    ],
+    betaLimitations: [
+      "ORVO is not publicly downloadable yet.",
+      "Final compatibility and system requirements are still being tested.",
+      "Interface recordings and audio examples will be added before launch.",
+    ],
+  },
   {
     slug: "midium",
     name: "MIDIUM",
