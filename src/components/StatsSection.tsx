@@ -24,7 +24,7 @@ export default function StatsSection() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-24 relative overflow-hidden">
+    <section ref={sectionRef} className="content-section relative overflow-hidden py-16 md:py-24">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Terminal-style header */}
         <motion.div

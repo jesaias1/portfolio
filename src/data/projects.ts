@@ -9,6 +9,9 @@ export interface PortfolioProject {
   featured: boolean;
   longDesc?: string;
   video?: string | null;
+  status?: string;
+  visible?: boolean;
+  order?: number;
 }
 
 export const fallbackProjects: PortfolioProject[] = [
@@ -24,6 +27,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake'],
     link: '/audio/orvo',
     featured: true,
+    status: 'In development',
+    visible: true,
   },
   {
     id: 'midium-004',
@@ -37,6 +42,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['C++', 'JUCE', 'VST3', 'MIDI', 'CMake'],
     link: '/audio/midium',
     featured: true,
+    status: 'Beta',
+    visible: true,
   },
   {
     id: 'abyx-005',
@@ -50,6 +57,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['C++', 'JUCE', 'VST3', 'MIDI', 'XInput'],
     link: '/audio/abyx',
     featured: true,
+    status: 'Beta',
+    visible: true,
   },
   {
     id: 'kvizy-007',
@@ -63,6 +72,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest'],
     link: 'https://kvizy.dk',
     featured: true,
+    status: 'Live',
+    visible: true,
   },
   {
     id: 'ordbomben-001',
@@ -76,6 +87,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['Next.js', 'WebSocket', 'Real-time', 'Game'],
     link: 'https://www.ordbomben.dk',
     featured: true,
+    status: 'Under maintenance',
+    visible: true,
   },
   {
     id: 'lettus-002',
@@ -89,6 +102,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['React', 'TypeScript', 'Game Logic', 'PWA'],
     link: 'https://www.lettus.fun',
     featured: true,
+    status: 'Live',
+    visible: true,
   },
   {
     id: 'dump-003',
@@ -102,5 +117,7 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['Next.js', 'Stripe', 'Audio', 'Commerce'],
     link: 'https://www.dump.media',
     featured: true,
+    status: 'Under maintenance',
+    visible: true,
   },
 ];

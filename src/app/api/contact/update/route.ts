@@ -13,16 +13,17 @@ export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
     
-    const contact = await prisma.contact.update({
-      where: { id: '1' },
-      data: {
-        email: data.email,
-        github: data.github,
-        linkedin: data.linkedin,
-        twitter: data.twitter,
-        resume: data.resume,
-      },
-    });
+    const existing = await prisma.contact.findFirst({ select: { id: true } });
+    const values = {
+      email: data.email || 'contact@jesaias.dk',
+      github: data.github || null,
+      linkedin: data.linkedin || null,
+      twitter: data.twitter || null,
+      resume: data.resume || null,
+    };
+    const contact = existing
+      ? await prisma.contact.update({ where: { id: existing.id }, data: values })
+      : await prisma.contact.create({ data: { id: 'main', ...values } });
 
     return NextResponse.json(contact);
   } catch (error) {

@@ -51,10 +51,15 @@ export default function Home() {
 
   return (
     <>
+      {!showSplash && isReady ? (
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+      ) : null}
       {showSplash && <SplashScreen onComplete={completeSplash} />}
 
       {!showSplash && isReady && (
-        <main className="relative">
+        <main id="main-content" className="relative" tabIndex={-1}>
           <ScrollVideo />
           <CustomCursor />
           <ScrollProgress />

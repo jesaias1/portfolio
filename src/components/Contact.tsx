@@ -1,32 +1,46 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSound } from '@/hooks/use-sound';
 
+type ContactInfo = {
+  email: string;
+  github?: string;
+  linkedin?: string;
+  twitter?: string;
+};
+
+const fallbackContact: ContactInfo = {
+  email: 'contact@jesaias.dk',
+  github: 'https://github.com/jesaias1',
+  linkedin: 'https://www.linkedin.com/in/jesaias/',
+};
+
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [contactInfo, setContactInfo] = useState<ContactInfo>(fallbackContact);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const { play } = useSound();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetch('/api/contact')
+      .then((response) => {
+        if (!response.ok) throw new Error('Contact details unavailable');
+        return response.json();
+      })
+      .then((data) => setContactInfo({ ...fallbackContact, ...data }))
+      .catch(() => undefined);
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
+
     play('click');
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error('All fields must be filled');
-      play('error');
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -34,247 +48,194 @@ export default function Contact() {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        toast.success('[ok] Message sent!');
-        play('success');
-        setIsSuccess(true);
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        toast.error('[error] Try again.');
-        play('error');
-      }
+      if (!response.ok) throw new Error('Message could not be sent');
+      toast.success('Message sent.');
+      play('success');
+      setIsSuccess(true);
+      setFormData({ name: '', email: '', message: '' });
     } catch {
-      toast.error('[error] Network error. Try again.');
+      toast.error(`Message unavailable — email ${contactInfo.email} instead.`);
       play('error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <section id="contact" className="py-20 md:py-32 relative overflow-hidden">
-      <div className="max-w-3xl mx-auto px-6 relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
-              ~/contact
-            </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
-          </div>
-          <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-3">
-            Let&apos;s Talk
-          </h2>
-          <p className="text-gray-500 font-mono text-sm">
-            {'>'} init --new-project --collaborate
-          </p>
-        </motion.div>
+  const socialLinks = [
+    { label: 'GitHub', href: contactInfo.github },
+    { label: 'LinkedIn', href: contactInfo.linkedin },
+    { label: 'Twitter', href: contactInfo.twitter },
+  ].filter((link): link is { label: string; href: string } => Boolean(link.href));
 
-        {/* Terminal-style form */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+  return (
+    <section id="contact" className="content-section relative overflow-hidden py-20 md:py-28">
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        <motion.header
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true, margin: '-80px' }}
+          className="mb-10 border-b border-white/10 pb-8 md:mb-14"
         >
-          {/* Terminal window */}
-          <div className="border border-white/5">
-            {/* Terminal header */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-[#111] border-b border-white/5">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-              </div>
-              <span className="font-mono text-[10px] text-gray-600 ml-2">
-                contact@jesaias.dk
+          <p className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-[#4ddbff]">
+            Contact / Start a conversation
+          </p>
+          <h2 className="max-w-4xl text-4xl font-bold tracking-[-0.045em] text-white md:text-6xl">
+            Have something worth building?
+          </h2>
+        </motion.header>
+
+        <div className="grid overflow-hidden border border-white/[0.09] bg-[#08090a]/80 md:grid-cols-[0.78fr_1.22fr]">
+          <motion.aside
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65 }}
+            viewport={{ once: true }}
+            className="flex flex-col justify-between border-b border-white/[0.09] p-6 md:min-h-[520px] md:border-b-0 md:border-r md:p-8"
+          >
+            <div>
+              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">
+                Direct contact
               </span>
+              <a
+                href={`mailto:${contactInfo.email}`}
+                className="mt-4 block break-all text-xl font-semibold text-white hover:text-[#4ddbff] md:text-2xl"
+              >
+                {contactInfo.email}
+              </a>
+              <p className="mt-6 max-w-sm text-sm leading-6 text-gray-500">
+                Tell me what you are making, what is difficult, and where you want it to go. A rough idea is enough to begin.
+              </p>
             </div>
 
-            {/* Terminal body */}
+            <div className="mt-10">
+              <div className="mb-5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#4ddbff] shadow-[0_0_8px_rgba(77,219,255,.7)]" />
+                Based in Copenhagen / working remotely
+              </div>
+              <nav aria-label="Social links" className="flex flex-wrap gap-x-5 gap-y-2">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-[#4ddbff]"
+                  >
+                    {link.label} ↗
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </motion.aside>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.08 }}
+            viewport={{ once: true }}
+            className="p-6 md:p-8"
+          >
             {isSuccess ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 md:p-8 bg-[#0c0c0c] space-y-3 font-mono text-sm"
-              >
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-gray-500"
-                >
-                  {'>'} sending message...
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-gray-500"
-                >
-                  {'>'} connecting to server...
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 }}
-                  className="text-[#4ddbff]"
-                  style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.4)' }}
-                >
-                  [ok] message_sent.log - Message received!
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2 }}
-                  className="text-gray-600 pt-2"
-                >
-                  {'>'} Thank you for your message. I will get back to you as soon as possible.
-                </motion.div>
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.6 }}
-                  onClick={() => setIsSuccess(false)}
-                  className="font-mono text-xs text-[#4ddbff]/60 hover:text-[#4ddbff] transition-colors pt-4"
-                >
-                  {'>'} ./send_another
-                </motion.button>
-              </motion.div>
-            ) : (
-            <form onSubmit={handleSubmit} className="p-4 md:p-8 bg-[#0c0c0c] space-y-6">
-              {/* Name */}
-              <TerminalInput
-                label="name"
-                type="text"
-                value={formData.name}
-                onChange={(val) => setFormData({ ...formData, name: val })}
-                placeholder="Your name"
-                focused={focusedField === 'name'}
-                onFocus={() => setFocusedField('name')}
-                onBlur={() => setFocusedField(null)}
-              />
-
-              {/* Email */}
-              <TerminalInput
-                label="email"
-                type="email"
-                value={formData.email}
-                onChange={(val) => setFormData({ ...formData, email: val })}
-                placeholder="your@email.com"
-                focused={focusedField === 'email'}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
-              />
-
-              {/* Message */}
-              <div className="space-y-2">
-                <label className="font-mono text-xs text-gray-500">
-                  <span className="text-[#4ddbff]">{'>'}</span> message:
-                </label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  onFocus={() => setFocusedField('message')}
-                  onBlur={() => setFocusedField(null)}
-                  rows={5}
-                  placeholder="Tell me about your project..."
-                  className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none resize-none transition-all border ${
-                    focusedField === 'message'
-                      ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(77,219,255,0.05)]'
-                      : 'border-white/5 hover:border-white/10'
-                  }`}
-                />
-              </div>
-
-              {/* Submit */}
-              <div className="flex items-center justify-between pt-2">
-                <span className="font-mono text-[10px] text-gray-700">
-                  {formData.name && formData.email && formData.message 
-                    ? '[ready to send]' 
-                    : '[fill all fields]'
-                  }
+              <div className="flex min-h-[410px] flex-col items-start justify-center" role="status" aria-live="polite">
+                <span className="mb-5 font-mono text-xs uppercase tracking-[0.16em] text-[#4ddbff]">
+                  Message received
                 </span>
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onMouseEnter={() => play('hover')}
-                  disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
-                  className="font-mono text-sm px-6 py-3 bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                  style={{
-                    boxShadow: '0 0 15px rgba(77, 219, 255, 0.1)',
-                  }}
+                <h3 className="max-w-md text-3xl font-semibold tracking-[-0.035em] text-white">
+                  Thank you. I will get back to you as soon as I can.
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsSuccess(false)}
+                  className="mt-8 border border-white/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:border-[#4ddbff]/40 hover:text-[#4ddbff]"
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      >
-                        ...
-                      </motion.span>
-                      sending...
-                    </span>
-                  ) : (
-                    './send_message'
-                  )}
-                </motion.button>
+                  Send another message
+                </button>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <FormField
+                  id="contact-name"
+                  label="Your name"
+                  type="text"
+                  autoComplete="name"
+                  value={formData.name}
+                  onChange={(value) => setFormData((current) => ({ ...current, name: value }))}
+                />
+                <FormField
+                  id="contact-email"
+                  label="Email address"
+                  type="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={(value) => setFormData((current) => ({ ...current, email: value }))}
+                />
+                <div>
+                  <label htmlFor="contact-message" className="mb-2 block font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500">
+                    Project or idea
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    required
+                    maxLength={5000}
+                    rows={6}
+                    value={formData.message}
+                    onChange={(event) => setFormData((current) => ({ ...current, message: event.target.value }))}
+                    placeholder="A few lines about what you want to make..."
+                    className="w-full resize-none border border-white/10 bg-white/[0.02] px-4 py-3 text-sm leading-6 text-gray-200 outline-none placeholder:text-gray-700 focus:border-[#4ddbff]/45"
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-between gap-4 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.11em] text-gray-700">
+                    Usually answered by email
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onMouseEnter={() => play('hover')}
+                    className="border border-[#4ddbff]/40 bg-[#4ddbff]/10 px-6 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-[#4ddbff] hover:bg-[#4ddbff]/20 disabled:cursor-wait disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Sending…' : 'Send message'}
+                  </button>
+                </div>
+              </form>
             )}
-          </div>
-        </motion.div>
-
-        {/* Alternative contact */}
-
+          </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-function TerminalInput({
+function FormField({
+  id,
   label,
   type,
+  autoComplete,
   value,
   onChange,
-  placeholder,
-  focused,
-  onFocus,
-  onBlur,
 }: {
+  id: string;
   label: string;
-  type: string;
+  type: 'text' | 'email';
+  autoComplete: string;
   value: string;
-  onChange: (val: string) => void;
-  placeholder: string;
-  focused: boolean;
-  onFocus: () => void;
-  onBlur: () => void;
+  onChange: (value: string) => void;
 }) {
   return (
-    <div className="space-y-2">
-      <label className="font-mono text-xs text-gray-500">
-        <span className="text-[#4ddbff]">{'>'}</span> {label}:
+    <div>
+      <label htmlFor={id} className="mb-2 block font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500">
+        {label}
       </label>
       <input
+        id={id}
         type={type}
+        autoComplete={autoComplete}
+        required
+        maxLength={type === 'email' ? 254 : 100}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        className={`w-full px-4 py-3 bg-white/[0.02] font-mono text-sm text-gray-200 placeholder-gray-700 outline-none transition-all border ${
-          focused
-            ? 'border-[#4ddbff]/40 shadow-[0_0_10px_rgba(77,219,255,0.05)]'
-            : 'border-white/5 hover:border-white/10'
-        }`}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full border border-white/10 bg-white/[0.02] px-4 py-3 text-sm text-gray-200 outline-none placeholder:text-gray-700 focus:border-[#4ddbff]/45"
       />
     </div>
   );

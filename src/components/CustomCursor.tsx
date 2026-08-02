@@ -16,7 +16,10 @@ export default function CustomCursor() {
 
   useEffect(() => {
     // Only show on desktop (fine pointer)
-    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return;
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
@@ -56,18 +59,29 @@ export default function CustomCursor() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
+    const handleVisibility = () => {
+      if (document.hidden) cancelAnimationFrame(rafRef.current);
+      else rafRef.current = requestAnimationFrame(tick);
+    };
+
     rafRef.current = requestAnimationFrame(tick);
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [handleMouseMove]);
 
   // SSR guard: only render on desktop
-  if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+  if (
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  ) {
     return null;
   }
 

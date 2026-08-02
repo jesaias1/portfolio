@@ -7,12 +7,22 @@ export async function GET() {
     const contact = await prisma.contact.findFirst();
 
     if (!contact) {
-      return NextResponse.json({ error: 'Contact info not found' }, { status: 404 });
+      return NextResponse.json({
+        id: 'main',
+        email: 'contact@jesaias.dk',
+        github: 'https://github.com/jesaias1',
+        linkedin: 'https://www.linkedin.com/in/jesaias/',
+      });
     }
 
     return NextResponse.json(contact);
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch contact data' }, { status: 500 });
+    return NextResponse.json({
+      id: 'main',
+      email: 'contact@jesaias.dk',
+      github: 'https://github.com/jesaias1',
+      linkedin: 'https://www.linkedin.com/in/jesaias/',
+    });
   }
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { fallbackProjects } from '@/data/projects';
+import { decodeProjectMetadata } from '@/lib/project-metadata';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -19,10 +20,14 @@ export async function GET() {
       const videoPath = join(process.cwd(), 'public', 'projects', 'videos', videoFilename);
       const hasVideo = existsSync(videoPath);
 
+      const metadata = decodeProjectMetadata(JSON.parse(project.tags), project.title, project.id);
+
       return {
         ...project,
-        tags: JSON.parse(project.tags),
-        video: hasVideo ? `/projects/videos/${videoFilename}` : null,
+        tags: metadata.tags,
+        status: metadata.status,
+        visible: metadata.visible,
+        video: metadata.video ?? (hasVideo ? `/projects/videos/${videoFilename}` : null),
       };
     });
 

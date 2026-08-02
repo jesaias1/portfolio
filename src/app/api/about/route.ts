@@ -6,7 +6,13 @@ export async function GET() {
     const about = await prisma.about.findFirst();
 
     if (!about) {
-      return NextResponse.json({ error: 'About section not found' }, { status: 404 });
+      return NextResponse.json({
+        id: 'main',
+        title: 'About Jesaias',
+        content: '',
+        image: '/headshot.jpg',
+        skills: [],
+      });
     }
 
     return NextResponse.json({
@@ -14,6 +20,12 @@ export async function GET() {
       skills: JSON.parse(about.skills),
     });
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch about data' }, { status: 500 });
+    return NextResponse.json({
+      id: 'main',
+      title: 'About Jesaias',
+      content: '',
+      image: '/headshot.jpg',
+      skills: [],
+    });
   }
 }

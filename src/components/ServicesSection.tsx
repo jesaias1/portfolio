@@ -27,7 +27,7 @@ const services = [
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="relative py-16 md:py-20">
+    <section id="services" className="content-section relative py-16 md:py-20">
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
         <motion.header
           initial={{ opacity: 0, y: 22 }}

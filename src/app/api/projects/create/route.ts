@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { encodeProjectMetadata } from '@/lib/project-metadata';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
         description: data.description,
         longDesc: data.longDesc,
         image: data.image,
-        tags: JSON.stringify(data.tags),
+        tags: JSON.stringify(encodeProjectMetadata(data)),
         link: data.link,
         github: data.github,
         featured: data.featured || false,
@@ -29,7 +30,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ...project,
-      tags: JSON.parse(project.tags),
+      tags: data.tags,
+      status: data.status || 'Project',
+      visible: data.visible !== false,
+      video: data.video || null,
     });
   } catch (error) {
     console.error('Error creating project:', error);

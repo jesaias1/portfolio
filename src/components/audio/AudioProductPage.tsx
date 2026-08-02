@@ -128,12 +128,25 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
                 sizes="(max-width: 900px) 100vw, 90vw"
               />
               <div className="interface-placeholder__label">
-                <span>Demo capture slot</span>
-                <strong>Your ORVO recording will replace this preview.</strong>
+                <span>ORVO / Interface study</span>
+                <strong>One sample. Four ways out.</strong>
               </div>
             </div>
           )}
         </div>
+        {!product.assets.video ? (
+          <ol className="interface-demo__steps" aria-label={`${product.name} workflow preview`}>
+            {product.workflow.map((step, index) => (
+              <li key={step.title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <strong>{step.title}</strong>
+                  <p>{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : null}
       </section>
 
       <section className="product-detail-grid" aria-label={`${product.name} product details`}>

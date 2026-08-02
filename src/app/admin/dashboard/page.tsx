@@ -19,17 +19,22 @@ import {
 } from 'react-icons/hi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import toast from 'react-hot-toast';
+import { projectStatuses, type ProjectStatus } from '@/lib/project-metadata';
 
 interface Project {
   id: string;
   title: string;
   description: string;
+  longDesc?: string;
   image: string;
+  video?: string;
   tags: string[];
   link?: string;
   github?: string;
   featured: boolean;
   order: number;
+  status?: ProjectStatus | 'Project';
+  visible?: boolean;
 }
 
 interface AboutData {
@@ -44,6 +49,7 @@ interface ContactData {
   github?: string;
   linkedin?: string;
   twitter?: string;
+  resume?: string;
 }
 
 type Tab = 'projects' | 'about' | 'contact';
@@ -375,7 +381,17 @@ function ProjectsTab({
                           className="w-20 h-20 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all"
                         />
                         <div className="flex-1">
-                          <h3 className="font-medium mb-1">{project.title}</h3>
+                          <div className="mb-1 flex flex-wrap items-center gap-2">
+                            <h3 className="font-medium">{project.title}</h3>
+                            <span className="border border-[#4ddbff]/20 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[#4ddbff]/70">
+                              {project.status || 'Project'}
+                            </span>
+                            {project.visible === false ? (
+                              <span className="border border-amber-400/20 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-amber-300/70">
+                                Hidden
+                              </span>
+                            ) : null}
+                          </div>
                           <p className="text-sm text-gray-400 line-clamp-1">
                             {project.description}
                           </p>
@@ -483,9 +499,10 @@ function AboutTab({ data, onUpdate }: { data: AboutData; onUpdate: () => void })
         <div>
           <label className="block text-sm mb-2 text-gray-400">Billede URL</label>
           <input
-            type="url"
+            type="text"
             value={formData.image}
             onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            placeholder="/headshot.jpg"
             className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
           />
         </div>
@@ -599,6 +616,16 @@ function ContactTab({ data, onUpdate }: { data: ContactData; onUpdate: () => voi
           />
         </div>
 
+        <div>
+          <label className="block text-sm mb-2 text-gray-400">CV / Resume URL</label>
+          <input
+            type="text"
+            value={formData.resume || ''}
+            onChange={(e) => setFormData({ ...formData, resume: e.target.value })}
+            className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+          />
+        </div>
+
         <motion.button
           type="submit"
           disabled={isSaving}
@@ -626,12 +653,16 @@ function ProjectModal({
   const [formData, setFormData] = useState({
     title: project?.title || '',
     description: project?.description || '',
+    longDesc: project?.longDesc || '',
     image: project?.image || '',
+    video: project?.video || '',
     tags: project?.tags.join(', ') || '',
     link: project?.link || '',
     github: project?.github || '',
     featured: project?.featured || false,
     order: project?.order || 0,
+    status: project?.status || 'Project',
+    visible: project?.visible !== false,
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -718,6 +749,16 @@ function ProjectModal({
           </div>
 
           <div>
+            <label className="block text-sm mb-2 text-gray-400">Lang projektbeskrivelse</label>
+            <textarea
+              value={formData.longDesc}
+              onChange={(e) => setFormData({ ...formData, longDesc: e.target.value })}
+              rows={5}
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors resize-none"
+            />
+          </div>
+
+          <div>
             <label className="block text-sm mb-2 text-gray-400">Billede URL</label>
             <input
               type="text"
@@ -726,6 +767,31 @@ function ProjectModal({
               required
               className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Video URL eller lokal sti</label>
+            <input
+              type="text"
+              value={formData.video}
+              onChange={(e) => setFormData({ ...formData, video: e.target.value })}
+              placeholder="/projects/videos/project.mp4"
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Offentlig status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as ProjectStatus | 'Project' })}
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+            >
+              <option value="Project">Project</option>
+              {projectStatuses.map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -770,6 +836,15 @@ function ProjectModal({
                 className="w-5 h-5"
               />
               <span className="text-sm text-gray-400">Fremhævet Projekt</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.visible}
+                onChange={(e) => setFormData({ ...formData, visible: e.target.checked })}
+                className="w-5 h-5"
+              />
+              <span className="text-sm text-gray-400">Vis på portfolio</span>
             </label>
           </div>
 
