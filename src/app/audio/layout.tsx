@@ -4,7 +4,7 @@ import "./audio.css";
 export const metadata: Metadata = {
   title: "Jesaias Audio - Music Software",
   description:
-    "Independent music software for drawing, performing and discovering new ideas. Home of MIDIUM and ABYX.",
+    "Independent music software for drawing, performing and discovering new ideas. Home of ORVO, MIDIUM and ABYX.",
   alternates: {
     canonical: "/audio",
   },

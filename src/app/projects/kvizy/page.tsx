@@ -34,8 +34,30 @@ const details = [
 ];
 
 export default function KvizyCaseStudy() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "KVIZY",
+    description:
+      "A Danish offline-first pass-the-device multiplayer quiz for game nights on one shared screen.",
+    applicationCategory: "GameApplication",
+    operatingSystem: "Web",
+    inLanguage: "da-DK",
+    isAccessibleForFree: true,
+    url: "https://kvizy.dk",
+    author: {
+      "@type": "Person",
+      name: "Jesaias",
+      url: "https://jesaias.dk",
+    },
+  };
+
   return (
     <main className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       <nav className={styles.nav} aria-label="KVIZY case study navigation">
         <Link href="/#projects" className={styles.back}>← Portfolio</Link>
         <span className={styles.wordmark}>KVIZY</span>

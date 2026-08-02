@@ -10,12 +10,43 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
   const isComingSoon = product.commerce.mode === "coming-soon";
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: product.name,
+    description: product.longCopy,
+    applicationCategory: "MultimediaApplication",
+    applicationSubCategory: "Music software",
+    operatingSystem: product.compatibility.join(", "),
+    softwareVersion: product.currentVersion.version,
+    url: `https://jesaias.dk/audio/${product.slug}`,
+    author: {
+      "@type": "Person",
+      name: "Jesaias",
+      url: "https://jesaias.dk",
+    },
+    ...(hasLicenseCheckout
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: "10.00",
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+            url: product.urls.buyLicense,
+          },
+        }
+      : {}),
+  };
 
   return (
     <main
       className={`audio-site product-page product-page--${product.slug}`}
       style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as React.CSSProperties}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       <AudioNav />
 
       <section className="product-hero" aria-labelledby="product-title">

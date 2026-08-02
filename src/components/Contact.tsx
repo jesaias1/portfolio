@@ -19,7 +19,8 @@ const fallbackContact: ContactInfo = {
 };
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', website: '' });
+  const [formStartedAt, setFormStartedAt] = useState(() => Date.now());
   const [contactInfo, setContactInfo] = useState<ContactInfo>(fallbackContact);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -45,14 +46,15 @@ export default function Contact() {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, startedAt: formStartedAt }),
       });
 
       if (!response.ok) throw new Error('Message could not be sent');
       toast.success('Message sent.');
       play('success');
       setIsSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', website: '' });
+      setFormStartedAt(Date.now());
     } catch {
       toast.error(`Message unavailable — email ${contactInfo.email} instead.`);
       play('error');
@@ -154,6 +156,18 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                  <label htmlFor="contact-website">Website</label>
+                  <input
+                    id="contact-website"
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formData.website}
+                    onChange={(event) => setFormData((current) => ({ ...current, website: event.target.value }))}
+                  />
+                </div>
                 <FormField
                   id="contact-name"
                   label="Your name"

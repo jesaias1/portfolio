@@ -80,7 +80,7 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [projectsRes, aboutRes, contactRes] = await Promise.all([
-        fetch('/api/projects'),
+        fetch('/api/projects?admin=1'),
         fetch('/api/about'),
         fetch('/api/contact'),
       ]);
@@ -179,6 +179,14 @@ export default function AdminDashboard() {
               className="px-6 py-3 border border-[#4ddbff]/30 text-[#4ddbff] hover:bg-[#4ddbff]/5 transition-all font-mono text-xs uppercase tracking-widest"
             >
               View Site
+            </motion.a>
+            <motion.a
+              href="/?portfolioPreview=1#projects"
+              whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(77, 219, 255, 0.1)' }}
+              whileTap={{ scale: 0.98 }}
+              className="px-6 py-3 border border-amber-400/30 text-amber-300 hover:bg-amber-400/5 transition-all font-mono text-xs uppercase tracking-widest"
+            >
+              Preview Hidden
             </motion.a>
             <motion.button
               onClick={() => signOut({ callbackUrl: '/' })}
