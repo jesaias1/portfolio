@@ -4,7 +4,6 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Clone,
-  Environment,
   Float,
   useGLTF,
 } from '@react-three/drei';
@@ -87,14 +86,23 @@ function CursorGlow({
   mousePos,
   isLowEnd,
   prefersReducedMotion,
+  isActive,
+  pulseToken,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   prefersReducedMotion: boolean;
+  isActive: boolean;
+  pulseToken: number;
 }) {
   const spriteRef = useRef<THREE.Sprite>(null);
   const materialRef = useRef<THREE.SpriteMaterial>(null);
   const lightRef = useRef<THREE.PointLight>(null);
+  const pulse = useRef(0);
+
+  useEffect(() => {
+    if (pulseToken > 0 && !prefersReducedMotion) pulse.current = 1;
+  }, [prefersReducedMotion, pulseToken]);
 
   const glowTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -121,8 +129,10 @@ function CursorGlow({
     return () => glowTexture.dispose();
   }, [glowTexture]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!spriteRef.current || !materialRef.current || !lightRef.current) return;
+
+    pulse.current = Math.max(0, pulse.current - delta * 1.15);
 
     const distance = mousePos.current.active
       ? Math.hypot(mousePos.current.x * 0.85, mousePos.current.y * 1.15)
@@ -130,9 +140,10 @@ function CursorGlow({
     const proximity = THREE.MathUtils.clamp(1 - distance / 1.15, 0, 1);
     const motionScale = prefersReducedMotion ? 0 : 1;
 
-    const targetOpacity = 0.12 + proximity * (isLowEnd ? 0.14 : 0.28) * motionScale;
-    const targetLight = 0.35 + proximity * (isLowEnd ? 0.95 : 1.65) * motionScale;
-    const targetScale = 4.85 + proximity * 0.7;
+    const activeLift = isActive && !prefersReducedMotion ? 1 : 0;
+    const targetOpacity = 0.12 + proximity * (isLowEnd ? 0.14 : 0.28) * motionScale + activeLift * 0.05 + pulse.current * 0.26;
+    const targetLight = 0.35 + proximity * (isLowEnd ? 0.95 : 1.65) * motionScale + activeLift * 0.35 + pulse.current * 2.05;
+    const targetScale = 4.85 + proximity * 0.7 + activeLift * 0.14 + pulse.current * 0.82;
 
     materialRef.current.opacity = THREE.MathUtils.lerp(
       materialRef.current.opacity,
@@ -188,14 +199,23 @@ function LogoModel({
   isLowEnd,
   isMobile,
   prefersReducedMotion,
+  isActive,
+  pulseToken,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
+  isActive: boolean;
+  pulseToken: number;
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const pulse = useRef(0);
   const { scene } = useGLTF(MODEL_PATH);
+
+  useEffect(() => {
+    if (pulseToken > 0 && !prefersReducedMotion) pulse.current = 1;
+  }, [prefersReducedMotion, pulseToken]);
 
   const preparedScene = useMemo(() => {
     const clone = scene.clone(true);
@@ -221,12 +241,15 @@ function LogoModel({
     return { center: c, scaleFactor: (isMobile ? 1.72 : 3.2) / maxDim };
   }, [preparedScene, isMobile]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!groupRef.current || prefersReducedMotion) return;
+
+    pulse.current = Math.max(0, pulse.current - delta * 1.35);
+    const pulseArc = Math.sin((1 - pulse.current) * Math.PI);
 
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
-      BASE_Y_ROTATION + mousePos.current.x * 0.3,
+      BASE_Y_ROTATION + mousePos.current.x * 0.3 + pulse.current * 0.11,
       0.05
     );
     groupRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -234,6 +257,19 @@ function LogoModel({
       mousePos.current.y * 0.2,
       0.05
     );
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
+      -pulseArc * 0.04,
+      0.09
+    );
+    groupRef.current.position.z = THREE.MathUtils.lerp(
+      groupRef.current.position.z,
+      pulseArc * 0.12,
+      0.09
+    );
+    const targetScale = 1 + (isActive ? 0.008 : 0) + pulse.current * 0.045;
+    const nextScale = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.09);
+    groupRef.current.scale.setScalar(nextScale);
   });
 
   const model = (
@@ -277,20 +313,20 @@ function LogoModel({
   );
 }
 
-function SceneEnvironment({ isLowEnd }: { isLowEnd: boolean }) {
-  return <Environment preset="studio" environmentIntensity={isLowEnd ? 0.95 : 1.2} />;
-}
-
 function LogoScene({
   mousePos,
   isLowEnd,
   isMobile,
   prefersReducedMotion,
+  isActive,
+  pulseToken,
 }: {
   mousePos: MotionInput;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
+  isActive: boolean;
+  pulseToken: number;
 }) {
   return (
     <>
@@ -300,11 +336,13 @@ function LogoScene({
       <pointLight position={[0, 2.5, 3]} intensity={0.52} color="#ffffff" distance={12} />
       <pointLight position={[0, -3, 2]} intensity={0.18} color="#80eaff" distance={10} />
 
-      <SceneEnvironment isLowEnd={isLowEnd} />
+      <hemisphereLight args={['#ecfdff', '#050708', isLowEnd ? 0.56 : 0.72]} />
       <CursorGlow
         mousePos={mousePos}
         isLowEnd={isLowEnd}
         prefersReducedMotion={prefersReducedMotion}
+        isActive={isActive}
+        pulseToken={pulseToken}
       />
 
       <LogoModel
@@ -312,6 +350,8 @@ function LogoScene({
         isLowEnd={isLowEnd}
         isMobile={isMobile}
         prefersReducedMotion={prefersReducedMotion}
+        isActive={isActive}
+        pulseToken={pulseToken}
       />
     </>
   );
@@ -334,7 +374,15 @@ function LoadingFallback({ prefersReducedMotion }: { prefersReducedMotion: boole
   );
 }
 
-export default function Logo3D({ className = '' }: { className?: string }) {
+export default function Logo3D({
+  className = '',
+  isActive = false,
+  pulseToken = 0,
+}: {
+  className?: string;
+  isActive?: boolean;
+  pulseToken?: number;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0, active: false });
   const orientationBase = useRef<{ beta: number; gamma: number } | null>(null);
@@ -424,6 +472,7 @@ export default function Logo3D({ className = '' }: { className?: string }) {
   return (
     <div
       ref={containerRef}
+      aria-hidden="true"
       className={className}
       style={{
         position: 'absolute',
@@ -455,6 +504,8 @@ export default function Logo3D({ className = '' }: { className?: string }) {
             isLowEnd={isLowEnd}
             isMobile={isMobile}
             prefersReducedMotion={prefersReducedMotion}
+            isActive={isActive}
+            pulseToken={pulseToken}
           />
         </Suspense>
       </Canvas>

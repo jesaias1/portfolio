@@ -22,7 +22,7 @@ export default function Projects() {
   const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
   const [previewMode, setPreviewMode] = useState(false);
   const visibleProjects = projects.filter(
-    (project) => previewMode || (project.visible !== false && !isLegacyHidden(project))
+    (project) => !isLegacyHidden(project) && (previewMode || project.visible !== false)
   );
 
   useEffect(() => {
@@ -170,7 +170,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
             alt={`${project.title} project preview`}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            quality={78}
+            quality={75}
             onError={() => setImageFailed(true)}
             className="object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
             style={{ filter: showVideo ? 'none' : 'saturate(.74) brightness(.76)' }}
@@ -255,5 +255,5 @@ function isExternal(href: string) {
 
 function isLegacyHidden(project: PortfolioProject) {
   const key = `${project.title} ${project.id}`.toLowerCase();
-  return key.includes('stickman') || key.includes('stick fighting');
+  return key.includes('stickman') || key.includes('stick fighting') || key.includes('stick-fighting');
 }

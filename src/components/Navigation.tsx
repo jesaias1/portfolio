@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useSound } from '@/hooks/use-sound';
 
@@ -19,6 +19,8 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
   const { play } = useSound();
 
@@ -50,8 +52,13 @@ export default function Navigation() {
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
+    mobileMenuRef.current?.querySelector<HTMLAnchorElement>('a')?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -129,14 +136,14 @@ export default function Navigation() {
                     onMouseEnter={() => play('hover')}
                     aria-current={isActive ? 'location' : undefined}
                     className={`group relative font-mono text-xs tracking-wider transition-colors ${
-                      isActive ? 'text-[#4ddbff]' : 'text-gray-500 hover:text-[#4ddbff]'
+                      isActive ? 'text-[#4ddbff]' : 'text-gray-400 hover:text-[#4ddbff]'
                     }`}
                   >
-                    <span className={`mr-1 text-[#4ddbff] transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    <span aria-hidden="true" className={`mr-1 text-[#4ddbff] transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                       {'>'}
                     </span>
                     {item.name}
-                    <span className={`absolute -bottom-1 left-0 h-px bg-[#4ddbff] opacity-50 transition-all ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                    <span aria-hidden="true" className={`absolute -bottom-1 left-0 h-px bg-[#4ddbff] opacity-50 transition-all ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                   </a>
                 </motion.div>
               );
@@ -144,13 +151,14 @@ export default function Navigation() {
           </div>
 
           <motion.button
+            ref={menuButtonRef}
             type="button"
             whileTap={{ scale: 0.9 }}
             onClick={() => {
               setIsMobileMenuOpen((open) => !open);
               play('click');
             }}
-            className="text-xl text-gray-400 transition-colors hover:text-[#4ddbff] md:hidden"
+            className="-mr-2 inline-flex min-h-11 min-w-11 items-center justify-center text-xl text-gray-300 transition-colors hover:text-[#4ddbff] md:hidden"
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-navigation"
             aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -163,6 +171,7 @@ export default function Navigation() {
       <AnimatePresence>
         {isMobileMenuOpen ? (
           <motion.div
+            ref={mobileMenuRef}
             id="mobile-navigation"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -190,7 +199,7 @@ export default function Navigation() {
                         isActive ? 'text-[#4ddbff]' : 'text-gray-400 hover:text-[#4ddbff]'
                       }`}
                     >
-                      <span className="mr-2 text-[#4ddbff]">{'>'}</span>
+                      <span aria-hidden="true" className="mr-2 text-[#4ddbff]">{'>'}</span>
                       {item.name}
                     </a>
                   </motion.div>

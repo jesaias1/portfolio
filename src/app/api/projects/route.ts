@@ -61,11 +61,18 @@ export async function GET(request: Request) {
 }
 
 function catalogueResponse(projects: typeof fallbackProjects, includeHidden: boolean) {
-  const catalogue = includeHidden ? projects : projects.filter((project) => project.visible !== false);
+  const catalogue = includeHidden
+    ? projects
+    : projects.filter((project) => project.visible !== false && !isLegacyHidden(project));
   return NextResponse.json(catalogue, {
     headers: {
       'Cache-Control': includeHidden ? 'private, no-store' : 'public, max-age=60, stale-while-revalidate=300',
       'X-Portfolio-Preview': String(includeHidden),
     },
   });
+}
+
+function isLegacyHidden(project: PortfolioProject) {
+  const key = `${project.title} ${project.id}`.toLowerCase();
+  return key.includes('stickman') || key.includes('stick fighting') || key.includes('stick-fighting');
 }

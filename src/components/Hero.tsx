@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { AnimatePresence, motion, useScroll, useTransform, useInView, useReducedMotion } from 'framer-motion';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
 import { useLenis } from 'lenis/react';
@@ -18,6 +18,8 @@ const Logo3D = dynamic(() => import('./Logo3D'), {
   ),
 });
 
+const FULL_SUBTITLE = '> creative_developer --software --audio --games';
+
 /* ASCII_LOGO removed — replaced with 3D Logo component */
 
 export default function Hero() {
@@ -27,8 +29,23 @@ export default function Hero() {
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [subtitleText, setSubtitleText] = useState('');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
+  const [logoPulse, setLogoPulse] = useState(0);
+  const [showBlueprint, setShowBlueprint] = useState(true);
+  const shouldReduceMotion = useReducedMotion();
   const { play } = useSound();
   const lenis = useLenis();
+  const closeTerminal = useCallback(() => setIsTerminalOpen(false), []);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setShowBlueprint(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => setShowBlueprint(false), 2400);
+    return () => window.clearTimeout(timer);
+  }, [shouldReduceMotion]);
 
   const handleNavClick = (href: string) => {
     play('click');
@@ -59,14 +76,12 @@ export default function Hero() {
   });
   
   const logoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const fullSubtitle = '> creative_developer --software --audio --games';
-
   // Global keyboard shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '/' || e.key === '`') {
-        // Only trigger if not already typing in an input
-        if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        const target = e.target instanceof HTMLElement ? e.target : null;
+        if (!target?.closest('input, textarea, select, [contenteditable="true"]')) {
           e.preventDefault();
           setIsTerminalOpen(true);
         }
@@ -79,13 +94,19 @@ export default function Hero() {
   // Trigger subtitle typing when intro section scrolls into view
   useEffect(() => {
     if (introInView && !subtitleVisible) {
+      if (shouldReduceMotion) {
+        setSubtitleVisible(true);
+        setSubtitleText(FULL_SUBTITLE);
+        return;
+      }
+
       const timer = setTimeout(() => {
         setSubtitleVisible(true);
         let charIndex = 0;
         const typeInterval = setInterval(() => {
           charIndex++;
-          setSubtitleText(fullSubtitle.slice(0, charIndex));
-          if (charIndex >= fullSubtitle.length) {
+          setSubtitleText(FULL_SUBTITLE.slice(0, charIndex));
+          if (charIndex >= FULL_SUBTITLE.length) {
             clearInterval(typeInterval);
           }
         }, 35);
@@ -93,7 +114,7 @@ export default function Hero() {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [introInView, subtitleVisible]);
+  }, [introInView, shouldReduceMotion, subtitleVisible]);
 
   return (
     <>
@@ -105,6 +126,7 @@ export default function Hero() {
         id="home" 
         className="relative flex h-screen min-h-[100svh] items-center justify-center overflow-hidden"
       >
+        <h1 className="sr-only">Jesaias — creative developer building software, audio tools and playful systems</h1>
         <div className="pointer-events-none absolute inset-0 z-0">
           <div className="absolute left-1/2 top-[44%] h-[62vw] max-h-[760px] min-h-[420px] w-[62vw] max-w-[760px] min-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4ddbff]/[0.035] blur-3xl" />
           <div className="absolute inset-x-[8vw] top-1/2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
@@ -129,8 +151,45 @@ export default function Hero() {
           }}
           className="absolute inset-0 z-20 pointer-events-none"
         >
-          <Logo3D />
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
+            animate={{
+              opacity: 1,
+              scale: isLogoHovered ? 1.012 : 1,
+              filter: 'blur(0px)',
+            }}
+            transition={{ duration: 1.2, delay: shouldReduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0"
+          >
+            <Logo3D isActive={isLogoHovered} pulseToken={logoPulse} />
+          </motion.div>
         </motion.div>
+
+        <button
+          type="button"
+          aria-label="Animate the Jesaias signature"
+          data-testid="hero-logo-interaction"
+          onPointerEnter={(event) => {
+            if (event.pointerType !== 'touch') setIsLogoHovered(true);
+          }}
+          onPointerLeave={() => setIsLogoHovered(false)}
+          onFocus={(event) => {
+            if (event.currentTarget.matches(':focus-visible')) setIsLogoHovered(true);
+          }}
+          onBlur={() => setIsLogoHovered(false)}
+          onClick={() => {
+            play('click');
+            setLogoPulse((value) => value + 1);
+          }}
+          className="absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 cursor-crosshair rounded-[45%] bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#4ddbff]/55 focus-visible:ring-offset-8 focus-visible:ring-offset-black max-sm:h-[240px] max-sm:w-[86vw]"
+        >
+          <span className="sr-only">The signature responds to pointer movement and clicks</span>
+          {logoPulse > 0 && !shouldReduceMotion ? <LogoBurst key={logoPulse} /> : null}
+        </button>
+
+        <AnimatePresence>
+          {showBlueprint && !shouldReduceMotion ? <BlueprintReveal /> : null}
+        </AnimatePresence>
 
         {/* Scroll indicator — anchored to bottom of hero */}
         <motion.div
@@ -204,9 +263,84 @@ export default function Hero() {
 
       <TerminalOverlay 
         isOpen={isTerminalOpen} 
-        onClose={() => setIsTerminalOpen(false)} 
+        onClose={closeTerminal}
       />
     </>
+  );
+}
+
+function LogoBurst() {
+  return (
+    <motion.span
+      data-testid="hero-logo-burst"
+      aria-hidden="true"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 0 }}
+      transition={{ duration: 1.05, ease: 'easeOut' }}
+      className="pointer-events-none absolute inset-0"
+    >
+      <motion.span
+        initial={{ opacity: 0.5, scale: 0.78 }}
+        animate={{ opacity: 0, scale: 1.08 }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-[10%] rounded-[45%] border border-[#4ddbff]/40 shadow-[0_0_24px_rgba(77,219,255,0.08)]"
+      />
+      <motion.span
+        initial={{ opacity: 0.34, scale: 0.7 }}
+        animate={{ opacity: 0, scale: 1 }}
+        transition={{ duration: 0.78, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-[20%] rounded-[45%] border border-white/25"
+      />
+      <motion.span
+        initial={{ opacity: 0, scaleX: 0.08 }}
+        animate={{ opacity: [0, 0.85, 0], scaleX: 1 }}
+        transition={{ duration: 0.62, ease: 'easeOut' }}
+        className="absolute left-[10%] right-[10%] top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-[#d9fbff] to-transparent shadow-[0_0_14px_rgba(77,219,255,0.9)]"
+      />
+      <motion.span
+        initial={{ opacity: 0.9, scale: 0.3 }}
+        animate={{ opacity: 0, scale: 2.6 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c8f8ff] shadow-[0_0_28px_rgba(77,219,255,0.95)]"
+      />
+    </motion.span>
+  );
+}
+
+function BlueprintReveal() {
+  const lineTransition = { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.45 } }}
+      className="pointer-events-none absolute left-1/2 top-[44%] z-30 h-[min(54vw,540px)] min-h-[260px] w-[min(80vw,800px)] -translate-x-1/2 -translate-y-1/2"
+    >
+      <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={lineTransition} className="absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-transparent via-[#4ddbff]/55 to-transparent" />
+      <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ ...lineTransition, delay: 0.08 }} className="absolute inset-x-0 bottom-0 h-px origin-right bg-gradient-to-r from-transparent via-[#4ddbff]/30 to-transparent" />
+      <motion.span initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ ...lineTransition, delay: 0.15 }} className="absolute inset-y-0 left-0 w-px origin-top bg-gradient-to-b from-transparent via-[#4ddbff]/35 to-transparent" />
+      <motion.span initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ ...lineTransition, delay: 0.2 }} className="absolute inset-y-0 right-0 w-px origin-bottom bg-gradient-to-b from-transparent via-[#4ddbff]/35 to-transparent" />
+
+      <motion.span
+        initial={{ left: '10%', opacity: 0 }}
+        animate={{ left: '90%', opacity: [0, 0.65, 0] }}
+        transition={{ duration: 1.4, delay: 0.42, ease: 'easeInOut' }}
+        className="absolute inset-y-[5%] w-px bg-[#b9f4ff] shadow-[0_0_18px_rgba(77,219,255,0.9)]"
+      />
+
+      <div className="absolute left-3 top-3 font-mono text-[8px] uppercase tracking-[0.2em] text-[#4ddbff]/55 sm:text-[9px]">
+        mark / construction
+      </div>
+      <div className="absolute bottom-3 right-3 font-mono text-[8px] uppercase tracking-[0.2em] text-white/30 sm:text-[9px]">
+        geometry locked
+      </div>
+      <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-[#4ddbff]/55" />
+      <span className="absolute left-1/2 bottom-0 h-3 w-px -translate-x-1/2 translate-y-1/2 bg-[#4ddbff]/35" />
+      <span className="absolute left-0 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-[#4ddbff]/35" />
+      <span className="absolute right-0 top-1/2 h-px w-3 translate-x-1/2 -translate-y-1/2 bg-[#4ddbff]/35" />
+    </motion.div>
   );
 }
 
@@ -223,8 +357,51 @@ function TerminalButton({
 }) {
   const { play } = useSound();
 
-  const content = (
-    <motion.div
+  const classes = `
+    group relative min-h-11 overflow-hidden px-8 py-3.5 font-mono text-sm tracking-wider transition-all duration-300
+    ${variant === 'solid'
+      ? 'border border-[#4ddbff]/40 bg-[#4ddbff]/10 text-[#4ddbff] hover:border-[#4ddbff]/80 hover:bg-[#4ddbff]/20'
+      : 'border border-gray-700 bg-white/[0.02] text-gray-400 hover:border-[#4ddbff]/40 hover:bg-[#4ddbff]/5 hover:text-[#4ddbff]/80'
+    }
+  `;
+  const style = {
+    boxShadow: variant === 'solid'
+      ? '0 0 20px rgba(77, 219, 255, 0.1), inset 0 1px 0 rgba(77, 219, 255, 0.1)'
+      : 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
+  };
+  const decoration = (
+    <>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(77,219,255,0.08),transparent)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+      />
+      <span className="relative z-10">{children}</span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <motion.a
+        href={href}
+        whileHover={{ scale: 1.03, y: -1 }}
+        whileTap={{ scale: 0.97 }}
+        onMouseEnter={() => play('hover')}
+        onClick={() => play('click')}
+        className={classes}
+        style={style}
+      >
+        {decoration}
+      </motion.a>
+    );
+  }
+
+  return (
+    <motion.button
+      type="button"
       whileHover={{ scale: 1.03, y: -1 }}
       whileTap={{ scale: 0.97 }}
       onMouseEnter={() => play('hover')}
@@ -232,39 +409,10 @@ function TerminalButton({
         play('click');
         onClick?.();
       }}
-      className={`
-        relative px-8 py-3.5 font-mono text-sm tracking-wider overflow-hidden group transition-all duration-300 cursor-pointer
-        ${variant === 'solid' 
-          ? 'bg-[#4ddbff]/10 border border-[#4ddbff]/40 text-[#4ddbff] hover:bg-[#4ddbff]/20 hover:border-[#4ddbff]/80' 
-          : 'bg-white/[0.02] border border-gray-700 text-gray-400 hover:border-[#4ddbff]/40 hover:text-[#4ddbff]/80 hover:bg-[#4ddbff]/5'
-        }
-      `}
-      style={{
-        boxShadow: variant === 'solid' 
-          ? '0 0 20px rgba(77, 219, 255, 0.1), inset 0 1px 0 rgba(77, 219, 255, 0.1)' 
-          : 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
-      }}
+      className={classes}
+      style={style}
     >
-      {/* Hover sweep glow */}
-      <motion.div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          background: variant === 'solid' 
-            ? 'linear-gradient(90deg, transparent, rgba(77, 219, 255, 0.08), transparent)' 
-            : 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent)',
-        }}
-      />
-      {/* Scan line sweep on hover */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ddbff]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-      />
-      <span className="relative z-10">{children}</span>
-    </motion.div>
+      {decoration}
+    </motion.button>
   );
-
-  if (href) {
-    return <a href={href}>{content}</a>;
-  }
-
-  return content;
 }

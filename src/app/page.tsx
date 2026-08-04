@@ -1,20 +1,22 @@
 'use client';
 
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import About from '@/components/About';
-import Contact from '@/components/Contact';
-import CustomCursor from '@/components/CustomCursor';
-import GlitchFlash from '@/components/GlitchFlash';
 import Hero from '@/components/Hero';
 import Navigation from '@/components/Navigation';
-import Projects from '@/components/Projects';
-import ScrollProgress from '@/components/ScrollProgress';
 import ScrollVideo from '@/components/ScrollVideo';
 import SectionDivider from '@/components/SectionDivider';
-import ServicesSection from '@/components/ServicesSection';
 import SplashScreen from '@/components/SplashScreen';
-import StatsSection from '@/components/StatsSection';
+
+const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: false });
+const GlitchFlash = dynamic(() => import('@/components/GlitchFlash'), { ssr: false });
+const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), { ssr: false });
+const ServicesSection = dynamic(() => import('@/components/ServicesSection'));
+const Projects = dynamic(() => import('@/components/Projects'));
+const StatsSection = dynamic(() => import('@/components/StatsSection'));
+const About = dynamic(() => import('@/components/About'));
+const Contact = dynamic(() => import('@/components/Contact'));
 
 const sitemap = ['services', 'projects', 'about', 'contact'];
 
@@ -30,7 +32,8 @@ export default function Home() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      setShowSplash(!window.localStorage.getItem('jesaias-visited'));
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setShowSplash(!reducedMotion && !window.localStorage.getItem('jesaias-visited'));
       setIsReady(true);
     });
 
