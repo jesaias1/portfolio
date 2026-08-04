@@ -14,7 +14,6 @@ const GlitchFlash = dynamic(() => import('@/components/GlitchFlash'), { ssr: fal
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), { ssr: false });
 const ServicesSection = dynamic(() => import('@/components/ServicesSection'));
 const Projects = dynamic(() => import('@/components/Projects'));
-const StatsSection = dynamic(() => import('@/components/StatsSection'));
 const About = dynamic(() => import('@/components/About'));
 const Contact = dynamic(() => import('@/components/Contact'));
 
@@ -74,8 +73,6 @@ export default function Home() {
           <ServicesSection />
           <SectionDivider />
           <Projects />
-          <SectionDivider />
-          <StatsSection />
           <SectionDivider />
           <About />
           <SectionDivider />

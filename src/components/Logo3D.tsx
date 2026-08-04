@@ -4,9 +4,11 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Clone,
+  Edges,
   Float,
   useGLTF,
 } from '@react-three/drei';
+import type { EdgesRef } from '@react-three/drei';
 import * as THREE from 'three';
 
 const MODEL_PATH = '/logo3d.glb';
@@ -78,6 +80,52 @@ function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
       attenuationColor="#a8f2ff"
       attenuationDistance={2.35}
       side={THREE.FrontSide}
+    />
+  );
+}
+
+function LogoEdgeChase({ pulseToken }: { pulseToken: number }) {
+  const edgeRef = useRef<EdgesRef>(null);
+  const pulse = useRef(0);
+
+  useEffect(() => {
+    if (pulseToken <= 0) return;
+    pulse.current = 1;
+    if (!edgeRef.current) return;
+    edgeRef.current.visible = true;
+    edgeRef.current.material.dashOffset = 0;
+  }, [pulseToken]);
+
+  useFrame((_, delta) => {
+    if (pulse.current <= 0) return;
+
+    pulse.current = Math.max(0, pulse.current - delta * 0.72);
+    const progress = 1 - pulse.current;
+    const envelope = Math.sin(progress * Math.PI);
+    const edge = edgeRef.current;
+
+    if (!edge) return;
+    edge.material.opacity = envelope * 0.88;
+    edge.material.dashOffset = -progress * 6.2;
+    edge.material.linewidth = 1.1 + envelope * 0.75;
+    edge.visible = pulse.current > 0;
+  });
+
+  return (
+    <Edges
+      ref={edgeRef}
+      threshold={18}
+      color="#b9f5ff"
+      lineWidth={1.1}
+      dashed
+      dashScale={4.5}
+      dashSize={0.16}
+      gapSize={0.92}
+      transparent
+      opacity={0}
+      depthTest={false}
+      toneMapped={false}
+      renderOrder={40}
     />
   );
 }
@@ -291,7 +339,12 @@ function LogoModel({
           receiveShadow
           inject={(object) =>
             object instanceof THREE.Mesh ? (
-              <LogoMaterial isLowEnd={isLowEnd} />
+              <>
+                <LogoMaterial isLowEnd={isLowEnd} />
+                {pulseToken > 0 && !prefersReducedMotion ? (
+                  <LogoEdgeChase pulseToken={pulseToken} />
+                ) : null}
+              </>
             ) : null
           }
         />

@@ -20,6 +20,7 @@ test('public portfolio and project routes remain available', async ({ page }) =>
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Jesaias');
   await expect(page.getByRole('heading', { name: /Tools, games and systems/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Results' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Open ORVO' })).toBeVisible();
   await expect(page.getByText(/stickman knockout/i)).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Animate the Jesaias signature' })).toBeVisible();
