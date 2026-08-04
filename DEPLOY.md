@@ -50,11 +50,11 @@
    Click "Environment Variables" and add these:
 
    ```
-   DATABASE_URL=file:./dev.db
+   DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public
    NEXTAUTH_URL=https://your-project-name.vercel.app
    NEXTAUTH_SECRET=generate-a-secret-key-here
-   ADMIN_EMAIL=lin4s@live.dk
-   ADMIN_PASSWORD=miebs112
+   ADMIN_EMAIL=your-admin-email@example.com
+   ADMIN_PASSWORD=replace-with-a-long-unique-password
    ```
 
    **To generate NEXTAUTH_SECRET:**
@@ -105,7 +105,7 @@
 After deployment completes:
 - **Portfolio URL:** `https://your-project-name.vercel.app`
 - **Admin Login:** `https://your-project-name.vercel.app/admin/login`
-- **Credentials:** `lin4s@live.dk` / `miebs112`
+- **Credentials:** the values configured in `ADMIN_EMAIL` and `ADMIN_PASSWORD`
 
 ## 🔄 Making Updates
 

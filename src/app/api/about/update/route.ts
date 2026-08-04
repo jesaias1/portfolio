@@ -13,15 +13,16 @@ export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
     
-    const about = await prisma.about.update({
-      where: { id: '1' },
-      data: {
-        title: data.title,
-        content: data.content,
-        image: data.image,
-        skills: JSON.stringify(data.skills),
-      },
-    });
+    const existing = await prisma.about.findFirst({ select: { id: true } });
+    const values = {
+      title: data.title || 'About Jesaias',
+      content: data.content || '',
+      image: data.image || '/headshot.jpg',
+      skills: JSON.stringify(data.skills || []),
+    };
+    const about = existing
+      ? await prisma.about.update({ where: { id: existing.id }, data: values })
+      : await prisma.about.create({ data: { id: 'main', ...values } });
 
     return NextResponse.json({
       ...about,

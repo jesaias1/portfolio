@@ -19,17 +19,23 @@ import {
 } from 'react-icons/hi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import toast from 'react-hot-toast';
+import { projectStatuses, type ProjectStatus } from '@/lib/project-metadata';
+import { isSafeMediaReference } from '@/lib/media-reference';
 
 interface Project {
   id: string;
   title: string;
   description: string;
+  longDesc?: string;
   image: string;
+  video?: string;
   tags: string[];
   link?: string;
   github?: string;
   featured: boolean;
   order: number;
+  status?: ProjectStatus | 'Project';
+  visible?: boolean;
 }
 
 interface AboutData {
@@ -44,6 +50,7 @@ interface ContactData {
   github?: string;
   linkedin?: string;
   twitter?: string;
+  resume?: string;
 }
 
 type Tab = 'projects' | 'about' | 'contact';
@@ -74,7 +81,7 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [projectsRes, aboutRes, contactRes] = await Promise.all([
-        fetch('/api/projects'),
+        fetch('/api/projects?admin=1'),
         fetch('/api/about'),
         fetch('/api/contact'),
       ]);
@@ -173,6 +180,14 @@ export default function AdminDashboard() {
               className="px-6 py-3 border border-[#4ddbff]/30 text-[#4ddbff] hover:bg-[#4ddbff]/5 transition-all font-mono text-xs uppercase tracking-widest"
             >
               View Site
+            </motion.a>
+            <motion.a
+              href="/?portfolioPreview=1#projects"
+              whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(77, 219, 255, 0.1)' }}
+              whileTap={{ scale: 0.98 }}
+              className="px-6 py-3 border border-amber-400/30 text-amber-300 hover:bg-amber-400/5 transition-all font-mono text-xs uppercase tracking-widest"
+            >
+              Preview Hidden
             </motion.a>
             <motion.button
               onClick={() => signOut({ callbackUrl: '/' })}
@@ -343,6 +358,16 @@ function ProjectsTab({
         </motion.button>
       </div>
 
+      <div className="mb-6 grid gap-3 border border-[#4ddbff]/15 bg-[#4ddbff]/[0.035] p-4 md:grid-cols-[auto_1fr] md:items-start md:gap-6">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#4ddbff]">
+          Media workflow
+        </span>
+        <p className="font-mono text-[10px] leading-5 text-gray-500">
+          Add a poster image first, then an optional silent MP4 or WebM preview. Videos only load
+          on desktop hover; touch devices, reduced-motion users and data-saver mode keep the poster.
+        </p>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="projects-list">
           {(provided) => (
@@ -375,7 +400,20 @@ function ProjectsTab({
                           className="w-20 h-20 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all"
                         />
                         <div className="flex-1">
-                          <h3 className="font-medium mb-1">{project.title}</h3>
+                          <div className="mb-1 flex flex-wrap items-center gap-2">
+                            <h3 className="font-medium">{project.title}</h3>
+                            <span className="border border-[#4ddbff]/20 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[#4ddbff]/70">
+                              {project.status || 'Project'}
+                            </span>
+                            <span className="border border-white/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-gray-500">
+                              {project.video ? 'Video ready' : 'Poster only'}
+                            </span>
+                            {project.visible === false ? (
+                              <span className="border border-amber-400/20 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-amber-300/70">
+                                Hidden
+                              </span>
+                            ) : null}
+                          </div>
                           <p className="text-sm text-gray-400 line-clamp-1">
                             {project.description}
                           </p>
@@ -393,6 +431,7 @@ function ProjectsTab({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => onEdit(project)}
+                          aria-label={`Edit ${project.title}`}
                           className="p-3 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/10 text-indigo-400 transition-all"
                         >
                           <HiPencil />
@@ -401,6 +440,7 @@ function ProjectsTab({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => onDelete(project.id)}
+                          aria-label={`Delete ${project.title}`}
                           disabled={isDeleting === project.id}
                           className="p-3 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 text-red-400 transition-all disabled:opacity-50"
                         >
@@ -432,7 +472,7 @@ function AboutTab({ data, onUpdate }: { data: AboutData; onUpdate: () => void })
     try {
       const res = await fetch('/api/about/update', {
         method: 'PUT',
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -483,9 +523,10 @@ function AboutTab({ data, onUpdate }: { data: AboutData; onUpdate: () => void })
         <div>
           <label className="block text-sm mb-2 text-gray-400">Billede URL</label>
           <input
-            type="url"
+            type="text"
             value={formData.image}
             onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            placeholder="/headshot.jpg"
             className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
           />
         </div>
@@ -529,7 +570,7 @@ function ContactTab({ data, onUpdate }: { data: ContactData; onUpdate: () => voi
     try {
       const res = await fetch('/api/contact/update', {
         method: 'PUT',
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -599,6 +640,16 @@ function ContactTab({ data, onUpdate }: { data: ContactData; onUpdate: () => voi
           />
         </div>
 
+        <div>
+          <label className="block text-sm mb-2 text-gray-400">CV / Resume URL</label>
+          <input
+            type="text"
+            value={formData.resume || ''}
+            onChange={(e) => setFormData({ ...formData, resume: e.target.value })}
+            className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+          />
+        </div>
+
         <motion.button
           type="submit"
           disabled={isSaving}
@@ -626,17 +677,31 @@ function ProjectModal({
   const [formData, setFormData] = useState({
     title: project?.title || '',
     description: project?.description || '',
+    longDesc: project?.longDesc || '',
     image: project?.image || '',
+    video: project?.video || '',
     tags: project?.tags.join(', ') || '',
     link: project?.link || '',
     github: project?.github || '',
     featured: project?.featured || false,
     order: project?.order || 0,
+    status: project?.status || 'Project',
+    visible: project?.visible !== false,
   });
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isSafeMediaReference(formData.image, true)) {
+      toast.error('Use a local /projects/... path or a secure HTTPS poster URL');
+      return;
+    }
+    if (!isSafeMediaReference(formData.video)) {
+      toast.error('Use a local /projects/videos/... path or a secure HTTPS video URL');
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -653,7 +718,7 @@ function ProjectModal({
 
       const res = await fetch(url, {
         method,
-        headers: { 'Indhold-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -718,14 +783,63 @@ function ProjectModal({
           </div>
 
           <div>
-            <label className="block text-sm mb-2 text-gray-400">Billede URL</label>
+            <label className="block text-sm mb-2 text-gray-400">Lang projektbeskrivelse</label>
+            <textarea
+              value={formData.longDesc}
+              onChange={(e) => setFormData({ ...formData, longDesc: e.target.value })}
+              rows={5}
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Poster image path</label>
             <input
-              type="url"
+              type="text"
               value={formData.image}
               onChange={(e) => setFormData({ ...formData, image: e.target.value })}
               required
+              placeholder="/projects/project-name.webp"
               className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
             />
+            <p className="mt-2 font-mono text-[10px] leading-5 text-gray-600">
+              Always shown on mobile and while a video is loading. WebP is recommended.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Hover-preview video path</label>
+            <input
+              type="text"
+              value={formData.video}
+              onChange={(e) => setFormData({ ...formData, video: e.target.value })}
+              placeholder="/projects/videos/project-name.mp4"
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+            />
+            <p className="mt-2 font-mono text-[10px] leading-5 text-gray-600">
+              Optional. Use a muted MP4 or WebM clip under 8 MB; the portfolio loads it only when useful.
+            </p>
+          </div>
+
+          <ProjectMediaPreview
+            key={`${formData.image}|${formData.video}`}
+            title={formData.title || 'Project'}
+            image={formData.image}
+            video={formData.video}
+          />
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Offentlig status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as ProjectStatus | 'Project' })}
+              className="w-full px-4 py-3 bg-black/50 border border-white/10 focus:border-indigo-500/50 focus:outline-none transition-colors"
+            >
+              <option value="Project">Project</option>
+              {projectStatuses.map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -771,6 +885,15 @@ function ProjectModal({
               />
               <span className="text-sm text-gray-400">Fremhævet Projekt</span>
             </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.visible}
+                onChange={(e) => setFormData({ ...formData, visible: e.target.checked })}
+                className="w-5 h-5"
+              />
+              <span className="text-sm text-gray-400">Vis på portfolio</span>
+            </label>
           </div>
 
           <div className="flex gap-4 pt-4">
@@ -796,5 +919,69 @@ function ProjectModal({
         </form>
       </motion.div>
     </motion.div>
+  );
+}
+
+function ProjectMediaPreview({
+  title,
+  image,
+  video,
+}: {
+  title: string;
+  image: string;
+  video: string;
+}) {
+  const [videoFailed, setVideoFailed] = useState(false);
+  const validImage = isSafeMediaReference(image, true);
+  const validVideo = isSafeMediaReference(video) && Boolean(video.trim());
+
+  return (
+    <div className="border border-white/10 bg-black/30 p-3">
+      <div className="mb-3 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.12em]">
+        <span className="text-gray-500">Card media preview</span>
+        <span className={validVideo && !videoFailed ? 'text-[#4ddbff]' : 'text-gray-600'}>
+          {validVideo && !videoFailed ? 'Silent video' : 'Poster fallback'}
+        </span>
+      </div>
+
+      <div className="relative aspect-[16/10] overflow-hidden border border-white/[0.07] bg-[#050607]">
+        {validVideo && !videoFailed ? (
+          <video
+            key={video}
+            src={video}
+            poster={validImage ? image : undefined}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={`${title} silent project-card preview`}
+            onError={() => setVideoFailed(true)}
+            className="h-full w-full object-cover"
+          />
+        ) : validImage ? (
+          <div
+            role="img"
+            aria-label={`${title} poster preview`}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${JSON.stringify(image)})` }}
+          />
+        ) : (
+          <div className="grid h-full place-items-center px-6 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-gray-700">
+            Add a valid poster path to preview this card
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+        <span className="pointer-events-none absolute bottom-3 left-3 font-mono text-[10px] uppercase tracking-[0.12em] text-white/65">
+          {title}
+        </span>
+      </div>
+
+      {videoFailed ? (
+        <p className="mt-3 font-mono text-[10px] leading-5 text-amber-300/70">
+          The video could not be loaded. The public card will safely keep using its poster.
+        </p>
+      ) : null}
+    </div>
   );
 }

@@ -1,44 +1,104 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
+import { checkContactRateLimit } from '@/lib/rate-limit';
 
 export async function GET() {
   try {
     const contact = await prisma.contact.findFirst();
 
     if (!contact) {
-      return NextResponse.json({ error: 'Contact info not found' }, { status: 404 });
+      return NextResponse.json({
+        id: 'main',
+        email: 'contact@jesaias.dk',
+        github: 'https://github.com/jesaias1',
+        linkedin: 'https://www.linkedin.com/in/jesaias/',
+      });
     }
 
     return NextResponse.json(contact);
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch contact data' }, { status: 500 });
+    return NextResponse.json({
+      id: 'main',
+      email: 'contact@jesaias.dk',
+      github: 'https://github.com/jesaias1',
+      linkedin: 'https://www.linkedin.com/in/jesaias/',
+    });
   }
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { name, email, message } = body;
+  const startedAt = Date.now();
+  const requestId = request.headers.get('x-vercel-id');
+  const route = '/api/contact';
+  const log = (level: 'info' | 'error', message: string, status: number) => {
+    const payload = { level, message, route, status, requestId, durationMs: Date.now() - startedAt };
+    if (level === 'error') console.error(JSON.stringify(payload));
+    else console.log(JSON.stringify(payload));
+  };
 
-    // Validate
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+  try {
+    const origin = request.headers.get('origin');
+    const host = request.headers.get('host');
+    if (origin && host && new URL(origin).host !== host) {
+      log('error', 'Contact request rejected by origin check', 403);
+      return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 });
     }
 
-    console.log('--- NEW CONTACT FORM SUBMISSION ---');
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Message:', message);
-    console.log('-----------------------------------');
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > 20_000) {
+      log('error', 'Contact payload exceeded size limit', 413);
+      return NextResponse.json({ error: 'Request too large' }, { status: 413 });
+    }
 
-    // Check for environment variables
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const clientKey =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      requestId ||
+      'local';
+    const rateLimit = checkContactRateLimit(clientKey);
+    if (!rateLimit.allowed) {
+      log('error', 'Contact rate limit exceeded', 429);
+      return NextResponse.json(
+        { error: 'Too many messages. Please try again later.' },
+        { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } }
+      );
+    }
+
+    const body = await request.json();
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const email = typeof body.email === 'string' ? body.email.trim() : '';
+    const message = typeof body.message === 'string' ? body.message.trim() : '';
+    const website = typeof body.website === 'string' ? body.website.trim() : '';
+    const formStartedAt = typeof body.startedAt === 'number' ? body.startedAt : 0;
+    const formAge = Date.now() - formStartedAt;
+
+    if (
+      website ||
+      formAge < 1500 ||
+      formAge > 2 * 60 * 60 * 1000 ||
+      !name ||
+      !email ||
+      !message ||
+      name.length > 100 ||
+      email.length > 254 ||
+      message.length > 5000 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      log('error', 'Contact validation rejected submission', 400);
+      return NextResponse.json({ error: 'Invalid contact form submission' }, { status: 400 });
+    }
+
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+    const contactToEmail = process.env.CONTACT_TO_EMAIL;
+
+    if (emailUser && emailPass && contactToEmail) {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user: emailUser,
+          pass: emailPass,
         },
       });
 
@@ -46,10 +106,10 @@ export async function POST(request: Request) {
         s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: 'sunglazzez@gmail.com',
+        from: emailUser,
+        to: contactToEmail,
         replyTo: email,
-        subject: `New Message from Portfolio: ${name}`,
+        subject: `New Message from Portfolio: ${name.replace(/[\r\n]+/g, ' ')}`,
         text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
         html: `
           <h3>New Message from Portfolio</h3>
@@ -63,15 +123,24 @@ export async function POST(request: Request) {
       };
 
       await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully via Nodemailer');
+      log('info', 'Contact message sent', 200);
       return NextResponse.json({ success: true, message: 'Message sent via email' });
-    } else {
-      console.log('Email credentials missing (EMAIL_USER/EMAIL_PASS). Logged to console only.');
-      return NextResponse.json({ success: true, message: 'Message logged (email not configured)' });
     }
 
+    log('error', 'Contact email transport is not configured', 503);
+    return NextResponse.json(
+      { error: 'Contact form is temporarily unavailable' },
+      { status: 503 }
+    );
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error(JSON.stringify({
+      level: 'error',
+      message: 'Contact form request failed',
+      route,
+      requestId,
+      durationMs: Date.now() - startedAt,
+      error: error instanceof Error ? error.message : String(error),
+    }));
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }

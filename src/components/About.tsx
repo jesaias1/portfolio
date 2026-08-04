@@ -1,220 +1,160 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-const techStack = [
-  { name: 'React / Next.js', level: 95, category: 'frontend' },
-  { name: 'TypeScript', level: 88, category: 'language' },
-  { name: 'Node.js', level: 85, category: 'backend' },
-  { name: 'C++ / JUCE', level: 75, category: 'native' },
-  { name: 'After Effects SDK', level: 80, category: 'creative' },
-  { name: 'PostgreSQL', level: 80, category: 'database' },
-  { name: 'WebSocket', level: 85, category: 'realtime' },
-  { name: 'Framer Motion', level: 92, category: 'animation' },
+const defaultSkills = ['Next.js', 'TypeScript', 'Node.js', 'C++ / JUCE', 'PostgreSQL', 'Realtime systems'];
+
+const disciplines = [
+  {
+    index: '01',
+    title: 'Product development',
+    text: 'Useful, dependable web products shaped from interface to infrastructure.',
+  },
+  {
+    index: '02',
+    title: 'Creative systems',
+    text: 'Games and interactive tools where the technical idea is part of the experience.',
+  },
+  {
+    index: '03',
+    title: 'Audio software',
+    text: 'Instruments and workflows that make sound more tactile, playful and immediate.',
+  },
 ];
 
+type AboutData = {
+  title?: string;
+  content?: string;
+  image?: string;
+  skills?: string[];
+};
+
 export default function About() {
-  const [aboutData, setAboutData] = useState({ content: '' });
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [aboutData, setAboutData] = useState<AboutData>({});
 
   useEffect(() => {
     fetch('/api/about')
-      .then(res => res.json())
-      .then(data => setAboutData(data))
-      .catch(console.error);
+      .then((response) => {
+        if (!response.ok) throw new Error('About content unavailable');
+        return response.json();
+      })
+      .then((data) => setAboutData(data))
+      .catch(() => undefined);
   }, []);
 
+  const paragraphs = normalizeParagraphs(aboutData.content);
+  const skills = aboutData.skills?.length ? aboutData.skills : defaultSkills;
+  const image = aboutData.image?.startsWith('/') ? aboutData.image : '/headshot.jpg';
+
   return (
-    <section ref={sectionRef} id="about" className="py-20 md:py-32 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+    <section id="about" className="content-section relative overflow-hidden py-20 md:py-28">
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        <motion.header
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-16"
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true, margin: '-80px' }}
+          className="mb-10 grid gap-5 border-b border-white/10 pb-8 md:mb-14 md:grid-cols-[1fr_auto] md:items-end"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-sm text-[#4ddbff]" style={{ textShadow: '0 0 8px rgba(77, 219, 255, 0.3)' }}>
-              ~/about
-            </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#4ddbff]/20 to-transparent" />
+          <div>
+            <p className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-[#4ddbff]">
+              About / Jesaias
+            </p>
+            <h2 className="max-w-4xl text-4xl font-bold tracking-[-0.045em] text-white md:text-6xl">
+              Building where software, sound and play overlap.
+            </h2>
           </div>
-          <h2 className="text-3xl md:text-6xl font-bold tracking-tight">
-            System Info
-          </h2>
-        </motion.div>
+          <p className="font-mono text-[10px] uppercase leading-5 tracking-[0.14em] text-gray-600 md:text-right">
+            Copenhagen, Denmark<br />Creative developer
+          </p>
+        </motion.header>
 
-        {/* Photo + Bio Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="grid md:grid-cols-5 gap-8 md:gap-12 mb-16"
-        >
-          {/* Photo — left side */}
-          <div className="md:col-span-2 flex justify-center md:justify-start">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative group"
-            >
-              {/* Outer border frame */}
-              <div className="absolute -inset-3 border border-[#4ddbff]/20 group-hover:border-[#4ddbff]/40 transition-all duration-700" />
-              
-              {/* Corner decorations */}
-              <div className="absolute -top-3 -left-3 w-3 h-3 border-t border-l border-[#4ddbff]/60" />
-              <div className="absolute -top-3 -right-3 w-3 h-3 border-t border-r border-[#4ddbff]/60" />
-              <div className="absolute -bottom-3 -left-3 w-3 h-3 border-b border-l border-[#4ddbff]/60" />
-              <div className="absolute -bottom-3 -right-3 w-3 h-3 border-b border-r border-[#4ddbff]/60" />
-
-              {/* Photo */}
-              <div className="relative w-64 h-80 md:w-72 md:h-96 overflow-hidden">
-                <Image
-                  src="/headshot.jpg"
-                  alt="Jesaias"
-                  fill
-                  className="object-cover object-top grayscale group-hover:grayscale-[50%] transition-all duration-700"
-                  sizes="(max-width: 768px) 256px, 288px"
-                />
-                {/* Cyan overlay on hover */}
-                <div className="absolute inset-0 bg-[#4ddbff]/5 group-hover:bg-[#4ddbff]/10 transition-all duration-700 mix-blend-overlay" />
-                
-                {/* Scanline effect */}
-                <div className="absolute inset-0 scanlines pointer-events-none opacity-20" />
-              </div>
-
-              {/* Label below photo */}
-              <div className="absolute -bottom-8 left-0 right-0 text-center">
-                <span className="font-mono text-[10px] text-gray-700 tracking-widest">
-                  capture_001.jpg
-                </span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* System Info + Bio — right side */}
-          <div className="md:col-span-3 space-y-6">
-            {/* System diagnostics */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <div className="border border-white/5 p-4 md:p-6 space-y-3 font-mono text-sm">
-                <div className="text-[#4ddbff] text-xs tracking-wider mb-4" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
-                  SYSTEM DIAGNOSTICS
-                </div>
-                
-                <SystemLine label="USER" value="Jesaias (Linas)" />
-                <SystemLine label="ROLE" value="Creative Developer" />
-                <SystemLine label="LOCATION" value="Denmark 🇩🇰" />
-                <SystemLine label="EXPERIENCE" value="6+ years" />
-                <SystemLine label="STATUS" value="ONLINE" valueColor="#4ddbff" />
-              </div>
-            </motion.div>
-
-            {/* Bio content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              viewport={{ once: true }}
-              className="text-gray-400 leading-relaxed space-y-4 font-sans text-base"
-            >
-              {aboutData.content ? (
-                <div dangerouslySetInnerHTML={{ __html: aboutData.content }} />
-              ) : (
-                <>
-                  <p>
-                    Passionate developer building everything from <span className="text-white">web apps</span> and{' '}
-                    <span className="text-white">multiplayer games</span> to{' '}
-                    <span className="text-white">VST plugins</span> and{' '}
-                    <span className="text-white">creative dev tools</span>.
-                  </p>
-                  <p>
-                    My mission is to transform complex ideas into 
-                    user-friendly, beautiful, and scalable solutions that
-                    exceed expectations.
-                  </p>
-                </>
-              )}
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* Tech stack */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <div className="border border-white/5 p-4 md:p-6">
-            <div className="text-[#4ddbff] text-xs tracking-wider mb-6 font-mono" style={{ textShadow: '0 0 6px rgba(77, 219, 255, 0.3)' }}>
-              TECH STACK ANALYSIS
+        <div className="grid gap-10 md:grid-cols-[minmax(240px,0.72fr)_minmax(0,1.45fr)] md:items-start md:gap-14">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="relative mx-auto w-full max-w-[340px] md:mx-0"
+          >
+            <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#090a0b]">
+              <Image
+                src={image}
+                alt="Jesaias, creative developer"
+                fill
+                sizes="(max-width: 768px) 85vw, 340px"
+                className="object-cover object-top grayscale transition duration-700 hover:grayscale-[35%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-[#4ddbff]/[0.04]" />
             </div>
-            
-            <div className="grid md:grid-cols-2 gap-x-8 gap-y-4">
-              {techStack.map((tech, index) => (
-                <TerminalSkillBar 
-                  key={tech.name} 
-                  tech={tech} 
-                  index={index}
-                  animate={isInView}
-                />
+            <div className="flex items-center justify-between border-x border-b border-white/10 px-4 py-3 font-mono text-[9px] uppercase tracking-[0.12em] text-gray-600">
+              <span>Creative developer</span>
+              <span className="text-[#4ddbff]/70">DK / available</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.08 }}
+            viewport={{ once: true }}
+          >
+            <div className="max-w-3xl space-y-5 text-lg leading-8 text-gray-300 md:text-xl md:leading-9">
+              {paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-          </div>
-        </motion.div>
+
+            <div className="mt-9 flex flex-wrap gap-2 border-t border-white/[0.07] pt-6">
+              {skills.slice(0, 8).map((skill) => (
+                <span
+                  key={skill}
+                  className="border border-white/10 bg-black/20 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.11em] text-gray-500"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="mt-12 grid border border-white/[0.08] md:grid-cols-3">
+          {disciplines.map((discipline) => (
+            <article
+              key={discipline.title}
+              className="grid grid-cols-[auto_1fr] gap-4 border-b border-white/[0.08] p-5 last:border-b-0 md:min-h-[170px] md:border-b-0 md:border-r md:p-6 md:last:border-r-0"
+            >
+              <span className="font-mono text-[9px] text-[#4ddbff]/60">/{discipline.index}</span>
+              <div>
+                <h3 className="mb-3 text-lg font-semibold text-white">{discipline.title}</h3>
+                <p className="text-sm leading-6 text-gray-500">{discipline.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function SystemLine({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) {
-  return (
-    <div className="flex items-baseline gap-2">
-      <span className="text-gray-600">{label}:</span>
-      <span className="text-gray-300" style={valueColor ? { color: valueColor, textShadow: `0 0 8px ${valueColor}40` } : {}}>
-        {value}
-      </span>
-    </div>
-  );
-}
+function normalizeParagraphs(content?: string) {
+  if (!content) {
+    return [
+      'I build digital products from the first idea through the details that make them feel finished. My work moves between full-stack applications, realtime games and native audio software.',
+      'The common thread is simple: complex systems should feel clear, responsive and enjoyable to use.',
+    ];
+  }
 
-function TerminalSkillBar({ tech, index, animate }: { tech: typeof techStack[0]; index: number; animate: boolean }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={animate ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="font-mono text-xs"
-    >
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-gray-300">{tech.name}</span>
-        <span className="text-[#4ddbff]/70">{tech.level}%</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-[#4ddbff]/40">[</span>
-        <div className="flex-1 relative h-2 bg-white/5 overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#4ddbff]/60 to-[#99eaff]/40"
-            initial={{ width: '0%' }}
-            animate={animate ? { width: `${tech.level}%` } : {}}
-            transition={{ duration: 1, delay: index * 0.08 + 0.3, ease: [0.6, 0, 0.2, 1] }}
-          />
-        </div>
-        <span className="text-[#4ddbff]/40">]</span>
-      </div>
-    </motion.div>
-  );
+  const plainText = content
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+
+  return plainText.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
 }

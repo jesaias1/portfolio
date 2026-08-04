@@ -9,9 +9,27 @@ export interface PortfolioProject {
   featured: boolean;
   longDesc?: string;
   video?: string | null;
+  status?: string;
+  visible?: boolean;
+  order?: number;
 }
 
 export const fallbackProjects: PortfolioProject[] = [
+  {
+    id: 'orvo-006',
+    title: 'ORVO',
+    description:
+      'A sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.',
+    longDesc:
+      'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
+    image: '/projects/orvo.png',
+    video: null,
+    tags: ['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake'],
+    link: '/audio/orvo',
+    featured: true,
+    status: 'In development',
+    visible: true,
+  },
   {
     id: 'midium-004',
     title: 'MIDIUM',
@@ -24,6 +42,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['C++', 'JUCE', 'VST3', 'MIDI', 'CMake'],
     link: '/audio/midium',
     featured: true,
+    status: 'Beta',
+    visible: true,
   },
   {
     id: 'abyx-005',
@@ -37,6 +57,23 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['C++', 'JUCE', 'VST3', 'MIDI', 'XInput'],
     link: '/audio/abyx',
     featured: true,
+    status: 'Beta',
+    visible: true,
+  },
+  {
+    id: 'kvizy-007',
+    title: 'KVIZY',
+    description:
+      'A complete Danish pass-the-device quiz game for game nights, families, parties and friendly competition.',
+    longDesc:
+      'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
+    image: '/projects/kvizy.png',
+    video: null,
+    tags: ['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest'],
+    link: 'https://kvizy.dk',
+    featured: true,
+    status: 'Live',
+    visible: true,
   },
   {
     id: 'ordbomben-001',
@@ -50,6 +87,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['Next.js', 'WebSocket', 'Real-time', 'Game'],
     link: 'https://www.ordbomben.dk',
     featured: true,
+    status: 'Under maintenance',
+    visible: true,
   },
   {
     id: 'lettus-002',
@@ -63,6 +102,8 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['React', 'TypeScript', 'Game Logic', 'PWA'],
     link: 'https://www.lettus.fun',
     featured: true,
+    status: 'Live',
+    visible: true,
   },
   {
     id: 'dump-003',
@@ -76,5 +117,7 @@ export const fallbackProjects: PortfolioProject[] = [
     tags: ['Next.js', 'Stripe', 'Audio', 'Commerce'],
     link: 'https://www.dump.media',
     featured: true,
+    status: 'Under maintenance',
+    visible: true,
   },
 ];

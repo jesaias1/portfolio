@@ -8,5 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ['/admin/', '/api/'],
     },
     sitemap: 'https://jesaias.dk/sitemap.xml',
+    host: 'https://jesaias.dk',
   };
 }

@@ -87,9 +87,9 @@ Write-Host "4. Add these variables:" -ForegroundColor White
 Write-Host ""
 Write-Host "   NEXTAUTH_SECRET = [Generate at: https://generate-secret.vercel.app/32]" -ForegroundColor Cyan
 Write-Host "   NEXTAUTH_URL = https://your-project-name.vercel.app" -ForegroundColor Cyan
-Write-Host "   ADMIN_EMAIL = lin4s@live.dk" -ForegroundColor Cyan
-Write-Host "   ADMIN_PASSWORD = miebs112" -ForegroundColor Cyan
-Write-Host "   DATABASE_URL = file:./dev.db" -ForegroundColor Cyan
+Write-Host "   ADMIN_EMAIL = your admin email" -ForegroundColor Cyan
+Write-Host "   ADMIN_PASSWORD = a long unique password" -ForegroundColor Cyan
+Write-Host "   DATABASE_URL = your PostgreSQL connection string" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "5. After adding variables, redeploy:" -ForegroundColor White
 Write-Host "   - Deployments tab → ... menu → Redeploy" -ForegroundColor Gray

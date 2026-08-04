@@ -3,18 +3,50 @@ import Link from "next/link";
 import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
 import { AudioFooter } from "@/components/audio/AudioLanding";
 import { AudioNav } from "@/components/audio/AudioNav";
-import { audioProducts, type AudioProduct } from "@/data/audio-products";
+import ProjectNavigation from "@/components/ProjectNavigation";
+import { type AudioProduct } from "@/data/audio-products";
 
 export function AudioProductPage({ product }: { product: AudioProduct }) {
-  const related = audioProducts.find((item) => item.slug !== product.slug);
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
+  const isComingSoon = product.commerce.mode === "coming-soon";
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: product.name,
+    description: product.longCopy,
+    applicationCategory: "MultimediaApplication",
+    applicationSubCategory: "Music software",
+    operatingSystem: product.compatibility.join(", "),
+    softwareVersion: product.currentVersion.version,
+    url: `https://jesaias.dk/audio/${product.slug}`,
+    author: {
+      "@type": "Person",
+      name: "Jesaias",
+      url: "https://jesaias.dk",
+    },
+    ...(hasLicenseCheckout
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: "10.00",
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+            url: product.urls.buyLicense,
+          },
+        }
+      : {}),
+  };
 
   return (
     <main
       className={`audio-site product-page product-page--${product.slug}`}
       style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as React.CSSProperties}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       <AudioNav />
 
       <section className="product-hero" aria-labelledby="product-title">
@@ -44,7 +76,16 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             <p className="trial-note">{product.commerce.trialNote}</p>
           ) : null}
           <div className="audio-actions">
-            {hasLicenseCheckout ? (
+            {isComingSoon ? (
+              <>
+                <a href={`#${product.slug}-video`} className="audio-button audio-button--dark">
+                  Explore the interface
+                </a>
+                <Link href="/#contact" className="audio-button audio-button--light">
+                  Follow development
+                </Link>
+              </>
+            ) : hasLicenseCheckout ? (
               <>
                 <a
                   href={product.urls.download}
@@ -102,12 +143,41 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           <p>{product.shortCopy}</p>
         </div>
         <div className="interface-demo__film">
-          <AutoAdVideo
-            label={`${product.name} silent advertisement`}
-            poster={product.assets.screenshot}
-            src={product.assets.video}
-          />
+          {product.assets.video ? (
+            <AutoAdVideo
+              label={`${product.name} silent advertisement`}
+              poster={product.assets.screenshot}
+              src={product.assets.video}
+            />
+          ) : (
+            <div className="interface-placeholder" id="orvo-preview">
+              <Image
+                src={product.assets.screenshot}
+                alt={`${product.name} interface preview`}
+                width={1600}
+                height={1000}
+                sizes="(max-width: 900px) 100vw, 90vw"
+              />
+              <div className="interface-placeholder__label">
+                <span>ORVO / Interface study</span>
+                <strong>One sample. Four ways out.</strong>
+              </div>
+            </div>
+          )}
         </div>
+        {!product.assets.video ? (
+          <ol className="interface-demo__steps" aria-label={`${product.name} workflow preview`}>
+            {product.workflow.map((step, index) => (
+              <li key={step.title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <strong>{step.title}</strong>
+                  <p>{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : null}
       </section>
 
       <section className="product-detail-grid" aria-label={`${product.name} product details`}>
@@ -139,7 +209,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </ul>
       </section>
 
-      {!hasLicenseCheckout ? (
+      {!hasLicenseCheckout && !isComingSoon ? (
         <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
           <div>
             <p className="audio-kicker">{product.commerce.statusLabel}</p>
@@ -157,6 +227,22 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
               Support link
             </a>
           </div>
+        </section>
+      ) : null}
+
+      {isComingSoon ? (
+        <section className="download-panel development-panel" aria-labelledby="development-title">
+          <div>
+            <p className="audio-kicker">In development</p>
+            <h2 id="development-title">The structure is ready for launch.</h2>
+            <p>
+              Product recordings, audio examples, compatibility details and the final download
+              link can be added here without rebuilding the page.
+            </p>
+          </div>
+          <Link href="/#contact" className="audio-button audio-button--light">
+            Ask about ORVO
+          </Link>
         </section>
       ) : null}
 
@@ -183,18 +269,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </section>
       ) : null}
 
-      {related ? (
-        <section className="related-product" aria-labelledby="related-title">
-          <div>
-            <p className="audio-kicker">Related product</p>
-            <h2 id="related-title">{related.name}</h2>
-            <p>{related.headline}</p>
-          </div>
-          <Link href={`/audio/${related.slug}`} className="audio-button audio-button--dark">
-            Explore {related.name}
-          </Link>
-        </section>
-      ) : null}
+      <ProjectNavigation currentSlug={product.slug} accent={product.accent} />
 
       <AudioFooter />
     </main>

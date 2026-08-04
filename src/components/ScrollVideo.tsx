@@ -1,87 +1,105 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+type NavigatorWithConnection = Navigator & {
+  connection?: { saveData?: boolean };
+};
 
 export default function ScrollVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = window.matchMedia('(min-width: 769px)');
+    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
+    const update = () => setShouldLoadVideo(desktop.matches && !reducedMotion.matches && !saveData);
 
-    // Start playing at a fixed slow rate
-    const tryPlay = () => {
-      v.playbackRate = 0.85;
-      v.play().catch(() => {});
-    };
-
-    if (v.readyState >= 3) {
-      tryPlay();
-    } else {
-      v.addEventListener('canplay', tryPlay, { once: true });
-    }
-
-    // Throttled scroll-velocity based rate adjustment
-    // Only update playback rate every ~100ms to avoid thrashing
-    let lastY = window.scrollY;
-    let lastUpdate = 0;
-    let rafId: number;
-
-    const BASE_RATE = 0.85;
-    const MAX_RATE = 1.5;
-
-    const tick = (now: number) => {
-      // Only recalculate every 100ms
-      if (now - lastUpdate > 100) {
-        const dy = Math.abs(window.scrollY - lastY);
-        const velocity = dy / Math.max(1, now - lastUpdate);
-        const rate = Math.min(MAX_RATE, BASE_RATE + velocity * 0.8);
-
-        // Only update if rate changed significantly (avoid constant property writes)
-        if (Math.abs(v.playbackRate - rate) > 0.05) {
-          v.playbackRate = rate;
-        }
-
-        lastY = window.scrollY;
-        lastUpdate = now;
-      }
-
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
+    update();
+    desktop.addEventListener('change', update);
+    reducedMotion.addEventListener('change', update);
 
     return () => {
-      cancelAnimationFrame(rafId);
-      v.removeEventListener('canplay', tryPlay);
+      desktop.removeEventListener('change', update);
+      reducedMotion.removeEventListener('change', update);
     };
   }, []);
 
-  return (
-    <div className="fixed inset-0 w-full h-screen pointer-events-none overflow-hidden bg-black" style={{ zIndex: -60 }}>
-      {/* Background video — loops natively */}
-      <video
-        ref={videoRef}
-        src="/video/website%20bg.mp4"
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          opacity: 0.85,
-        }}
-        className="contrast-[1.2] brightness-[0.45]"
-        playsInline
-        muted
-        loop
-        preload="auto"
-      />
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoadVideo) return;
 
-      {/* Heavy vignette overlays to ensure text pops and the aesthetic is dramatic */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)] z-10" />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/90 z-10" />
+    const tryPlay = () => {
+      video.playbackRate = 0.85;
+      void video.play().catch(() => undefined);
+    };
+
+    if (video.readyState >= 3) tryPlay();
+    else video.addEventListener('canplay', tryPlay, { once: true });
+
+    let lastY = window.scrollY;
+    let lastUpdate = 0;
+    let rafId = 0;
+    const baseRate = 0.85;
+    const maxRate = 1.5;
+
+    const tick = (now: number) => {
+      if (now - lastUpdate > 100) {
+        const distance = Math.abs(window.scrollY - lastY);
+        const velocity = distance / Math.max(1, now - lastUpdate);
+        const rate = Math.min(maxRate, baseRate + velocity * 0.8);
+        if (Math.abs(video.playbackRate - rate) > 0.05) video.playbackRate = rate;
+        lastY = window.scrollY;
+        lastUpdate = now;
+      }
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        window.cancelAnimationFrame(rafId);
+        video.pause();
+      } else {
+        tryPlay();
+        rafId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    rafId = window.requestAnimationFrame(tick);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      video.removeEventListener('canplay', tryPlay);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      video.pause();
+    };
+  }, [shouldLoadVideo]);
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 h-screen w-full overflow-hidden bg-[radial-gradient(circle_at_50%_28%,#16252b_0%,#080b0c_38%,#030404_76%)]"
+      style={{ zIndex: -60 }}
+      aria-hidden="true"
+    >
+      {shouldLoadVideo ? (
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover opacity-85 contrast-[1.2] brightness-[0.45]"
+          playsInline
+          muted
+          loop
+          preload="metadata"
+          poster="/video/website-bg-poster.webp"
+          tabIndex={-1}
+        >
+          <source src="/video/website-bg-optimized.mp4" type="video/mp4" />
+        </video>
+      ) : null}
+
+      <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)]" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
     </div>
   );
 }

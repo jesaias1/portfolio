@@ -1,28 +1,42 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date('2026-08-04T00:00:00.000Z');
+
   return [
     {
       url: 'https://jesaias.dk',
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 1,
     },
     {
       url: 'https://jesaias.dk/audio',
-      lastModified: new Date(),
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: 'https://jesaias.dk/audio/orvo',
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: 'https://jesaias.dk/audio/midium',
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: 'https://jesaias.dk/audio/abyx',
-      lastModified: new Date(),
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://jesaias.dk/projects/kvizy',
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },

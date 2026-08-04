@@ -6,8 +6,6 @@ import { HeroMechanic } from "@/components/audio/HeroMechanic";
 import { audioProducts, audioSite } from "@/data/audio-products";
 
 export function AudioLanding() {
-  const [midium, abyx] = audioProducts;
-
   return (
     <main className="audio-site">
       <AudioNav />
@@ -18,27 +16,32 @@ export function AudioLanding() {
           <h1 id="audio-hero-title">{audioSite.tagline}</h1>
           <p>{audioSite.description}</p>
           <div className="audio-actions audio-actions--hero">
-            <Link href="/audio/midium" className="audio-button audio-button--neutral">
-              Explore MIDIUM
+            <Link href="/audio/orvo" className="audio-button audio-button--neutral">
+              Explore ORVO
             </Link>
-            <Link href="/audio/abyx" className="audio-button audio-button--neutral">
-              Explore ABYX
-            </Link>
+            <a href="#catalogue" className="audio-button audio-button--neutral">View all tools</a>
           </div>
         </div>
         <HeroMechanic />
       </section>
 
-      <ProductShowcase product={midium} direction="left" />
-      <ProductShowcase product={abyx} direction="right" />
+      <div id="catalogue">
+        {audioProducts.map((product, index) => (
+          <ProductShowcase
+            key={product.slug}
+            product={product}
+            direction={index % 2 === 0 ? "left" : "right"}
+          />
+        ))}
+      </div>
 
       <section className="philosophy" aria-labelledby="philosophy-title">
         <p className="audio-kicker">Shared philosophy</p>
         <h2 id="philosophy-title">Music software should invite you to touch it.</h2>
         <p>
-          MIDIUM replaces note-by-note programming with drawing. ABYX transforms a familiar
-          controller into an instrument. Both explore new ways to get ideas out before they
-          disappear.
+          ORVO transforms sound, MIDIUM replaces note-by-note programming with drawing, and
+          ABYX turns a familiar controller into an instrument. Each tool explores a more
+          immediate way to make music.
         </p>
       </section>
 
@@ -48,10 +51,10 @@ export function AudioLanding() {
           <h2 id="future-title">Built with space for the next instruments.</h2>
         </div>
         <div className="future-slots" aria-label="Future product slots">
+          <span>ORVO</span>
           <span>MIDIUM</span>
           <span>ABYX</span>
           <span>Next plugin</span>
-          <span>Next utility</span>
         </div>
       </section>
 
@@ -70,6 +73,7 @@ function ProductShowcase({
   direction: "left" | "right";
 }) {
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
+  const isComingSoon = product.commerce.mode === "coming-soon";
 
   return (
     <section
@@ -79,11 +83,24 @@ function ProductShowcase({
       style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as React.CSSProperties}
     >
       <div id={`${product.slug}-video`} className="product-showcase__media">
-        <AutoAdVideo
-          label={`${product.name} silent advertisement`}
-          poster={product.assets.screenshot}
-          src={product.assets.video}
-        />
+        {product.assets.video ? (
+          <AutoAdVideo
+            label={`${product.name} silent advertisement`}
+            poster={product.assets.screenshot}
+            src={product.assets.video}
+          />
+        ) : (
+          <div className="catalogue-placeholder">
+            <Image
+              src={product.assets.screenshot}
+              alt={`${product.name} interface preview`}
+              width={1600}
+              height={1000}
+              sizes="(max-width: 900px) 100vw, 58vw"
+            />
+            <span>Motion preview coming later</span>
+          </div>
+        )}
       </div>
       <div className="product-showcase__copy">
         <div className="label-row">
@@ -118,14 +135,20 @@ function ProductShowcase({
           ))}
         </ol>
         <div className="audio-actions">
-          <a
-            href={product.urls.download}
-            className="audio-button audio-button--dark"
-            target={hasLicenseCheckout ? "_blank" : undefined}
-            rel={hasLicenseCheckout ? "noopener noreferrer" : undefined}
-          >
-            {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download"}
-          </a>
+          {isComingSoon ? (
+            <Link href={`/audio/${product.slug}`} className="audio-button audio-button--dark">
+              Development preview
+            </Link>
+          ) : (
+            <a
+              href={product.urls.download}
+              className="audio-button audio-button--dark"
+              target={hasLicenseCheckout ? "_blank" : undefined}
+              rel={hasLicenseCheckout ? "noopener noreferrer" : undefined}
+            >
+              {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download"}
+            </a>
+          )}
           <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
             View {product.name} page
           </Link>
@@ -163,20 +186,21 @@ function UpdatesSection() {
 }
 
 function SupportSection() {
+  const licensedProducts = audioProducts.filter((product) => product.urls.buyLicense);
+
   return (
     <section id="support" className="support-band" aria-labelledby="support-title">
       <div>
         <p className="audio-kicker">30-day trials</p>
         <h2 id="support-title">Try each plugin for 30 days.</h2>
         <p>
-          MIDIUM and ABYX include VST3 plugins for compatible DAWs, plus standalone
-          apps currently available for Windows. After the trial, a $10 license key
-          unlocks each plugin.
+          MIDIUM and ABYX include VST3 plugins for compatible DAWs, plus standalone apps
+          currently available for Windows. ORVO will join the catalogue after development.
         </p>
       </div>
       <div className="audio-actions">
         <a
-          href={audioProducts[0].urls.download}
+          href={licensedProducts[0].urls.download}
           className="audio-button audio-button--dark"
           target="_blank"
           rel="noopener noreferrer"
@@ -184,7 +208,7 @@ function SupportSection() {
           Try MIDIUM
         </a>
         <a
-          href={audioProducts[1].urls.download}
+          href={licensedProducts[1].urls.download}
           className="audio-button audio-button--light"
           target="_blank"
           rel="noopener noreferrer"
@@ -205,12 +229,10 @@ export function AudioFooter() {
         <p>{audioSite.origin}</p>
       </div>
       <nav aria-label="Audio footer">
-        <a href={audioSite.urls.instagram}>Instagram</a>
-        <a href={audioSite.urls.youtube}>YouTube</a>
+        <a href={audioSite.urls.portfolio}>Portfolio</a>
+        <a href={audioSite.urls.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
         <a href={audioSite.urls.support}>Support</a>
         <a href={audioSite.urls.contact}>Contact</a>
-        <a href={audioSite.urls.terms}>Terms</a>
-        <a href={audioSite.urls.privacy}>Privacy</a>
       </nav>
     </footer>
   );

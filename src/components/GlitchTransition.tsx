@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const GLITCH_SLICES = [
   'inset(12% 0 68% 0)',
@@ -17,18 +17,22 @@ const GLITCH_SLICES = [
 export default function GlitchTransition() {
   const [key, setKey] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleTrigger = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       setKey(prev => prev + 1);
       setIsTransitioning(true);
-      // Mid-point of the transition (fully covered) is at 400ms
-      // Transition out ends at 1000ms
-      setTimeout(() => setIsTransitioning(false), 1000);
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => setIsTransitioning(false), 720);
     };
 
     window.addEventListener('glitch-trigger', handleTrigger);
-    return () => window.removeEventListener('glitch-trigger', handleTrigger);
+    return () => {
+      window.removeEventListener('glitch-trigger', handleTrigger);
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    };
   }, []);
 
   return (
@@ -39,7 +43,7 @@ export default function GlitchTransition() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.16 }}
           className="fixed inset-0 z-[100] pointer-events-none flex flex-col items-center justify-center bg-[#0a0a0a]"
         >
           {/* Cover Layer */}
@@ -47,7 +51,7 @@ export default function GlitchTransition() {
             initial={{ scaleY: 0 }}
             animate={{ scaleY: 1 }}
             exit={{ scaleY: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0 bg-[#0a0a0a] origin-top"
           />
 
@@ -63,7 +67,7 @@ export default function GlitchTransition() {
                 ],
                 opacity: [0, 0.1, 0]
               }}
-              transition={{ duration: 0.3, delay: 0.1 * i }}
+              transition={{ duration: 0.2, delay: 0.035 * i }}
               className="absolute inset-0 bg-[#4ddbff]"
             />
           ))}
@@ -72,7 +76,7 @@ export default function GlitchTransition() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.2, 0] }}
-            transition={{ duration: 0.4, delay: 0.4 }}
+            transition={{ duration: 0.3, delay: 0.22 }}
             className="absolute inset-0 bg-[#4ddbff]"
           />
 
@@ -80,7 +84,7 @@ export default function GlitchTransition() {
           <motion.div
             initial={{ top: '0%', opacity: 0 }}
             animate={{ top: '100%', opacity: 1 }}
-            transition={{ duration: 0.4, ease: "linear" }}
+            transition={{ duration: 0.32, ease: "linear" }}
             className="absolute w-full h-px bg-[#4ddbff] shadow-[0_0_20px_#4ddbff]"
           />
         </motion.div>
