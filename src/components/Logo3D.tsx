@@ -13,6 +13,8 @@ import * as THREE from 'three';
 
 const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
+const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0.2, 0.18, 0];
+const MOBILE_VISUAL_OFFSET: [number, number, number] = [0.1, 0.13, 0];
 
 useGLTF.preload(MODEL_PATH);
 
@@ -322,13 +324,17 @@ function LogoModel({
 
   const model = (
     // Outer group: rotation only — world-space center stays at origin regardless of rotation angle
-    <group ref={groupRef} rotation={[0, BASE_Y_ROTATION, 0]}>
+    <group
+      ref={groupRef}
+      rotation={[0, BASE_Y_ROTATION, 0]}
+      position={isMobile ? MOBILE_VISUAL_OFFSET : DESKTOP_VISUAL_OFFSET}
+    >
       {/* Inner group: centering + scale — offsets cancel cleanly before rotation is applied */}
       <group
         scale={scaleFactor}
         position={[
           -center.x * scaleFactor,
-          (-center.y * scaleFactor) + (isMobile ? 0.08 : 0),
+          -center.y * scaleFactor,
           -center.z * scaleFactor,
         ]}
       >
