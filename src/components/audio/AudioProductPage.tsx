@@ -3,10 +3,10 @@ import Link from "next/link";
 import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
 import { AudioFooter } from "@/components/audio/AudioLanding";
 import { AudioNav } from "@/components/audio/AudioNav";
-import { audioProducts, type AudioProduct } from "@/data/audio-products";
+import ProjectNavigation from "@/components/ProjectNavigation";
+import { type AudioProduct } from "@/data/audio-products";
 
 export function AudioProductPage({ product }: { product: AudioProduct }) {
-  const related = audioProducts.find((item) => item.slug !== product.slug);
   const heroVideo = product.slug === "abyx" ? "/projects/videos/abyx.mp4" : null;
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
   const isComingSoon = product.commerce.mode === "coming-soon";
@@ -269,18 +269,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </section>
       ) : null}
 
-      {related ? (
-        <section className="related-product" aria-labelledby="related-title">
-          <div>
-            <p className="audio-kicker">Related product</p>
-            <h2 id="related-title">{related.name}</h2>
-            <p>{related.headline}</p>
-          </div>
-          <Link href={`/audio/${related.slug}`} className="audio-button audio-button--dark">
-            Explore {related.name}
-          </Link>
-        </section>
-      ) : null}
+      <ProjectNavigation currentSlug={product.slug} accent={product.accent} />
 
       <AudioFooter />
     </main>

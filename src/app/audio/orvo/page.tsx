@@ -2,31 +2,21 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AudioProductPage } from "@/components/audio/AudioProductPage";
 import { getAudioProduct } from "@/data/audio-products";
+import { createProjectMetadata } from "@/lib/seo";
 
 const product = getAudioProduct("orvo");
 
-export const metadata: Metadata = {
-  title: "ORVO - Jesaias Audio",
+export const metadata: Metadata = createProjectMetadata({
+  title: "ORVO — Sample Transformation Instrument by Jesaias",
   description:
     "ORVO is a sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.",
-  alternates: {
-    canonical: "/audio/orvo",
-  },
-  openGraph: {
-    title: "ORVO - Stretch sound until it becomes something else.",
-    description:
-      "A VST3 sample-transformation instrument with Cloud, Elastic, Tape and Grain engines, PULSE sequencing, LFOs and effects.",
-    url: "https://jesaias.dk/audio/orvo",
-    images: [
-      {
-        url: "/projects/orvo.png",
-        width: 1600,
-        height: 1000,
-        alt: "ORVO sample-transformation instrument interface",
-      },
-    ],
-  },
-};
+  path: "/audio/orvo",
+  image: "/projects/orvo.png",
+  imageWidth: 1600,
+  imageHeight: 1000,
+  imageAlt: "ORVO sample-transformation instrument interface",
+  keywords: ["ORVO", "VST3", "sample transformation", "granular synthesis", "JUCE", "audio plugin"],
+});
 
 export default function OrvoPage() {
   if (!product) notFound();

@@ -67,6 +67,13 @@ section[id] {
   contain-intrinsic-size: auto 900px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .route-reveal {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -511,6 +518,10 @@ a, button {
   border-color: #4ddbff !important;
   margin-left: -8px;
   margin-top: -8px;
+}
+
+.cursor-ring-hidden {
+  opacity: 0 !important;
 }
 
 /* ═══════════════════════════════════════════════

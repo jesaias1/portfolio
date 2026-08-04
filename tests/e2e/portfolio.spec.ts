@@ -27,9 +27,31 @@ test('public portfolio and project routes remain available', async ({ page }) =>
   await page.goto('/audio/orvo');
   await expect(page.getByRole('heading', { level: 1, name: 'ORVO' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Stretch sound until it becomes something else/i })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Browse portfolio projects' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Next project: MIDIUM' })).toBeVisible();
 
   await page.goto('/projects/kvizy');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Quiz night');
+});
+
+test('mobile keeps the 3D hero while avoiding the heavy background video', async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.includes('mobile'), 'Mobile rendering behavior only.');
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+
+  await expect(page.locator('#home canvas')).toBeVisible();
+  await expect(page.locator('video[src*="website"]')).toHaveCount(0);
+});
+
+test('public pages expose canonical and social metadata', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'Metadata is viewport-independent.');
+
+  await page.goto('/audio/orvo');
+  await expect(page).toHaveTitle(/ORVO.*Jesaias/i);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://jesaias.dk/audio/orvo');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /projects\/orvo\.png/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 });
 
 test('public catalogue pins ORVO and excludes retired projects', async ({ request }) => {
@@ -41,7 +63,7 @@ test('public catalogue pins ORVO and excludes retired projects', async ({ reques
   expect(projects.some((project: { title: string }) => /stickman|stick fighting/i.test(project.title))).toBe(false);
 });
 
-test('hero mark has a responsive tap target and visible click response', async ({ page }) => {
+test('hero mark has a responsive tap target and visible click response', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
 
@@ -57,6 +79,11 @@ test('hero mark has a responsive tap target and visible click response', async (
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
+
+  if (!testInfo.project.name.includes('mobile')) {
+    await mark.hover();
+    await expect(page.locator('.cursor-ring')).toHaveClass(/cursor-ring-hidden/);
+  }
 
   await mark.click();
   await expect(page.getByTestId('hero-logo-burst')).toBeVisible();

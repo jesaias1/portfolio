@@ -12,6 +12,11 @@ export default function CustomCursor() {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     mouseRef.current.x = e.clientX;
     mouseRef.current.y = e.clientY;
+    const target = e.target instanceof HTMLElement ? e.target : null;
+    const hideRing = Boolean(target?.closest('[data-hide-cursor-ring]'));
+    const interactive = Boolean(target?.closest('a, button, [role="button"], input, textarea, select, label[for]'));
+    ringRef.current?.classList.toggle('cursor-ring-hidden', hideRing);
+    ringRef.current?.classList.toggle('cursor-ring-hover', interactive && !hideRing);
   }, []);
 
   useEffect(() => {
@@ -22,23 +27,6 @@ export default function CustomCursor() {
     ) return;
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
-    // Track hover state for interactive elements
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('a, button, [role="button"], input, textarea, select, label[for]')) {
-        ringRef.current?.classList.add('cursor-ring-hover');
-      }
-    };
-    const handleMouseOut = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('a, button, [role="button"], input, textarea, select, label[for]')) {
-        ringRef.current?.classList.remove('cursor-ring-hover');
-      }
-    };
-
-    document.addEventListener('mouseover', handleMouseOver, { passive: true });
-    document.addEventListener('mouseout', handleMouseOut, { passive: true });
 
     const tick = () => {
       const mx = mouseRef.current.x;
@@ -70,8 +58,6 @@ export default function CustomCursor() {
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [handleMouseMove]);
@@ -113,7 +99,7 @@ export default function CustomCursor() {
           border: '1px solid rgba(77, 219, 255, 0.5)',
           zIndex: 10000,
           willChange: 'transform',
-          transition: 'width 0.3s cubic-bezier(.23,1,.32,1), height 0.3s cubic-bezier(.23,1,.32,1), border-color 0.3s',
+          transition: 'width 0.3s cubic-bezier(.23,1,.32,1), height 0.3s cubic-bezier(.23,1,.32,1), border-color 0.3s, opacity 0.18s ease',
         }}
       />
     </>

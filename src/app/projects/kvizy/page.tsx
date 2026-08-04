@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ProjectNavigation from "@/components/ProjectNavigation";
+import { createProjectMetadata } from "@/lib/seo";
 import styles from "./kvizy.module.css";
 
-export const metadata: Metadata = {
-  title: "KVIZY - Danish multiplayer quiz by Jesaias",
+export const metadata: Metadata = createProjectMetadata({
+  title: "KVIZY — Danish Offline Multiplayer Quiz by Jesaias",
   description:
     "A case study of KVIZY, a Danish offline-first pass-the-device quiz game designed for game nights on one shared screen.",
-  alternates: {
-    canonical: "/projects/kvizy",
-  },
-  openGraph: {
-    title: "KVIZY - Quiz-aftenen starter her.",
-    description:
-      "A Danish offline-first multiplayer quiz with 1,439 curated questions and four ways to play.",
-    url: "https://jesaias.dk/projects/kvizy",
-    images: [{ url: "/projects/kvizy.png", width: 1600, height: 900, alt: "KVIZY game interface" }],
-  },
-};
+  path: "/projects/kvizy",
+  image: "/projects/kvizy.png",
+  imageWidth: 1600,
+  imageHeight: 900,
+  imageAlt: "KVIZY Danish multiplayer quiz interface",
+  keywords: ["KVIZY", "Danish quiz", "multiplayer quiz", "offline PWA", "Next.js game", "game night"],
+});
 
 const modes = [
   ["Classic", "A balanced quiz night with categories, turns and a shared scoreboard."],
@@ -163,6 +161,7 @@ export default function KvizyCaseStudy() {
           Open KVIZY ↗
         </a>
       </section>
+      <ProjectNavigation currentSlug="kvizy" accent="#ff641f" />
     </main>
   );
 }

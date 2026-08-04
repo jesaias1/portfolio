@@ -169,6 +169,7 @@ export default function Hero() {
           type="button"
           aria-label="Animate the Jesaias signature"
           data-testid="hero-logo-interaction"
+          data-hide-cursor-ring
           onPointerEnter={(event) => {
             if (event.pointerType !== 'touch') setIsLogoHovered(true);
           }}
@@ -177,13 +178,17 @@ export default function Hero() {
             if (event.currentTarget.matches(':focus-visible')) setIsLogoHovered(true);
           }}
           onBlur={() => setIsLogoHovered(false)}
-          onClick={() => {
-            play('click');
+          onClick={(event) => {
+            if (event.detail > 0) event.currentTarget.blur();
             setLogoPulse((value) => value + 1);
           }}
-          className="absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 cursor-crosshair rounded-[45%] bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#4ddbff]/55 focus-visible:ring-offset-8 focus-visible:ring-offset-black max-sm:h-[240px] max-sm:w-[86vw]"
+          className="group absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 cursor-crosshair rounded-[45%] bg-transparent focus-visible:outline-none max-sm:h-[240px] max-sm:w-[86vw]"
         >
           <span className="sr-only">The signature responds to pointer movement and clicks</span>
+          <span aria-hidden="true" className="absolute left-[9%] top-[12%] h-3 w-3 border-l border-t border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
+          <span aria-hidden="true" className="absolute right-[9%] top-[12%] h-3 w-3 border-r border-t border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
+          <span aria-hidden="true" className="absolute bottom-[12%] left-[9%] h-3 w-3 border-b border-l border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
+          <span aria-hidden="true" className="absolute bottom-[12%] right-[9%] h-3 w-3 border-b border-r border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
           {logoPulse > 0 && !shouldReduceMotion ? <LogoBurst key={logoPulse} /> : null}
         </button>
 
@@ -280,28 +285,16 @@ function LogoBurst() {
       className="pointer-events-none absolute inset-0"
     >
       <motion.span
-        initial={{ opacity: 0.5, scale: 0.78 }}
-        animate={{ opacity: 0, scale: 1.08 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-[10%] rounded-[45%] border border-[#4ddbff]/40 shadow-[0_0_24px_rgba(77,219,255,0.08)]"
-      />
-      <motion.span
-        initial={{ opacity: 0.34, scale: 0.7 }}
-        animate={{ opacity: 0, scale: 1 }}
-        transition={{ duration: 0.78, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-[20%] rounded-[45%] border border-white/25"
+        initial={{ opacity: 0.42, scale: 0.24 }}
+        animate={{ opacity: 0, scale: 2.15 }}
+        transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute inset-[20%] rounded-[45%] bg-[radial-gradient(ellipse_at_center,rgba(77,219,255,0.2),rgba(77,219,255,0.07)_38%,transparent_72%)] blur-xl"
       />
       <motion.span
         initial={{ opacity: 0, scaleX: 0.08 }}
-        animate={{ opacity: [0, 0.85, 0], scaleX: 1 }}
-        transition={{ duration: 0.62, ease: 'easeOut' }}
-        className="absolute left-[10%] right-[10%] top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-[#d9fbff] to-transparent shadow-[0_0_14px_rgba(77,219,255,0.9)]"
-      />
-      <motion.span
-        initial={{ opacity: 0.9, scale: 0.3 }}
-        animate={{ opacity: 0, scale: 2.6 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c8f8ff] shadow-[0_0_28px_rgba(77,219,255,0.95)]"
+        animate={{ opacity: [0, 0.85, 0], scaleX: 1.32 }}
+        transition={{ duration: 0.72, ease: 'easeOut' }}
+        className="absolute left-[7%] right-[7%] top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-[#d9fbff] to-transparent shadow-[0_0_14px_rgba(77,219,255,0.9)]"
       />
     </motion.span>
   );

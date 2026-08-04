@@ -387,6 +387,7 @@ export default function Logo3D({
   const mousePos = useRef({ x: 0, y: 0, active: false });
   const orientationBase = useRef<{ beta: number; gamma: number } | null>(null);
   const orientationPermissionRequested = useRef(false);
+  const [isCanvasActive, setIsCanvasActive] = useState(true);
   const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
@@ -403,6 +404,28 @@ export default function Logo3D({
       1
     );
     mousePos.current.active = true;
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let isIntersecting = true;
+    const sync = () => setIsCanvasActive(isIntersecting && !document.hidden);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting;
+        sync();
+      },
+      { rootMargin: '120px' }
+    );
+
+    observer.observe(container);
+    document.addEventListener('visibilitychange', sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+    };
   }, []);
 
   useEffect(() => {
@@ -485,6 +508,7 @@ export default function Logo3D({
     >
       <Canvas
         camera={{ position: [0, 0, 5.8], fov: 42 }}
+        frameloop={isCanvasActive ? 'always' : 'never'}
         dpr={isMobile ? [1.25, 1.5] : [1.5, 2]}
         gl={{
           antialias: true,

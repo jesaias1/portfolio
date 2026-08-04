@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { fallbackProjects, type PortfolioProject } from '@/data/projects';
 import { useSound } from '@/hooks/use-sound';
+import TransitionLink from '@/components/TransitionLink';
 
 const projectPresentation: Record<string, { category: string; status: string; caseStudy?: string }> = {
   orvo: { category: 'Audio software', status: 'In development', caseStudy: '/audio/orvo' },
@@ -152,14 +153,20 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
       onMouseLeave={() => setHovered(false)}
       className="group relative overflow-hidden border border-white/[0.09] bg-[#0a0b0c]/90 transition-colors duration-500 hover:border-[#4ddbff]/30 focus-within:border-[#4ddbff]/45"
     >
-      {primaryHref ? (
+      {primaryHref && isExternal(primaryHref) ? (
         <a
           href={primaryHref}
-          target={isExternal(primaryHref) ? '_blank' : undefined}
-          rel={isExternal(primaryHref) ? 'noopener noreferrer' : undefined}
+          target="_blank"
+          rel="noopener noreferrer"
           aria-label={`Open ${project.title}`}
           className="absolute inset-0 z-20"
           onClick={() => play('click')}
+        />
+      ) : primaryHref ? (
+        <TransitionLink
+          href={primaryHref}
+          ariaLabel={`Open ${project.title}`}
+          className="absolute inset-0 z-20"
         />
       ) : null}
 
@@ -171,6 +178,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             quality={75}
+            loading={index < 2 ? 'eager' : 'lazy'}
             onError={() => setImageFailed(true)}
             className="object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
             style={{ filter: showVideo ? 'none' : 'saturate(.74) brightness(.76)' }}
@@ -233,9 +241,9 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
           <div className="relative z-30 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.1em]">
             {presentation.caseStudy ? (
-              <a href={presentation.caseStudy} className="text-[#4ddbff] hover:text-white" onClick={() => play('click')}>
+              <TransitionLink href={presentation.caseStudy} className="text-[#4ddbff] hover:text-white">
                 Case study
-              </a>
+              </TransitionLink>
             ) : null}
             {liveHref ? (
               <a href={liveHref} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white" onClick={() => play('click')}>
