@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { isSafeMediaReference } from '../../src/lib/media-reference';
 
+const isCompactProject = (projectName: string) =>
+  projectName.includes('mobile') || projectName.includes('tablet');
+const isMobileProject = (projectName: string) => projectName.includes('mobile');
+const isTabletProject = (projectName: string) => projectName.includes('tablet');
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   page.on('pageerror', (error) => console.error(`Browser error: ${error.message}`));
@@ -36,8 +41,8 @@ test('public portfolio and project routes remain available', async ({ page }) =>
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Quiz night');
 });
 
-test('mobile keeps the 3D hero while avoiding the heavy background video', async ({ page }, testInfo) => {
-  test.skip(!testInfo.project.name.includes('mobile'), 'Mobile rendering behavior only.');
+test('compact layouts keep the 3D hero while avoiding the heavy background video', async ({ page }, testInfo) => {
+  test.skip(!isCompactProject(testInfo.project.name), 'Compact rendering behavior only.');
 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
@@ -47,7 +52,7 @@ test('mobile keeps the 3D hero while avoiding the heavy background video', async
 });
 
 test('public pages expose canonical and social metadata', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name.includes('mobile'), 'Metadata is viewport-independent.');
+  test.skip(isCompactProject(testInfo.project.name), 'Metadata is viewport-independent.');
 
   await page.goto('/audio/orvo');
   await expect(page).toHaveTitle(/ORVO.*Jesaias/i);
@@ -66,7 +71,7 @@ test('public catalogue pins ORVO and excludes retired projects', async ({ reques
 });
 
 test('project media paths reject unsafe protocols', async ({}, testInfo) => {
-  test.skip(testInfo.project.name.includes('mobile'), 'Pure validation only needs one project.');
+  test.skip(isCompactProject(testInfo.project.name), 'Pure validation only needs one project.');
 
   expect(isSafeMediaReference('/projects/videos/orvo.mp4', true)).toBe(true);
   expect(isSafeMediaReference('https://cdn.example.com/orvo.webm', true)).toBe(true);
@@ -75,7 +80,7 @@ test('project media paths reject unsafe protocols', async ({}, testInfo) => {
 });
 
 test('optimized background replaces the oversized originals', async ({ request }, testInfo) => {
-  test.skip(testInfo.project.name.includes('mobile'), 'Asset response is viewport-independent.');
+  test.skip(isCompactProject(testInfo.project.name), 'Asset response is viewport-independent.');
 
   const optimized = await request.get('/video/website-bg-optimized.mp4');
   expect(optimized.ok()).toBeTruthy();
@@ -102,7 +107,7 @@ test('hero mark has a responsive tap target and visible click response', async (
   );
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
 
-  if (!testInfo.project.name.includes('mobile')) {
+  if (!isCompactProject(testInfo.project.name)) {
     await mark.hover();
     await expect(page.locator('.cursor-ring')).toHaveClass(/cursor-ring-hidden/);
   }
@@ -119,7 +124,7 @@ test('private project preview does not reveal hidden work when logged out', asyn
 });
 
 test('contact bot trap and security headers are active', async ({ request }, testInfo) => {
-  test.skip(testInfo.project.name.includes('mobile'), 'API behavior is viewport-independent.');
+  test.skip(isCompactProject(testInfo.project.name), 'API behavior is viewport-independent.');
 
   const homepage = await request.get('/');
   expect(homepage.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
@@ -142,9 +147,7 @@ test('contact bot trap and security headers are active', async ({ request }, tes
   expect(botSubmission.status()).toBe(400);
 });
 
-test('core pages have no serious automated accessibility violations', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name.includes('mobile'), 'Desktop scan covers the shared semantic structure.');
-
+test('core pages have no serious automated accessibility violations', async ({ page }) => {
   for (const path of ['/', '/audio/orvo', '/projects/kvizy']) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
@@ -157,8 +160,8 @@ test('core pages have no serious automated accessibility violations', async ({ p
   }
 });
 
-test('mobile navigation moves focus and closes with Escape', async ({ page }, testInfo) => {
-  test.skip(!testInfo.project.name.includes('mobile'), 'Mobile-navigation behavior only.');
+test('compact navigation moves focus and closes with Escape', async ({ page }, testInfo) => {
+  test.skip(!isMobileProject(testInfo.project.name), 'Mobile-navigation behavior only.');
 
   await page.goto('/');
   const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
@@ -166,4 +169,49 @@ test('mobile navigation moves focus and closes with Escape', async ({ page }, te
   await expect(page.getByRole('link', { name: 'services', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'Open navigation menu' })).toBeFocused();
+});
+
+test('tablet breakpoint exposes the desktop navigation without loading desktop media', async ({ page }, testInfo) => {
+  test.skip(!isTabletProject(testInfo.project.name), 'Tablet breakpoint behavior only.');
+
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Open navigation menu' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'projects', exact: true })).toBeVisible();
+  await expect(page.locator('video[src*="website"]')).toHaveCount(0);
+});
+
+test('core routes fit every tested viewport without horizontal overflow', async ({ page }) => {
+  for (const path of ['/', '/audio/orvo', '/projects/kvizy']) {
+    await page.goto(path);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    );
+    expect(overflow, `${path} horizontal overflow`).toBeLessThanOrEqual(1);
+  }
+});
+
+test('same-page links point to real sections', async ({ page }, testInfo) => {
+  test.skip(isCompactProject(testInfo.project.name), 'Fragment integrity is viewport-independent.');
+
+  for (const path of ['/', '/audio', '/audio/orvo', '/projects/kvizy']) {
+    await page.goto(path);
+    const missingTargets = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'))
+        .map((link) => link.getAttribute('href'))
+        .filter((href): href is string => Boolean(href && href.length > 1))
+        .filter((href) => !document.getElementById(decodeURIComponent(href.slice(1))))
+    );
+    expect(missingTargets, `${path} missing fragment targets`).toEqual([]);
+  }
+});
+
+test('reduced-motion mode disables decorative background motion', async ({ page }, testInfo) => {
+  test.skip(isCompactProject(testInfo.project.name), 'Reduced-motion behavior is viewport-independent.');
+
+  await page.goto('/');
+  await expect(page.locator('video[src*="website"]')).toHaveCount(0);
+  const scrollBehavior = await page.evaluate(
+    () => window.getComputedStyle(document.documentElement).scrollBehavior
+  );
+  expect(scrollBehavior).toBe('auto');
 });

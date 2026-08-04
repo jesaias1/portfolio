@@ -229,12 +229,10 @@ export function AudioFooter() {
         <p>{audioSite.origin}</p>
       </div>
       <nav aria-label="Audio footer">
-        <a href={audioSite.urls.instagram}>Instagram</a>
-        <a href={audioSite.urls.youtube}>YouTube</a>
+        <a href={audioSite.urls.portfolio}>Portfolio</a>
+        <a href={audioSite.urls.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
         <a href={audioSite.urls.support}>Support</a>
         <a href={audioSite.urls.contact}>Contact</a>
-        <a href={audioSite.urls.terms}>Terms</a>
-        <a href={audioSite.urls.privacy}>Privacy</a>
       </nav>
     </footer>
   );

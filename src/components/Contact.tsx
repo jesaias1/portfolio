@@ -101,7 +101,7 @@ export default function Contact() {
               </span>
               <a
                 href={`mailto:${contactInfo.email}`}
-                className="mt-4 block break-all text-xl font-semibold text-white hover:text-[#4ddbff] md:text-2xl"
+                className="mt-4 inline-flex min-h-11 items-center break-all text-xl font-semibold text-white hover:text-[#4ddbff] md:text-2xl"
               >
                 {contactInfo.email}
               </a>
@@ -122,7 +122,7 @@ export default function Contact() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-[#4ddbff]"
+                    className="inline-flex min-h-11 items-center font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-[#4ddbff]"
                   >
                     {link.label} ↗
                   </a>

@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -22,6 +22,7 @@ export default function Navigation() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+  const shouldReduceMotion = useReducedMotion();
   const { play } = useSound();
 
   useEffect(() => {
@@ -74,13 +75,18 @@ export default function Navigation() {
       setActiveSection(element.id);
       if (lenis) {
         lenis.scrollTo(element, {
-          duration: 1.25,
+          duration: shouldReduceMotion ? 0 : 1.25,
           easing: (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
         });
       } else {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: shouldReduceMotion ? 'auto' : 'smooth' });
       }
       window.history.replaceState(null, '', href);
+      return;
+    }
+
+    if (shouldReduceMotion) {
+      window.location.assign(href);
       return;
     }
 
@@ -110,7 +116,7 @@ export default function Navigation() {
                 handleNavClick('#home');
               }}
               aria-label="Back to the top"
-              className="font-mono text-sm tracking-wider text-[#4ddbff] transition-colors hover:text-white"
+              className="inline-flex min-h-11 items-center font-mono text-sm tracking-wider text-[#4ddbff] transition-colors hover:text-white"
               style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.3)' }}
             >
               {'>'} jesaias.dk
@@ -135,7 +141,7 @@ export default function Navigation() {
                     }}
                     onMouseEnter={() => play('hover')}
                     aria-current={isActive ? 'location' : undefined}
-                    className={`group relative font-mono text-xs tracking-wider transition-colors ${
+                    className={`group relative inline-flex min-h-11 items-center font-mono text-xs tracking-wider transition-colors ${
                       isActive ? 'text-[#4ddbff]' : 'text-gray-400 hover:text-[#4ddbff]'
                     }`}
                   >
@@ -195,7 +201,7 @@ export default function Navigation() {
                         handleNavClick(item.href);
                       }}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`block w-full py-2 text-left font-mono text-sm transition-colors ${
+                      className={`flex min-h-11 w-full items-center text-left font-mono text-sm transition-colors ${
                         isActive ? 'text-[#4ddbff]' : 'text-gray-400 hover:text-[#4ddbff]'
                       }`}
                     >

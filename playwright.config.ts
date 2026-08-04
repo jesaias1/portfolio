@@ -21,8 +21,24 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'mobile-chromium',
-      use: { ...devices['Pixel 7'] },
+      name: 'small-mobile-chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 360, height: 740 },
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
+      },
+    },
+    {
+      name: 'tablet-chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 768, height: 1024 },
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
+      },
     },
   ],
   webServer: {

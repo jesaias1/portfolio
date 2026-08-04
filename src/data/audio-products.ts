@@ -61,13 +61,10 @@ export const audioSite = {
   urls: {
     home: "/audio",
     portfolio: "https://jesaias.dk",
-    instagram: "#instagram",
-    youtube: "#youtube",
-    support: "#support",
+    instagram: "https://www.instagram.com/linasjesaias/",
+    support: "/audio#support",
     contact: "mailto:contact@jesaias.dk",
-    terms: "#terms",
-    privacy: "#privacy",
-    donation: "#support-development",
+    donation: "/audio#support",
   },
 };
 
@@ -92,8 +89,8 @@ export const audioProducts: AudioProduct[] = [
       download: "#orvo-preview",
       watch: "#orvo-video",
       resource: "/audio/orvo",
-      support: "#support",
-      donation: "#support-development",
+      support: "/audio#support",
+      donation: "/audio#support",
     },
     commerce: {
       mode: "coming-soon",
@@ -170,8 +167,8 @@ export const audioProducts: AudioProduct[] = [
       buyLicense: "https://jesaias.lemonsqueezy.com/checkout/buy/5b2c568d-8e84-4b1e-873f-bb093aea0463",
       watch: "#midium-video",
       resource: "/audio/midium",
-      support: "#support",
-      donation: "#support-development",
+      support: "/audio#support",
+      donation: "/audio#support",
     },
     commerce: {
       mode: "demo-plus-full",
@@ -251,8 +248,8 @@ export const audioProducts: AudioProduct[] = [
       buyLicense: "https://jesaias.lemonsqueezy.com/checkout/buy/58bd7308-585b-4de2-a446-d596288d7298",
       watch: "#abyx-video",
       resource: "/audio/abyx",
-      support: "#support",
-      donation: "#support-development",
+      support: "/audio#support",
+      donation: "/audio#support",
     },
     commerce: {
       mode: "demo-plus-full",

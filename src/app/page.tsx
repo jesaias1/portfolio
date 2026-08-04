@@ -115,7 +115,7 @@ function Footer() {
                 <a
                   key={item}
                   href={`#${item}`}
-                  className="font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
+                  className="inline-flex min-h-11 items-center font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
                 >
                   <span className="mr-1 text-[#4ddbff]/30">&gt;</span>
                   {item}
@@ -135,7 +135,7 @@ function Footer() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
+                  className="inline-flex min-h-11 items-center font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
                 >
                   <span className="mr-1 text-[#4ddbff]/30">&gt;</span>
                   {link.label}
@@ -168,7 +168,7 @@ function Footer() {
               <a
                 href="/admin/login"
                 aria-label="Open portfolio editor"
-                className="text-xs opacity-15 transition-opacity hover:opacity-100"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs opacity-15 transition-opacity hover:opacity-100"
               >
                 .
               </a>

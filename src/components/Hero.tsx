@@ -55,14 +55,18 @@ export default function Hero() {
       if (el) {
         if (lenis) {
           lenis.scrollTo(el, {
-            duration: 1.5,
+            duration: shouldReduceMotion ? 0 : 1.5,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
           });
         } else {
-          el.scrollIntoView({ behavior: 'smooth' });
+          el.scrollIntoView({ behavior: shouldReduceMotion ? 'auto' : 'smooth' });
         }
       }
     } else {
+      if (shouldReduceMotion) {
+        window.location.href = href;
+        return;
+      }
       window.dispatchEvent(new CustomEvent('glitch-trigger'));
       setTimeout(() => {
         window.location.href = href;

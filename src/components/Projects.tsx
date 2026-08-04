@@ -63,7 +63,7 @@ export default function Projects() {
           <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#4ddbff]">
             Private preview / hidden projects visible
           </span>
-          <Link href="/#projects" className="font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-white">
+          <Link href="/#projects" className="inline-flex min-h-11 items-center font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-white">
             Exit
           </Link>
         </div>
@@ -247,12 +247,12 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
           <div className="relative z-30 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.1em]">
             {presentation.caseStudy ? (
-              <TransitionLink href={presentation.caseStudy} className="text-[#4ddbff] hover:text-white">
+              <TransitionLink href={presentation.caseStudy} className="inline-flex min-h-11 items-center text-[#4ddbff] hover:text-white">
                 Case study
               </TransitionLink>
             ) : null}
             {liveHref ? (
-              <a href={liveHref} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white" onClick={() => play('click')}>
+              <a href={liveHref} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-gray-500 hover:text-white" onClick={() => play('click')}>
                 Live site ↗
               </a>
             ) : null}
