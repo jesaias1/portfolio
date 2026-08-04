@@ -86,6 +86,6 @@ export function encodeProjectMetadata({
     ...cleanTags,
     `${metadataPrefix}status=${encodeURIComponent(status || 'Project')}`,
     `${metadataPrefix}visible=${String(visible !== false)}`,
-    ...(video ? [`${metadataPrefix}video=${encodeURIComponent(video)}`] : []),
+    ...(video?.trim() ? [`${metadataPrefix}video=${encodeURIComponent(video.trim())}`] : []),
   ];
 }

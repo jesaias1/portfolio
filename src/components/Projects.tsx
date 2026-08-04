@@ -8,6 +8,10 @@ import { fallbackProjects, type PortfolioProject } from '@/data/projects';
 import { useSound } from '@/hooks/use-sound';
 import TransitionLink from '@/components/TransitionLink';
 
+type NavigatorWithConnection = Navigator & {
+  connection?: { saveData?: boolean };
+};
+
 const projectPresentation: Record<string, { category: string; status: string; caseStudy?: string }> = {
   orvo: { category: 'Audio software', status: 'In development', caseStudy: '/audio/orvo' },
   midium: { category: 'Audio software', status: 'Beta', caseStudy: '/audio/midium' },
@@ -125,7 +129,8 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
   useEffect(() => {
     const media = window.matchMedia('(hover: none), (pointer: coarse)');
-    const update = () => setTouchLayout(media.matches);
+    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
+    const update = () => setTouchLayout(media.matches || saveData);
     update();
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
@@ -199,6 +204,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
             muted
             playsInline
             preload="none"
+            poster={project.image}
             aria-hidden="true"
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-100' : 'opacity-0'}`}
           />

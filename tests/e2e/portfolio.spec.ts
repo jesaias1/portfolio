@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { isSafeMediaReference } from '../../src/lib/media-reference';
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -62,6 +63,26 @@ test('public catalogue pins ORVO and excludes retired projects', async ({ reques
 
   expect(projects[0]).toMatchObject({ title: 'ORVO', image: '/projects/orvo.png' });
   expect(projects.some((project: { title: string }) => /stickman|stick fighting/i.test(project.title))).toBe(false);
+});
+
+test('project media paths reject unsafe protocols', async ({}, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'Pure validation only needs one project.');
+
+  expect(isSafeMediaReference('/projects/videos/orvo.mp4', true)).toBe(true);
+  expect(isSafeMediaReference('https://cdn.example.com/orvo.webm', true)).toBe(true);
+  expect(isSafeMediaReference('javascript:alert(1)', true)).toBe(false);
+  expect(isSafeMediaReference('//untrusted.example/video.mp4', true)).toBe(false);
+});
+
+test('optimized background replaces the oversized originals', async ({ request }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'Asset response is viewport-independent.');
+
+  const optimized = await request.get('/video/website-bg-optimized.mp4');
+  expect(optimized.ok()).toBeTruthy();
+  expect(Number(optimized.headers()['content-length'])).toBeLessThan(2 * 1024 * 1024);
+
+  const removedOriginal = await request.get('/video/website%20bg.mp4');
+  expect(removedOriginal.status()).toBe(404);
 });
 
 test('hero mark has a responsive tap target and visible click response', async ({ page }, testInfo) => {

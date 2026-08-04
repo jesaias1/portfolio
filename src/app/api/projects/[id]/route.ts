@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { encodeProjectMetadata } from '@/lib/project-metadata';
+import { cleanMediaReference, isSafeMediaReference } from '@/lib/media-reference';
 
 export async function PUT(
   req: NextRequest,
@@ -17,13 +18,19 @@ export async function PUT(
   try {
     const params = await context.params;
     const data = await req.json();
+    const image = cleanMediaReference(data.image);
+    const video = cleanMediaReference(data.video);
+
+    if (!isSafeMediaReference(image, true) || !isSafeMediaReference(video)) {
+      return NextResponse.json({ error: 'Invalid project media path' }, { status: 400 });
+    }
     
     const values = {
       title: data.title,
       description: data.description,
       longDesc: data.longDesc,
-      image: data.image,
-      tags: JSON.stringify(encodeProjectMetadata(data)),
+      image,
+      tags: JSON.stringify(encodeProjectMetadata({ ...data, video })),
       link: data.link,
       github: data.github,
       featured: data.featured,
@@ -41,7 +48,7 @@ export async function PUT(
       tags: data.tags,
       status: data.status || 'Project',
       visible: data.visible !== false,
-      video: data.video || null,
+      video: video || null,
     });
   } catch (error) {
     console.error('Error updating project:', error);

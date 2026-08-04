@@ -86,14 +86,16 @@ export default function ScrollVideo() {
       {shouldLoadVideo ? (
         <video
           ref={videoRef}
-          src="/video/website%20bg.mp4"
           className="absolute inset-0 h-full w-full object-cover opacity-85 contrast-[1.2] brightness-[0.45]"
           playsInline
           muted
           loop
           preload="metadata"
+          poster="/video/website-bg-poster.webp"
           tabIndex={-1}
-        />
+        >
+          <source src="/video/website-bg-optimized.mp4" type="video/mp4" />
+        </video>
       ) : null}
 
       <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.85)_100%)]" />

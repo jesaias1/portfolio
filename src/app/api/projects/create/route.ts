@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { encodeProjectMetadata } from '@/lib/project-metadata';
+import { cleanMediaReference, isSafeMediaReference } from '@/lib/media-reference';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -13,14 +14,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await req.json();
+    const image = cleanMediaReference(data.image);
+    const video = cleanMediaReference(data.video);
+
+    if (!isSafeMediaReference(image, true) || !isSafeMediaReference(video)) {
+      return NextResponse.json({ error: 'Invalid project media path' }, { status: 400 });
+    }
     
     const project = await prisma.project.create({
       data: {
         title: data.title,
         description: data.description,
         longDesc: data.longDesc,
-        image: data.image,
-        tags: JSON.stringify(encodeProjectMetadata(data)),
+        image,
+        tags: JSON.stringify(encodeProjectMetadata({ ...data, video })),
         link: data.link,
         github: data.github,
         featured: data.featured || false,
@@ -33,7 +40,7 @@ export async function POST(req: NextRequest) {
       tags: data.tags,
       status: data.status || 'Project',
       visible: data.visible !== false,
-      video: data.video || null,
+      video: video || null,
     });
   } catch (error) {
     console.error('Error creating project:', error);
