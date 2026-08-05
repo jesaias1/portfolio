@@ -5,7 +5,6 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Clone,
   Edges,
-  Float,
   useGLTF,
 } from '@react-three/drei';
 import type { EdgesRef } from '@react-three/drei';
@@ -13,8 +12,8 @@ import * as THREE from 'three';
 
 const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
-const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0.2, 0.18, 0];
-const MOBILE_VISUAL_OFFSET: [number, number, number] = [0.1, 0.13, 0];
+const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0.25, 0.14, 0];
+const MOBILE_VISUAL_OFFSET: [number, number, number] = [0.06, 0.15, 0];
 
 useGLTF.preload(MODEL_PATH);
 
@@ -304,7 +303,7 @@ function LogoModel({
     );
     groupRef.current.rotation.x = THREE.MathUtils.lerp(
       groupRef.current.rotation.x,
-      mousePos.current.y * 0.2,
+      0,
       0.05
     );
     groupRef.current.rotation.z = THREE.MathUtils.lerp(
@@ -358,18 +357,7 @@ function LogoModel({
     </group>
   );
 
-  if (prefersReducedMotion) return model;
-
-  return (
-    <Float
-      speed={1.05}
-      rotationIntensity={isLowEnd ? 0.1 : 0.18}
-      floatIntensity={isLowEnd ? 0.14 : 0.28}
-      floatingRange={isLowEnd ? [-0.008, 0.008] : [-0.018, 0.018]}
-    >
-      {model}
-    </Float>
-  );
+  return model;
 }
 
 function LogoScene({
