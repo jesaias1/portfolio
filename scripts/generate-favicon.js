@@ -1,4 +1,4 @@
-// Generate favicon.ico and icon.png from the logo
+// Generate favicon.ico and icon.png from the current brand logo
 // Uses the canvas package to create a simplified favicon
 const fs = require('fs');
 const path = require('path');
@@ -25,12 +25,12 @@ fs.writeFileSync(path.join(publicDir, 'icon.svg'), svgFavicon);
 
 console.log('[✓] Generated icon.svg favicon');
 
-// Also copy logo.png as icon.png for Next.js metadata
-const logoPng = path.join(publicDir, 'logo.png');
+// Also copy brand-logo.png as icon.png for Next.js metadata
+const logoPng = path.join(publicDir, 'brand-logo.png');
 const iconPng = path.join(publicDir, 'icon.png');
 if (fs.existsSync(logoPng)) {
   fs.copyFileSync(logoPng, iconPng);
-  console.log('[✓] Copied logo.png → icon.png');
+  console.log('[✓] Copied brand-logo.png -> icon.png');
 }
 
 console.log('[done] Favicon files ready');

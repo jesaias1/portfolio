@@ -15,7 +15,7 @@ export async function PUT(req: NextRequest) {
     
     const existing = await prisma.contact.findFirst({ select: { id: true } });
     const values = {
-      email: data.email || 'contact@jesaias.dk',
+      email: data.email || 'linasjesaias@gmail.com',
       github: data.github || null,
       linkedin: data.linkedin || null,
       twitter: data.twitter || null,

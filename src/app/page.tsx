@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import Hero from '@/components/Hero';
@@ -28,11 +27,14 @@ const socialLinks = [
 export default function Home() {
   const [showSplash, setShowSplash] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [playLogoIntro, setPlayLogoIntro] = useState(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      setShowSplash(!reducedMotion && !window.localStorage.getItem('jesaias-visited'));
+      const isFirstVisit = !window.localStorage.getItem('jesaias-visited');
+      setShowSplash(!reducedMotion && isFirstVisit);
+      setPlayLogoIntro(!reducedMotion && isFirstVisit);
       setIsReady(true);
     });
 
@@ -67,7 +69,7 @@ export default function Home() {
           <ScrollProgress />
           <GlitchFlash />
           <Navigation />
-          <Hero />
+          <Hero playLogoIntro={playLogoIntro} />
 
           <SectionDivider />
           <ServicesSection />
@@ -93,13 +95,9 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-8 grid grid-cols-1 gap-8 md:mb-12 md:grid-cols-3 md:gap-12">
           <div className="space-y-4">
-            <Image
-              src="/logo.png"
-              alt="Jesaias"
-              width={100}
-              height={35}
-              className="h-6 w-auto opacity-60"
-            />
+            <span className="block font-mono text-sm tracking-[0.18em] text-[#4ddbff]/70">
+              &gt; jesaias.dk
+            </span>
             <p className="max-w-xs font-mono text-xs leading-relaxed text-gray-600">
               Creative developer building digital experiences at the intersection of code,
               creativity, and design.

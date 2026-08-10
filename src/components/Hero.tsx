@@ -6,6 +6,7 @@ import { useSound } from '@/hooks/use-sound';
 import TerminalOverlay from './TerminalOverlay';
 import { useLenis } from 'lenis/react';
 import dynamic from 'next/dynamic';
+import type { LogoDragControls } from './Logo3D';
 
 const Logo3D = dynamic(() => import('./Logo3D'), {
   ssr: false,
@@ -20,9 +21,7 @@ const Logo3D = dynamic(() => import('./Logo3D'), {
 
 const FULL_SUBTITLE = '> creative_developer --software --audio --games';
 
-/* ASCII_LOGO removed — replaced with 3D Logo component */
-
-export default function Hero() {
+export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolean }) {
   const heroRef = useRef<HTMLElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const introInView = useInView(introRef, { once: true, margin: '-80px' });
@@ -32,10 +31,32 @@ export default function Hero() {
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [logoPulse, setLogoPulse] = useState(0);
   const [showBlueprint, setShowBlueprint] = useState(true);
+  const logoDragControls = useRef<LogoDragControls>({
+    rotationX: 0,
+    rotationY: 0,
+    spinVelocity: 0,
+    isDragging: false,
+  });
+  const logoDragStart = useRef({
+    pointerId: -1,
+    x: 0,
+    y: 0,
+    rotationX: 0,
+    rotationY: 0,
+    lastX: 0,
+    lastTime: 0,
+    moved: false,
+  });
   const shouldReduceMotion = useReducedMotion();
   const { play } = useSound();
   const lenis = useLenis();
   const closeTerminal = useCallback(() => setIsTerminalOpen(false), []);
+  const setHeroCursorHidden = useCallback((hidden: boolean) => {
+    document.body.classList.toggle('hero-logo-cursor-hidden', hidden);
+  }, []);
+  const syncLogoDragControls = useCallback((nextControls: LogoDragControls) => {
+    logoDragControls.current = nextControls;
+  }, []);
 
   useEffect(() => {
     if (shouldReduceMotion) {
@@ -45,6 +66,56 @@ export default function Hero() {
 
     const timer = window.setTimeout(() => setShowBlueprint(false), 2400);
     return () => window.clearTimeout(timer);
+  }, [shouldReduceMotion]);
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const stopDrag = () => {
+      logoDragControls.current.isDragging = false;
+      logoDragStart.current.pointerId = -1;
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (logoDragStart.current.pointerId !== event.pointerId) return;
+
+      const now = performance.now();
+      const dx = event.clientX - logoDragStart.current.x;
+      const dy = event.clientY - logoDragStart.current.y;
+      const moveDistance = Math.hypot(dx, dy);
+      logoDragStart.current.moved ||= moveDistance > 4;
+
+      const nextRotationY = logoDragStart.current.rotationY + dx * 0.0046;
+      const nextRotationX = logoDragStart.current.rotationX + dy * 0.0032;
+      const timeDelta = Math.max(16, now - logoDragStart.current.lastTime);
+      const xDelta = event.clientX - logoDragStart.current.lastX;
+
+      logoDragControls.current.rotationY = nextRotationY;
+      logoDragControls.current.rotationX = Math.max(-0.42, Math.min(0.42, nextRotationX));
+      logoDragControls.current.spinVelocity = (xDelta / timeDelta) * 3.2;
+      logoDragStart.current.lastX = event.clientX;
+      logoDragStart.current.lastTime = now;
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      if (logoDragStart.current.pointerId !== event.pointerId) return;
+      stopDrag();
+    };
+
+    const handleBlur = () => stopDrag();
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+      window.removeEventListener('blur', handleBlur);
+      document.body.classList.remove('hero-logo-cursor-hidden');
+    };
   }, [shouldReduceMotion]);
 
   const handleNavClick = (href: string) => {
@@ -165,7 +236,13 @@ export default function Hero() {
             transition={{ duration: 1.2, delay: shouldReduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0"
           >
-            <Logo3D isActive={isLogoHovered} pulseToken={logoPulse} />
+            <Logo3D
+              isActive={isLogoHovered}
+              pulseToken={logoPulse}
+              dragControls={logoDragControls}
+              onDragControlsSync={syncLogoDragControls}
+              playIntroSwirl={playLogoIntro}
+            />
           </motion.div>
         </motion.div>
 
@@ -173,27 +250,61 @@ export default function Hero() {
           type="button"
           aria-label="Animate the Jesaias signature"
           data-testid="hero-logo-interaction"
+          data-hide-cursor-dot
           data-hide-cursor-ring
           onPointerEnter={(event) => {
-            if (event.pointerType !== 'touch') setIsLogoHovered(true);
+            if (event.pointerType !== 'touch') {
+              setIsLogoHovered(true);
+              setHeroCursorHidden(true);
+            }
           }}
-          onPointerLeave={() => setIsLogoHovered(false)}
+          onPointerLeave={() => {
+            setIsLogoHovered(false);
+            setHeroCursorHidden(false);
+          }}
           onFocus={(event) => {
             if (event.currentTarget.matches(':focus-visible')) setIsLogoHovered(true);
           }}
-          onBlur={() => setIsLogoHovered(false)}
+          onBlur={() => {
+            setIsLogoHovered(false);
+            setHeroCursorHidden(false);
+          }}
+          onPointerDown={(event) => {
+            if (shouldReduceMotion || event.button !== 0) return;
+
+            event.preventDefault();
+            event.currentTarget.setPointerCapture(event.pointerId);
+            setIsLogoHovered(true);
+            setHeroCursorHidden(true);
+
+            logoDragControls.current.isDragging = true;
+            logoDragControls.current.spinVelocity = 0;
+            logoDragStart.current = {
+              pointerId: event.pointerId,
+              x: event.clientX,
+              y: event.clientY,
+              rotationX: logoDragControls.current.rotationX,
+              rotationY: logoDragControls.current.rotationY,
+              lastX: event.clientX,
+              lastTime: performance.now(),
+              moved: false,
+            };
+          }}
           onClick={(event) => {
+            if (logoDragStart.current.moved) {
+              logoDragStart.current.moved = false;
+              return;
+            }
             if (event.detail > 0) event.currentTarget.blur();
             setLogoPulse((value) => value + 1);
           }}
-          className="group absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 cursor-crosshair rounded-[45%] bg-transparent focus-visible:outline-none max-sm:h-[240px] max-sm:w-[86vw]"
+          className="group absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 touch-none cursor-grab rounded-[45%] bg-transparent focus-visible:outline-none active:cursor-grabbing max-sm:h-[240px] max-sm:w-[86vw]"
         >
-          <span className="sr-only">The signature responds to pointer movement and clicks</span>
+          <span className="sr-only">The signature responds to pointer movement, dragging and clicks</span>
           <span aria-hidden="true" className="absolute left-[9%] top-[12%] h-3 w-3 border-l border-t border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
           <span aria-hidden="true" className="absolute right-[9%] top-[12%] h-3 w-3 border-r border-t border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
           <span aria-hidden="true" className="absolute bottom-[12%] left-[9%] h-3 w-3 border-b border-l border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
           <span aria-hidden="true" className="absolute bottom-[12%] right-[9%] h-3 w-3 border-b border-r border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
-          {logoPulse > 0 && !shouldReduceMotion ? <LogoBurst key={logoPulse} /> : null}
         </button>
 
         <AnimatePresence>
@@ -275,32 +386,6 @@ export default function Hero() {
         onClose={closeTerminal}
       />
     </>
-  );
-}
-
-function LogoBurst() {
-  return (
-    <motion.span
-      data-testid="hero-logo-burst"
-      aria-hidden="true"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 0 }}
-      transition={{ duration: 1.05, ease: 'easeOut' }}
-      className="pointer-events-none absolute inset-0"
-    >
-      <motion.span
-        initial={{ opacity: 0.42, scale: 0.24 }}
-        animate={{ opacity: 0, scale: 2.15 }}
-        transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute inset-[20%] rounded-[45%] bg-[radial-gradient(ellipse_at_center,rgba(77,219,255,0.2),rgba(77,219,255,0.07)_38%,transparent_72%)] blur-xl"
-      />
-      <motion.span
-        initial={{ opacity: 0, scaleX: 0.08 }}
-        animate={{ opacity: [0, 0.85, 0], scaleX: 1.32 }}
-        transition={{ duration: 0.72, ease: 'easeOut' }}
-        className="absolute left-[7%] right-[7%] top-1/2 h-px origin-center bg-gradient-to-r from-transparent via-[#d9fbff] to-transparent shadow-[0_0_14px_rgba(77,219,255,0.9)]"
-      />
-    </motion.span>
   );
 }
 

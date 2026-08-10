@@ -3,6 +3,13 @@ import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 import { checkContactRateLimit } from '@/lib/rate-limit';
 
+const CONTACT_EMAIL = 'linasjesaias@gmail.com';
+const LEGACY_CONTACT_EMAIL = 'contact@jesaias.dk';
+
+function publicContactEmail(email?: string | null) {
+  return !email || email === LEGACY_CONTACT_EMAIL ? CONTACT_EMAIL : email;
+}
+
 export async function GET() {
   try {
     const contact = await prisma.contact.findFirst();
@@ -10,17 +17,17 @@ export async function GET() {
     if (!contact) {
       return NextResponse.json({
         id: 'main',
-        email: 'contact@jesaias.dk',
+        email: CONTACT_EMAIL,
         github: 'https://github.com/jesaias1',
         linkedin: 'https://www.linkedin.com/in/jesaias/',
       });
     }
 
-    return NextResponse.json(contact);
+    return NextResponse.json({ ...contact, email: publicContactEmail(contact.email) });
   } catch {
     return NextResponse.json({
       id: 'main',
-      email: 'contact@jesaias.dk',
+      email: CONTACT_EMAIL,
       github: 'https://github.com/jesaias1',
       linkedin: 'https://www.linkedin.com/in/jesaias/',
     });
@@ -91,7 +98,8 @@ export async function POST(request: Request) {
 
     const emailUser = process.env.EMAIL_USER;
     const emailPass = process.env.EMAIL_PASS;
-    const contactToEmail = process.env.CONTACT_TO_EMAIL;
+    const configuredContactEmail = process.env.CONTACT_TO_EMAIL?.trim();
+    const contactToEmail = publicContactEmail(configuredContactEmail);
 
     if (emailUser && emailPass && contactToEmail) {
       const transporter = nodemailer.createTransport({

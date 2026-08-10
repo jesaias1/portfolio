@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useLenis } from 'lenis/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
@@ -116,10 +117,19 @@ export default function Navigation() {
                 handleNavClick('#home');
               }}
               aria-label="Back to the top"
-              className="inline-flex min-h-11 items-center font-mono text-sm tracking-wider text-[#4ddbff] transition-colors hover:text-white"
+              className="inline-flex min-h-11 items-center gap-2 font-mono text-sm tracking-wider text-[#4ddbff] transition-colors hover:text-white"
               style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.3)' }}
             >
-              {'>'} jesaias.dk
+              <span aria-hidden="true">&gt;</span>
+              <Image
+                src="/brand-logo.png"
+                alt=""
+                width={48}
+                height={32}
+                priority
+                className="h-7 w-11 object-contain opacity-90 mix-blend-screen"
+              />
+              <span className="hidden sm:inline">jesaias.dk</span>
             </Link>
           </motion.div>
 

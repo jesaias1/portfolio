@@ -7,6 +7,7 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -100, y: -100 });
   const ringPos = useRef({ x: -100, y: -100 });
+  const hideDotRef = useRef(false);
   const rafRef = useRef<number>(0);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -14,7 +15,9 @@ export default function CustomCursor() {
     mouseRef.current.y = e.clientY;
     const target = e.target instanceof HTMLElement ? e.target : null;
     const hideRing = Boolean(target?.closest('[data-hide-cursor-ring]'));
+    const hideDot = Boolean(target?.closest('[data-hide-cursor-dot]'));
     const interactive = Boolean(target?.closest('a, button, [role="button"], input, textarea, select, label[for]'));
+    hideDotRef.current = hideDot;
     ringRef.current?.classList.toggle('cursor-ring-hidden', hideRing);
     ringRef.current?.classList.toggle('cursor-ring-hover', interactive && !hideRing);
   }, []);
@@ -35,6 +38,8 @@ export default function CustomCursor() {
       // Dot follows instantly
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${mx - 3}px, ${my - 3}px, 0)`;
+        const shouldHideDot = hideDotRef.current || document.body.classList.contains('hero-logo-cursor-hidden');
+        dotRef.current.style.opacity = shouldHideDot ? '0' : '1';
       }
 
       // Ring follows with lag (lerp 0.1)
@@ -76,6 +81,7 @@ export default function CustomCursor() {
       {/* Main cursor dot */}
       <div
         ref={dotRef}
+        data-custom-cursor-dot
         className="fixed top-0 left-0 pointer-events-none"
         style={{
           width: 6,
@@ -85,6 +91,7 @@ export default function CustomCursor() {
           backgroundColor: '#4ddbff',
           boxShadow: '0 0 8px #4ddbff',
           willChange: 'transform',
+          transition: 'opacity 0.12s ease',
         }}
       />
 

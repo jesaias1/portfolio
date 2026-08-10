@@ -4,20 +4,33 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   Clone,
-  Edges,
+  Environment,
+  Lightformer,
   useGLTF,
 } from '@react-three/drei';
-import type { EdgesRef } from '@react-three/drei';
 import * as THREE from 'three';
 
 const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
-const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0.25, 0.14, 0];
-const MOBILE_VISUAL_OFFSET: [number, number, number] = [0.06, 0.15, 0];
+const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0, 0.14, 0];
+const MOBILE_VISUAL_OFFSET: [number, number, number] = [0, 0.15, 0];
 
 useGLTF.preload(MODEL_PATH);
 
 type MotionInput = React.RefObject<{ x: number; y: number; active: boolean }>;
+type InteractionInput = React.RefObject<{ boost: number }>;
+export type LogoDragControls = {
+  rotationX: number;
+  rotationY: number;
+  spinVelocity: number;
+  isDragging: boolean;
+};
+type DragInput = React.RefObject<LogoDragControls>;
+type DragSync = (nextControls: LogoDragControls) => void;
+
+function easeOutCubic(value: number) {
+  return 1 - Math.pow(1 - value, 3);
+}
 
 function useInteractionProfile() {
   const [profile, setProfile] = useState(() => {
@@ -61,23 +74,69 @@ function useInteractionProfile() {
   return profile;
 }
 
-function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
+function LogoMaterial({
+  interaction,
+  isLowEnd,
+}: {
+  interaction: InteractionInput;
+  isLowEnd: boolean;
+}) {
+  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
+  const baseClearcoat = isLowEnd ? 0.9 : 0.92;
+  const baseClearcoatRoughness = isLowEnd ? 0.07 : 0.035;
+  const baseEnvMapIntensity = isLowEnd ? 2.2 : 3.35;
+  const baseEmissiveIntensity = isLowEnd ? 0.025 : 0.04;
+  const baseIridescence = isLowEnd ? 0.1 : 0.18;
+
+  useFrame((_, delta) => {
+    const material = materialRef.current;
+    if (!material) return;
+
+    const boost = interaction.current.boost;
+    const response = 1 - Math.exp(-delta * 7);
+
+    material.clearcoat = THREE.MathUtils.lerp(material.clearcoat, Math.min(1, baseClearcoat + boost * 0.1), response);
+    material.clearcoatRoughness = THREE.MathUtils.lerp(
+      material.clearcoatRoughness,
+      Math.max(0.018, baseClearcoatRoughness - boost * 0.018),
+      response
+    );
+    material.envMapIntensity = THREE.MathUtils.lerp(
+      material.envMapIntensity,
+      baseEnvMapIntensity + boost * 0.65,
+      response
+    );
+    material.specularIntensity = THREE.MathUtils.lerp(material.specularIntensity, 1 + boost * 0.22, response);
+    material.emissiveIntensity = THREE.MathUtils.lerp(
+      material.emissiveIntensity,
+      baseEmissiveIntensity + boost * 0.035,
+      response
+    );
+    material.iridescence = THREE.MathUtils.lerp(material.iridescence, baseIridescence + boost * 0.06, response);
+  });
+
   return (
     <meshPhysicalMaterial
-      color={isLowEnd ? '#c9f7ff' : '#d2fbff'}
-      roughness={isLowEnd ? 0.18 : 0.13}
+      ref={materialRef}
+      color={isLowEnd ? '#ccf7ff' : '#d8fbff'}
+      roughness={isLowEnd ? 0.16 : 0.1}
       metalness={0}
-      clearcoat={1}
-      clearcoatRoughness={isLowEnd ? 0.08 : 0.05}
+      clearcoat={baseClearcoat}
+      clearcoatRoughness={baseClearcoatRoughness}
       transmission={isLowEnd ? 0.52 : 0.58}
+      iridescence={baseIridescence}
+      iridescenceIOR={1.32}
+      iridescenceThicknessRange={[150, 360]}
       transparent
       opacity={0.94}
       thickness={isLowEnd ? 0.72 : 0.86}
       ior={1.44}
-      reflectivity={0.58}
-      specularIntensity={0.85}
+      reflectivity={0.7}
+      specularIntensity={1}
       specularColor="#dffbff"
-      envMapIntensity={isLowEnd ? 1.55 : 2}
+      envMapIntensity={baseEnvMapIntensity}
+      emissive="#0b252d"
+      emissiveIntensity={baseEmissiveIntensity}
       attenuationColor="#a8f2ff"
       attenuationDistance={2.35}
       side={THREE.FrontSide}
@@ -85,73 +144,80 @@ function LogoMaterial({ isLowEnd }: { isLowEnd: boolean }) {
   );
 }
 
-function LogoEdgeChase({ pulseToken }: { pulseToken: number }) {
-  const edgeRef = useRef<EdgesRef>(null);
-  const pulse = useRef(0);
-
-  useEffect(() => {
-    if (pulseToken <= 0) return;
-    pulse.current = 1;
-    if (!edgeRef.current) return;
-    edgeRef.current.visible = true;
-    edgeRef.current.material.dashOffset = 0;
-  }, [pulseToken]);
+function LogoRimMaterial({
+  interaction,
+  isLowEnd,
+}: {
+  interaction: InteractionInput;
+  isLowEnd: boolean;
+}) {
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const baseOpacity = isLowEnd ? 0.035 : 0.055;
 
   useFrame((_, delta) => {
-    if (pulse.current <= 0) return;
+    const material = materialRef.current;
+    if (!material) return;
 
-    pulse.current = Math.max(0, pulse.current - delta * 0.72);
-    const progress = 1 - pulse.current;
-    const envelope = Math.sin(progress * Math.PI);
-    const edge = edgeRef.current;
-
-    if (!edge) return;
-    edge.material.opacity = envelope * 0.88;
-    edge.material.dashOffset = -progress * 6.2;
-    edge.material.linewidth = 1.1 + envelope * 0.75;
-    edge.visible = pulse.current > 0;
+    const response = 1 - Math.exp(-delta * 7);
+    material.opacity = THREE.MathUtils.lerp(material.opacity, baseOpacity + interaction.current.boost * 0.08, response);
   });
 
   return (
-    <Edges
-      ref={edgeRef}
-      threshold={18}
-      color="#b9f5ff"
-      lineWidth={1.1}
-      dashed
-      dashScale={4.5}
-      dashSize={0.16}
-      gapSize={0.92}
+    <meshBasicMaterial
+      ref={materialRef}
+      color="#bff8ff"
       transparent
-      opacity={0}
-      depthTest={false}
+      opacity={baseOpacity}
+      side={THREE.BackSide}
+      blending={THREE.AdditiveBlending}
+      depthWrite={false}
       toneMapped={false}
-      renderOrder={40}
     />
+  );
+}
+
+function LogoReflectionEnvironment({ isLowEnd }: { isLowEnd: boolean }) {
+  return (
+    <Environment resolution={isLowEnd ? 64 : 128} frames={1}>
+      <Lightformer
+        form="rect"
+        color="#f4ffff"
+        intensity={isLowEnd ? 2.2 : 3.5}
+        position={[0, 3.2, -4.8]}
+        rotation={[Math.PI / 3, 0, 0]}
+        scale={[8, 0.45, 1]}
+      />
+      <Lightformer
+        form="rect"
+        color="#4ddbff"
+        intensity={isLowEnd ? 1.6 : 2.7}
+        position={[-4.5, 0.4, -3.2]}
+        rotation={[0, Math.PI / 3, 0.25]}
+        scale={[0.8, 5.5, 1]}
+      />
+      <Lightformer
+        form="rect"
+        color="#9fefff"
+        intensity={isLowEnd ? 1.1 : 1.9}
+        position={[4.6, -1.4, -2.8]}
+        rotation={[0, -Math.PI / 3, -0.15]}
+        scale={[0.7, 4.2, 1]}
+      />
+    </Environment>
   );
 }
 
 function CursorGlow({
   mousePos,
-  isLowEnd,
   prefersReducedMotion,
   isActive,
-  pulseToken,
 }: {
   mousePos: MotionInput;
-  isLowEnd: boolean;
   prefersReducedMotion: boolean;
   isActive: boolean;
-  pulseToken: number;
 }) {
   const spriteRef = useRef<THREE.Sprite>(null);
   const materialRef = useRef<THREE.SpriteMaterial>(null);
-  const lightRef = useRef<THREE.PointLight>(null);
-  const pulse = useRef(0);
-
-  useEffect(() => {
-    if (pulseToken > 0 && !prefersReducedMotion) pulse.current = 1;
-  }, [prefersReducedMotion, pulseToken]);
 
   const glowTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -178,30 +244,20 @@ function CursorGlow({
     return () => glowTexture.dispose();
   }, [glowTexture]);
 
-  useFrame((_, delta) => {
-    if (!spriteRef.current || !materialRef.current || !lightRef.current) return;
-
-    pulse.current = Math.max(0, pulse.current - delta * 1.15);
+  useFrame(() => {
+    if (!spriteRef.current || !materialRef.current) return;
 
     const distance = mousePos.current.active
       ? Math.hypot(mousePos.current.x * 0.85, mousePos.current.y * 1.15)
       : 1.4;
     const proximity = THREE.MathUtils.clamp(1 - distance / 1.15, 0, 1);
-    const motionScale = prefersReducedMotion ? 0 : 1;
-
     const activeLift = isActive && !prefersReducedMotion ? 1 : 0;
-    const targetOpacity = 0.12 + proximity * (isLowEnd ? 0.14 : 0.28) * motionScale + activeLift * 0.05 + pulse.current * 0.26;
-    const targetLight = 0.35 + proximity * (isLowEnd ? 0.95 : 1.65) * motionScale + activeLift * 0.35 + pulse.current * 2.05;
-    const targetScale = 4.85 + proximity * 0.7 + activeLift * 0.14 + pulse.current * 0.82;
+    const targetOpacity = 0;
+    const targetScale = 4.75 + proximity * 0.34 + activeLift * 0.08;
 
     materialRef.current.opacity = THREE.MathUtils.lerp(
       materialRef.current.opacity,
       targetOpacity,
-      0.08
-    );
-    lightRef.current.intensity = THREE.MathUtils.lerp(
-      lightRef.current.intensity,
-      targetLight,
       0.08
     );
     spriteRef.current.scale.x = THREE.MathUtils.lerp(
@@ -231,20 +287,15 @@ function CursorGlow({
           toneMapped={false}
         />
       </sprite>
-      <pointLight
-        ref={lightRef}
-        position={[0.25, 0.2, 2.4]}
-        color="#4ddbff"
-        intensity={0.35}
-        distance={6}
-        decay={2}
-      />
     </>
   );
 }
 
 function LogoModel({
   mousePos,
+  dragControls,
+  onDragControlsSync,
+  playIntroSwirl,
   isLowEnd,
   isMobile,
   prefersReducedMotion,
@@ -252,6 +303,9 @@ function LogoModel({
   pulseToken,
 }: {
   mousePos: MotionInput;
+  dragControls?: DragInput;
+  onDragControlsSync?: DragSync;
+  playIntroSwirl: boolean;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
@@ -260,11 +314,26 @@ function LogoModel({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const pulse = useRef(0);
+  const introElapsed = useRef<number | null>(playIntroSwirl && !prefersReducedMotion ? 0 : null);
+  const dragIdleElapsed = useRef(0);
+  const materialInteraction = useRef({ boost: 0 });
+  const inertialDrag = useRef<LogoDragControls>({
+    rotationX: 0,
+    rotationY: 0,
+    spinVelocity: 0,
+    isDragging: false,
+  });
   const { scene } = useGLTF(MODEL_PATH);
 
   useEffect(() => {
     if (pulseToken > 0 && !prefersReducedMotion) pulse.current = 1;
   }, [prefersReducedMotion, pulseToken]);
+
+  useEffect(() => {
+    if (!playIntroSwirl || prefersReducedMotion) return;
+    introElapsed.current = 0;
+    pulse.current = 1;
+  }, [playIntroSwirl, prefersReducedMotion]);
 
   const preparedScene = useMemo(() => {
     const clone = scene.clone(true);
@@ -295,28 +364,95 @@ function LogoModel({
 
     pulse.current = Math.max(0, pulse.current - delta * 1.35);
     const pulseArc = Math.sin((1 - pulse.current) * Math.PI);
+    const drag = dragControls?.current;
+    const dragState = inertialDrag.current;
+    const introDuration = 3.1;
+    let introRotationX = 0;
+    let introRotationY = 0;
+    let introRotationZ = 0;
+    let introLift = 0;
+    let introScale = 0;
+
+    if (introElapsed.current !== null) {
+      introElapsed.current += delta;
+      const rawProgress = THREE.MathUtils.clamp(introElapsed.current / introDuration, 0, 1);
+      const easedProgress = easeOutCubic(rawProgress);
+      const remaining = 1 - easedProgress;
+      const orbit = rawProgress * Math.PI * 2;
+
+      introRotationY = remaining * Math.PI * 2.15;
+      introRotationX = Math.sin(orbit * 1.15) * remaining * 0.46;
+      introRotationZ = Math.sin(orbit * 0.85 + 0.55) * remaining * 0.16;
+      introLift = Math.sin(rawProgress * Math.PI) * 0.22;
+      introScale = Math.sin(rawProgress * Math.PI) * 0.035;
+
+      if (rawProgress >= 1) {
+        introElapsed.current = null;
+      }
+    }
+
+    if (drag?.isDragging) {
+      dragIdleElapsed.current = 0;
+      dragState.rotationX = drag.rotationX;
+      dragState.rotationY = drag.rotationY;
+      dragState.spinVelocity = drag.spinVelocity;
+      dragState.isDragging = true;
+    } else {
+      dragState.isDragging = false;
+      dragIdleElapsed.current += delta;
+      dragState.spinVelocity = THREE.MathUtils.damp(dragState.spinVelocity, 0, 2.8, delta);
+      dragState.rotationY += dragState.spinVelocity * delta;
+      dragState.rotationX = THREE.MathUtils.damp(dragState.rotationX, 0, 1.4, delta);
+
+      if (dragIdleElapsed.current > 2.25 && Math.abs(dragState.spinVelocity) < 0.08) {
+        dragState.rotationY = THREE.MathUtils.damp(dragState.rotationY, 0, 1.15, delta);
+      }
+
+      onDragControlsSync?.({
+        rotationX: dragState.rotationX,
+        rotationY: dragState.rotationY,
+        spinVelocity: dragState.spinVelocity,
+        isDragging: false,
+      });
+    }
+
+    const dragRotationX = dragState.rotationX;
+    const dragRotationY = dragState.rotationY;
+    const dragLift = dragState.isDragging ? 0.018 : 0;
+    const boostTarget = Math.max(
+      dragState.isDragging ? 0.72 : 0,
+      Math.min(0.5, Math.abs(dragState.spinVelocity) * 0.16),
+      pulseArc * 0.74,
+      introElapsed.current !== null ? 0.38 : 0
+    );
+    materialInteraction.current.boost = THREE.MathUtils.damp(
+      materialInteraction.current.boost,
+      boostTarget,
+      boostTarget > materialInteraction.current.boost ? 7.5 : 3.4,
+      delta
+    );
 
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
-      BASE_Y_ROTATION + mousePos.current.x * 0.3 + pulse.current * 0.11,
-      0.05
+      BASE_Y_ROTATION + mousePos.current.x * 0.16 + dragRotationY + introRotationY + pulse.current * 0.08,
+      introElapsed.current !== null ? 0.14 : dragState.isDragging ? 0.18 : 0.06
     );
     groupRef.current.rotation.x = THREE.MathUtils.lerp(
       groupRef.current.rotation.x,
-      0,
-      0.05
+      dragRotationX + introRotationX,
+      introElapsed.current !== null ? 0.14 : dragState.isDragging ? 0.18 : 0.06
     );
     groupRef.current.rotation.z = THREE.MathUtils.lerp(
       groupRef.current.rotation.z,
-      -pulseArc * 0.04,
-      0.09
+      introRotationZ - pulseArc * 0.04,
+      introElapsed.current !== null ? 0.14 : 0.09
     );
     groupRef.current.position.z = THREE.MathUtils.lerp(
       groupRef.current.position.z,
-      pulseArc * 0.12,
+      introLift + pulseArc * 0.12,
       0.09
     );
-    const targetScale = 1 + (isActive ? 0.008 : 0) + pulse.current * 0.045;
+    const targetScale = 1 + (isActive ? 0.008 : 0) + dragLift + introScale + pulseArc * 0.032;
     const nextScale = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.09);
     groupRef.current.scale.setScalar(nextScale);
   });
@@ -337,6 +473,17 @@ function LogoModel({
           -center.z * scaleFactor,
         ]}
       >
+        <group scale={1.012}>
+          <Clone
+            object={preparedScene}
+            deep="geometriesOnly"
+            inject={(object) =>
+              object instanceof THREE.Mesh ? (
+                <LogoRimMaterial interaction={materialInteraction} isLowEnd={isLowEnd} />
+              ) : null
+            }
+          />
+        </group>
         <Clone
           object={preparedScene}
           deep="geometriesOnly"
@@ -345,10 +492,7 @@ function LogoModel({
           inject={(object) =>
             object instanceof THREE.Mesh ? (
               <>
-                <LogoMaterial isLowEnd={isLowEnd} />
-                {pulseToken > 0 && !prefersReducedMotion ? (
-                  <LogoEdgeChase pulseToken={pulseToken} />
-                ) : null}
+                <LogoMaterial interaction={materialInteraction} isLowEnd={isLowEnd} />
               </>
             ) : null
           }
@@ -362,6 +506,9 @@ function LogoModel({
 
 function LogoScene({
   mousePos,
+  dragControls,
+  onDragControlsSync,
+  playIntroSwirl,
   isLowEnd,
   isMobile,
   prefersReducedMotion,
@@ -369,6 +516,9 @@ function LogoScene({
   pulseToken,
 }: {
   mousePos: MotionInput;
+  dragControls?: DragInput;
+  onDragControlsSync?: DragSync;
+  playIntroSwirl: boolean;
   isLowEnd: boolean;
   isMobile: boolean;
   prefersReducedMotion: boolean;
@@ -377,6 +527,7 @@ function LogoScene({
 }) {
   return (
     <>
+      <LogoReflectionEnvironment isLowEnd={isLowEnd} />
       <ambientLight intensity={0.12} color="#f6feff" />
       <directionalLight position={[4, 5, 5]} intensity={0.72} color="#ffffff" />
       <directionalLight position={[-4, 2, 3]} intensity={0.28} color="#d8f7ff" />
@@ -386,14 +537,15 @@ function LogoScene({
       <hemisphereLight args={['#ecfdff', '#050708', isLowEnd ? 0.56 : 0.72]} />
       <CursorGlow
         mousePos={mousePos}
-        isLowEnd={isLowEnd}
         prefersReducedMotion={prefersReducedMotion}
         isActive={isActive}
-        pulseToken={pulseToken}
       />
 
       <LogoModel
         mousePos={mousePos}
+        dragControls={dragControls}
+        onDragControlsSync={onDragControlsSync}
+        playIntroSwirl={playIntroSwirl}
         isLowEnd={isLowEnd}
         isMobile={isMobile}
         prefersReducedMotion={prefersReducedMotion}
@@ -425,10 +577,16 @@ export default function Logo3D({
   className = '',
   isActive = false,
   pulseToken = 0,
+  dragControls,
+  onDragControlsSync,
+  playIntroSwirl = false,
 }: {
   className?: string;
   isActive?: boolean;
   pulseToken?: number;
+  dragControls?: DragInput;
+  onDragControlsSync?: DragSync;
+  playIntroSwirl?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0, active: false });
@@ -572,6 +730,9 @@ export default function Logo3D({
         <Suspense fallback={<LoadingFallback prefersReducedMotion={prefersReducedMotion} />}>
           <LogoScene
             mousePos={mousePos}
+            dragControls={dragControls}
+            onDragControlsSync={onDragControlsSync}
+            playIntroSwirl={playIntroSwirl}
             isLowEnd={isLowEnd}
             isMobile={isMobile}
             prefersReducedMotion={prefersReducedMotion}

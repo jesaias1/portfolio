@@ -63,7 +63,7 @@ export const audioSite = {
     portfolio: "https://jesaias.dk",
     instagram: "https://www.instagram.com/linasjesaias/",
     support: "/audio#support",
-    contact: "mailto:contact@jesaias.dk",
+    contact: "mailto:linasjesaias@gmail.com",
     donation: "/audio#support",
   },
 };

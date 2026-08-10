@@ -13,7 +13,7 @@ type ContactInfo = {
 };
 
 const fallbackContact: ContactInfo = {
-  email: 'contact@jesaias.dk',
+  email: 'linasjesaias@gmail.com',
   github: 'https://github.com/jesaias1',
   linkedin: 'https://www.linkedin.com/in/jesaias/',
 };
@@ -101,7 +101,7 @@ export default function Contact() {
               </span>
               <a
                 href={`mailto:${contactInfo.email}`}
-                className="mt-4 inline-flex min-h-11 items-center break-all text-xl font-semibold text-white hover:text-[#4ddbff] md:text-2xl"
+                className="mt-4 inline-flex min-h-11 items-center break-all font-mono text-sm tracking-[0.04em] text-gray-300 hover:text-[#4ddbff] md:text-base"
               >
                 {contactInfo.email}
               </a>
