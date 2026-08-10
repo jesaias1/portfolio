@@ -83,7 +83,8 @@ export const audioProducts: AudioProduct[] = [
     identity: "transformative",
     labels: ["VST3", "C++20", "JUCE 8", "IN DEVELOPMENT"],
     assets: {
-      screenshot: "/projects/orvo.png",
+      screenshot: "/projects/orvo-mockup.png",
+      video: "/projects/videos/orvo-teaser.mp4",
     },
     urls: {
       download: "#orvo-preview",

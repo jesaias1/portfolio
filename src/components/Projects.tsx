@@ -108,7 +108,17 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
   const cardRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
-  const [touchLayout, setTouchLayout] = useState(false);
+  const [touchLayout, setTouchLayout] = useState(() =>
+    typeof window === 'undefined'
+      ? false
+      : window.matchMedia('(hover: none), (pointer: coarse)').matches
+  );
+  const [saveData] = useState(() =>
+    typeof navigator === 'undefined'
+      ? false
+      : (navigator as NavigatorWithConnection).connection?.saveData === true
+  );
+  const [touchInViewReady, setTouchInViewReady] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const inView = useInView(cardRef, { amount: 0.42 });
   const reduceMotion = useReducedMotion();
@@ -123,18 +133,31 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
   const isUnavailable = status === 'Under maintenance' || status === 'Archived';
   const liveHref = !isUnavailable && project.link && isExternal(project.link) ? project.link : undefined;
   const primaryHref = presentation.caseStudy ?? liveHref;
-  const showVideo = Boolean(project.video) && !reduceMotion && !touchLayout && hovered && inView;
+  const hasVideo = Boolean(project.video);
+  const showVideo =
+    hasVideo &&
+    !reduceMotion &&
+    !saveData &&
+    inView &&
+    (touchLayout ? touchInViewReady : hovered);
 
   const tags = project.tags.slice(0, 4);
 
   useEffect(() => {
     const media = window.matchMedia('(hover: none), (pointer: coarse)');
-    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
-    const update = () => setTouchLayout(media.matches || saveData);
-    update();
+    const update = () => setTouchLayout(media.matches);
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
   }, []);
+
+  useEffect(() => {
+    const shouldPrepareTouchVideo = touchLayout && hasVideo && !reduceMotion && !saveData && inView;
+    const timer = window.setTimeout(
+      () => setTouchInViewReady(shouldPrepareTouchVideo),
+      shouldPrepareTouchVideo ? 650 : 0
+    );
+    return () => window.clearTimeout(timer);
+  }, [hasVideo, inView, reduceMotion, saveData, touchLayout]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -203,7 +226,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
             loop
             muted
             playsInline
-            preload="none"
+            preload={touchLayout ? 'metadata' : 'none'}
             poster={project.image}
             aria-hidden="true"
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-100' : 'opacity-0'}`}

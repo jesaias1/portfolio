@@ -22,8 +22,8 @@ export const fallbackProjects: PortfolioProject[] = [
       'A sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.',
     longDesc:
       'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
-    image: '/projects/orvo.png',
-    video: null,
+    image: '/projects/orvo-mockup.png',
+    video: '/projects/videos/orvo-teaser.mp4',
     tags: ['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake'],
     link: '/audio/orvo',
     featured: true,
@@ -67,8 +67,8 @@ export const fallbackProjects: PortfolioProject[] = [
       'A complete Danish pass-the-device quiz game for game nights, families, parties and friendly competition.',
     longDesc:
       'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
-    image: '/projects/kvizy.png',
-    video: null,
+    image: '/projects/kvizy-mockup.png',
+    video: '/projects/videos/kvizy-teaser.mp4',
     tags: ['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest'],
     link: 'https://kvizy.dk',
     featured: true,

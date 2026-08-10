@@ -368,8 +368,8 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
             transition={{ duration: 0.8, delay: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 md:mt-14 relative z-40 pointer-events-auto"
           >
-            <TerminalButton onClick={() => { play('click'); setIsTerminalOpen(true); }}>
-              ./root_access
+            <TerminalButton onClick={() => handleNavClick('#about')}>
+              ./about
             </TerminalButton>
             <TerminalButton onClick={() => handleNavClick('#projects')} variant="outline">
               ./view_projects
@@ -378,6 +378,17 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
               ./contact
             </TerminalButton>
           </motion.div>
+          <button
+            type="button"
+            aria-label="Open root terminal"
+            onClick={() => {
+              play('click');
+              setIsTerminalOpen(true);
+            }}
+            className="mt-6 min-h-7 px-2 font-mono text-[9px] lowercase tracking-[0.18em] text-[#4ddbff]/10 transition-colors hover:text-[#4ddbff]/45 focus-visible:text-[#4ddbff] focus-visible:outline-none"
+          >
+            root
+          </button>
         </div>
       </section>
 

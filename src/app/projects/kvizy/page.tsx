@@ -10,9 +10,9 @@ export const metadata: Metadata = createProjectMetadata({
   description:
     "A case study of KVIZY, a Danish offline-first pass-the-device quiz game designed for game nights on one shared screen.",
   path: "/projects/kvizy",
-  image: "/projects/kvizy.png",
-  imageWidth: 1600,
-  imageHeight: 900,
+  image: "/projects/kvizy-mockup.png",
+  imageWidth: 1672,
+  imageHeight: 941,
   imageAlt: "KVIZY Danish multiplayer quiz interface",
   keywords: ["KVIZY", "Danish quiz", "multiplayer quiz", "offline PWA", "Next.js game", "game night"],
 });
@@ -86,7 +86,7 @@ export default function KvizyCaseStudy() {
           </div>
           <div className={styles.screen}>
             <Image
-              src="/projects/kvizy.png"
+              src="/projects/kvizy-mockup.png"
               alt="KVIZY start screen"
               fill
               priority

@@ -101,12 +101,12 @@ export default function Contact() {
               </span>
               <a
                 href={`mailto:${contactInfo.email}`}
-                className="mt-4 inline-flex min-h-11 items-center break-all font-mono text-sm tracking-[0.04em] text-gray-300 hover:text-[#4ddbff] md:text-base"
+                className="mt-4 inline-flex min-h-11 items-center break-all font-mono text-xs tracking-[0.03em] text-gray-400 hover:text-[#4ddbff] md:text-sm"
               >
                 {contactInfo.email}
               </a>
               <p className="mt-6 max-w-sm text-sm leading-6 text-gray-500">
-                Tell me what you are making, what is difficult, and where you want it to go. A rough idea is enough to begin.
+                Tell me what you want to build, where it is now, and what kind of help would move it forward. A rough idea is enough to begin.
               </p>
             </div>
 

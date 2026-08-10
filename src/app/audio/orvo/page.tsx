@@ -11,9 +11,9 @@ export const metadata: Metadata = createProjectMetadata({
   description:
     "ORVO is a sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.",
   path: "/audio/orvo",
-  image: "/projects/orvo.png",
-  imageWidth: 1600,
-  imageHeight: 1000,
+  image: "/projects/orvo-mockup.png",
+  imageWidth: 1672,
+  imageHeight: 941,
   imageAlt: "ORVO sample-transformation instrument interface",
   keywords: ["ORVO", "VST3", "sample transformation", "granular synthesis", "JUCE", "audio plugin"],
 });
