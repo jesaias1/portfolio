@@ -24,17 +24,35 @@ const socialLinks = [
   { label: 'instagram', href: 'https://www.instagram.com/linasjesaias/' },
 ];
 
+type StandaloneNavigator = Navigator & {
+  standalone?: boolean;
+};
+
+function isStandaloneAppLaunch() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as StandaloneNavigator).standalone === true
+  );
+}
+
 export default function Home() {
   const [showSplash, setShowSplash] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [playLogoIntro, setPlayLogoIntro] = useState(false);
+  const [rememberSplashVisit, setRememberSplashVisit] = useState(true);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const isFirstVisit = !window.localStorage.getItem('jesaias-visited');
-      setShowSplash(!reducedMotion && isFirstVisit);
-      setPlayLogoIntro(!reducedMotion && isFirstVisit);
+      const params = new URLSearchParams(window.location.search);
+      const demoMode = params.get('demo') === '1' || params.get('demo') === 'app';
+      const presentationMode = demoMode || isStandaloneAppLaunch();
+      const shouldPlayIntro = !reducedMotion && (presentationMode || isFirstVisit);
+
+      setRememberSplashVisit(!presentationMode);
+      setShowSplash(shouldPlayIntro);
+      setPlayLogoIntro(shouldPlayIntro);
       setIsReady(true);
     });
 
@@ -49,7 +67,9 @@ export default function Home() {
   }, [showSplash]);
 
   const completeSplash = () => {
-    window.localStorage.setItem('jesaias-visited', 'true');
+    if (rememberSplashVisit) {
+      window.localStorage.setItem('jesaias-visited', 'true');
+    }
     setShowSplash(false);
   };
 
