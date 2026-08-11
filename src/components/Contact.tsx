@@ -96,12 +96,12 @@ export default function Contact() {
             className="flex flex-col justify-between border-b border-white/[0.09] p-6 md:min-h-[520px] md:border-b-0 md:border-r md:p-8"
           >
             <div>
-              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">
+              <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">
                 Direct contact
               </span>
               <a
                 href={`mailto:${contactInfo.email}`}
-                className="mt-4 inline-flex min-h-11 items-center break-all font-mono text-xs tracking-[0.03em] text-gray-400 hover:text-[#4ddbff] md:text-sm"
+                className="mt-3 flex min-h-9 w-fit max-w-full items-center break-all font-mono text-xs tracking-[0.03em] text-gray-400 hover:text-[#4ddbff] md:text-sm"
               >
                 {contactInfo.email}
               </a>

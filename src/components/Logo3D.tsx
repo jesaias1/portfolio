@@ -432,8 +432,9 @@ function LogoModel({
       delta
     );
 
-    const pointerRotationY = mousePos.current.x * (isMobile ? 0.34 : 0.16);
+    const pointerRotationY = mousePos.current.x * (isMobile ? 0.46 : 0.16);
     const pointerRotationX = isMobile ? mousePos.current.y * 0.18 : 0;
+    const pointerRotationZ = isMobile ? -mousePos.current.x * 0.16 : 0;
 
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
@@ -447,7 +448,7 @@ function LogoModel({
     );
     groupRef.current.rotation.z = THREE.MathUtils.lerp(
       groupRef.current.rotation.z,
-      introRotationZ - pulseArc * 0.04,
+      pointerRotationZ + introRotationZ - pulseArc * 0.04,
       introElapsed.current !== null ? 0.14 : 0.09
     );
     groupRef.current.position.z = THREE.MathUtils.lerp(
@@ -661,7 +662,7 @@ export default function Logo3D({
       const gammaDelta = e.gamma - orientationBase.current.gamma;
       const betaDelta = e.beta - orientationBase.current.beta;
 
-      mousePos.current.x = THREE.MathUtils.clamp(gammaDelta / 14, -1, 1);
+      mousePos.current.x = THREE.MathUtils.clamp(gammaDelta / 11, -1, 1);
       mousePos.current.y = THREE.MathUtils.clamp(-betaDelta / 14, -1, 1);
       mousePos.current.active = true;
     };
