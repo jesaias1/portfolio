@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Hero from '@/components/Hero';
 import Navigation from '@/components/Navigation';
@@ -12,11 +13,13 @@ const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: f
 const GlitchFlash = dynamic(() => import('@/components/GlitchFlash'), { ssr: false });
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), { ssr: false });
 const ServicesSection = dynamic(() => import('@/components/ServicesSection'));
+const HowIWork = dynamic(() => import('@/components/HowIWork'));
 const Projects = dynamic(() => import('@/components/Projects'));
+const BuildLog = dynamic(() => import('@/components/BuildLog'));
 const About = dynamic(() => import('@/components/About'));
 const Contact = dynamic(() => import('@/components/Contact'));
 
-const sitemap = ['services', 'projects', 'about', 'contact'];
+const sitemap = ['services', 'process', 'projects', 'about', 'contact'];
 
 const socialLinks = [
   { label: 'github', href: 'https://github.com/jesaias1' },
@@ -40,6 +43,7 @@ export default function Home() {
   const [isReady, setIsReady] = useState(false);
   const [playLogoIntro, setPlayLogoIntro] = useState(false);
   const [rememberSplashVisit, setRememberSplashVisit] = useState(true);
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -50,6 +54,7 @@ export default function Home() {
       const presentationMode = demoMode || isStandaloneAppLaunch();
       const shouldPlayIntro = !reducedMotion && (presentationMode || isFirstVisit);
 
+      setIsPresentationMode(presentationMode);
       setRememberSplashVisit(!presentationMode);
       setShowSplash(shouldPlayIntro);
       setPlayLogoIntro(shouldPlayIntro);
@@ -57,6 +62,10 @@ export default function Home() {
     });
 
     return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    void import('@/components/Logo3D');
   }, []);
 
   useEffect(() => {
@@ -71,6 +80,14 @@ export default function Home() {
       window.localStorage.setItem('jesaias-visited', 'true');
     }
     setShowSplash(false);
+    window.requestAnimationFrame(() => setPlayLogoIntro(true));
+  };
+
+  const replayPresentationIntro = () => {
+    setRememberSplashVisit(false);
+    setPlayLogoIntro(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    setShowSplash(true);
   };
 
   return (
@@ -94,16 +111,44 @@ export default function Home() {
           <SectionDivider />
           <ServicesSection />
           <SectionDivider />
+          <HowIWork />
+          <SectionDivider />
           <Projects />
+          <SectionDivider />
+          <BuildLog />
           <SectionDivider />
           <About />
           <SectionDivider />
           <Contact />
 
           <Footer />
+          {isPresentationMode ? (
+            <PresentationModeControl onReplay={replayPresentationIntro} />
+          ) : null}
         </main>
       )}
     </>
+  );
+}
+
+function PresentationModeControl({ onReplay }: { onReplay: () => void }) {
+  return (
+    <div className="fixed bottom-4 right-4 z-[90] flex items-center gap-2 max-sm:bottom-3 max-sm:right-3">
+      <Link
+        href="/?demo=app"
+        className="hidden min-h-9 items-center border border-[#4ddbff]/20 bg-black/50 px-3 font-mono text-[10px] uppercase tracking-[0.12em] text-[#4ddbff]/45 backdrop-blur-md transition-colors hover:border-[#4ddbff]/55 hover:text-[#4ddbff] sm:inline-flex"
+      >
+        demo_link
+      </Link>
+      <button
+        type="button"
+        onClick={onReplay}
+        className="inline-flex min-h-10 items-center border border-[#4ddbff]/25 bg-black/55 px-3 font-mono text-[10px] uppercase tracking-[0.12em] text-[#4ddbff]/55 backdrop-blur-md transition-colors hover:border-[#4ddbff]/70 hover:text-[#4ddbff]"
+        aria-label="Replay the portfolio intro"
+      >
+        replay_intro
+      </button>
+    </div>
   );
 }
 
@@ -119,8 +164,7 @@ function Footer() {
               &gt; jesaias.dk
             </span>
             <p className="max-w-xs font-mono text-xs leading-relaxed text-gray-600">
-              Creative developer building digital experiences at the intersection of code,
-              creativity, and design.
+              AI-assisted creative developer building web products, interactive tools and music software.
             </p>
           </div>
 

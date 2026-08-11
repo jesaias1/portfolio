@@ -5,23 +5,23 @@ import { motion } from 'framer-motion';
 const services = [
   {
     title: 'Web products',
-    description: 'Polished full-stack applications built around a clear idea and real users.',
-    capabilities: ['Next.js', 'APIs', 'Databases'],
+    description: 'Modern websites, web apps and digital products built with polished UI and fast iteration.',
+    capabilities: ['React / Next.js', 'TypeScript workflows', 'Tailwind UI', 'Responsive interfaces'],
   },
   {
     title: 'Interactive systems',
-    description: 'Games and real-time experiences where feedback, timing and flow matter.',
-    capabilities: ['Realtime', 'Multiplayer', 'PWA'],
+    description: 'Games, real-time interactions and product logic for web-based experiences.',
+    capabilities: ['Game logic', 'WebSocket concepts', 'Real-time UX', 'Interaction design'],
   },
   {
-    title: 'Audio software',
-    description: 'Creative instruments and music tools that make technical workflows feel playable.',
-    capabilities: ['C++', 'JUCE', 'VST3'],
+    title: 'AI-assisted prototyping',
+    description: 'Fast product prototyping using AI tools for coding, debugging, ideation and iteration.',
+    capabilities: ['Prompt-driven development', 'Debugging with AI', 'Concept to demo', 'Rapid iteration'],
   },
   {
-    title: 'Product engineering',
-    description: 'From rough concept to a reliable system with thoughtful interaction design.',
-    capabilities: ['Architecture', 'UX', 'Delivery'],
+    title: 'Creative tools / music software',
+    description: 'Creative workflow tools, music software experiments and plugin-based product ideas.',
+    capabilities: ['MIDI concepts', 'VST/plugin workflows', 'JUCE/C++ learning', 'Producer-focused UX'],
   },
 ];
 
@@ -44,11 +44,11 @@ export default function ServicesSection() {
               <span className="h-px w-10 bg-[#4ddbff]/30" />
             </div>
             <h2 className="text-3xl font-bold tracking-[-0.04em] text-white md:text-5xl">
-              Creative ideas, engineered properly.
+              Creative software, built into shape.
             </h2>
           </div>
           <p className="max-w-sm font-mono text-[10px] leading-5 text-gray-600 md:text-right">
-            From first interaction to the system underneath it.
+            Practical product-building across web, interaction and music software.
           </p>
         </motion.header>
 

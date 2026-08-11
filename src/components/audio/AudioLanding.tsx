@@ -91,7 +91,6 @@ function ProductShowcase({
         </div>
         {product.assets.video ? (
           <div className="motion-preview motion-preview--catalogue">
-            <span>{product.name} motion preview</span>
             <AutoAdVideo
               label={`${product.name} silent advertisement`}
               poster={product.assets.screenshot}

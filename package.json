@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "generate:og": "node scripts/generate-og-images.mjs",
     "check:assets": "node scripts/check-performance-budget.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",

@@ -29,6 +29,7 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
   const [subtitleText, setSubtitleText] = useState('');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
+  const [isLogoReady, setIsLogoReady] = useState(false);
   const [logoPulse, setLogoPulse] = useState(0);
   const [showBlueprint, setShowBlueprint] = useState(true);
   const logoDragControls = useRef<LogoDragControls>({
@@ -56,6 +57,9 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
   }, []);
   const syncLogoDragControls = useCallback((nextControls: LogoDragControls) => {
     logoDragControls.current = nextControls;
+  }, []);
+  const handleLogoReady = useCallback(() => {
+    setIsLogoReady(true);
   }, []);
 
   useEffect(() => {
@@ -241,7 +245,8 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
               pulseToken={logoPulse}
               dragControls={logoDragControls}
               onDragControlsSync={syncLogoDragControls}
-              playIntroSwirl={playLogoIntro}
+              onReady={handleLogoReady}
+              playIntroSwirl={playLogoIntro && isLogoReady}
             />
           </motion.div>
         </motion.div>

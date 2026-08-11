@@ -77,10 +77,10 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
     // Command Logic
     switch (cmd) {
       case 'help':
-        setHistory(prev => [...prev, 'Available commands:', '- about: Brief bio', '- work: Go to projects', '- social: Links', '- clear: Clear display', '- exit: Shutdown terminal']);
+        setHistory(prev => [...prev, 'Available commands:', '- about: Brief bio', '- work: Go to projects', '- audio: Open music software', '- demo: Open presentation mode', '- social: Links', '- owner: Hidden owner commands', '- clear: Clear display', '- exit: Shutdown terminal']);
         break;
       case 'about':
-        setHistory(prev => [...prev, 'BIO: Full-stack engineer and creative developer. Building premium digital experiences with modern web technologies.']);
+        setHistory(prev => [...prev, 'BIO: AI-assisted creative developer and product prototyper. Building web products, interactive tools and music software with visual direction and fast iteration.']);
         break;
       case 'work':
       case 'projects':
@@ -93,6 +93,31 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         break;
       case 'social':
         setHistory(prev => [...prev, 'FIND ME ON:', 'GitHub: @jesaias1', 'LinkedIn: Jesaias G.', 'Instagram: @jesaias_music']);
+        break;
+      case 'audio':
+      case 'music':
+        setHistory(prev => [...prev, 'OPENING MUSIC SOFTWARE SYSTEM...']);
+        window.dispatchEvent(new CustomEvent('audio-transition-trigger'));
+        setTimeout(() => {
+          window.location.href = '/audio';
+        }, 220);
+        break;
+      case 'demo':
+      case 'presentation':
+      case 'present':
+        setHistory(prev => [...prev, 'STARTING PRESENTATION MODE...', 'INTRO WILL REPLAY ON LAUNCH.']);
+        window.dispatchEvent(new CustomEvent('glitch-trigger'));
+        setTimeout(() => {
+          window.location.href = '/?demo=app';
+        }, 400);
+        break;
+      case 'owner':
+        setHistory(prev => [...prev, 'OWNER COMMANDS:', '- demo: Presentation mode', '- reset-visit: Replay splash for normal browser launch', '- root: Admin login', '- audio: Music software']);
+        break;
+      case 'reset-visit':
+      case 'reset':
+        window.localStorage.removeItem('jesaias-visited');
+        setHistory(prev => [...prev, 'VISIT FLAG CLEARED. REFRESH TO PLAY THE INTRO AGAIN.']);
         break;
       case 'clear':
         setHistory([]);

@@ -23,6 +23,16 @@ const projectPresentation: Record<string, { category: string; status: string; ca
   'moonana studio': { category: 'Creative software', status: 'Under maintenance' },
 };
 
+const projectSignals: Record<string, string> = {
+  orvo: 'Product concept, interface direction and AI-assisted plugin iteration for a private preview build.',
+  midium: 'Music software prototype combining branding, MIDI workflow thinking and AI-assisted JUCE/C++ learning.',
+  abyx: 'Creative controller concept shaped around gamepad input, performance UX and plugin workflow experiments.',
+  kvizy: 'Built and iterated a Danish quiz product with offline-first flow, mobile UX and AI-assisted debugging.',
+  ordbomben: 'Developed and refined a real-time multiplayer word game with game flow, score logic and responsive play.',
+  lettus: 'Designed and iterated a compact daily word game with clear feedback, mobile layout and focused game logic.',
+  'dump.media': 'Directed a producer marketplace concept around audio browsing, creator profiles and media-commerce flow.',
+};
+
 export default function Projects() {
   const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
   const [previewMode, setPreviewMode] = useState(false);
@@ -142,6 +152,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
     (touchLayout ? touchInViewReady : hovered);
 
   const tags = project.tags.slice(0, 4);
+  const signal = projectSignals[key];
 
   useEffect(() => {
     const media = window.matchMedia('(hover: none), (pointer: coarse)');
@@ -258,6 +269,12 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
         <p className="max-w-xl text-sm leading-6 text-gray-400 sm:text-[15px]">
           {project.description}
         </p>
+
+        {signal ? (
+          <p className="mt-5 border-l border-[#4ddbff]/25 pl-4 font-mono text-[10px] uppercase leading-5 tracking-[0.09em] text-[#4ddbff]/55">
+            {signal}
+          </p>
+        ) : null}
 
         <div className="mt-7 flex flex-wrap items-end justify-between gap-5 border-t border-white/[0.07] pt-5">
           <div className="flex flex-wrap gap-x-4 gap-y-2">

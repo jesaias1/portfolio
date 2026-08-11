@@ -295,6 +295,7 @@ function LogoModel({
   mousePos,
   dragControls,
   onDragControlsSync,
+  onModelReady,
   playIntroSwirl,
   isLowEnd,
   isMobile,
@@ -305,6 +306,7 @@ function LogoModel({
   mousePos: MotionInput;
   dragControls?: DragInput;
   onDragControlsSync?: DragSync;
+  onModelReady?: () => void;
   playIntroSwirl: boolean;
   isLowEnd: boolean;
   isMobile: boolean;
@@ -314,7 +316,7 @@ function LogoModel({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const pulse = useRef(0);
-  const introElapsed = useRef<number | null>(playIntroSwirl && !prefersReducedMotion ? 0 : null);
+  const introElapsed = useRef<number | null>(null);
   const dragIdleElapsed = useRef(0);
   const materialInteraction = useRef({ boost: 0 });
   const inertialDrag = useRef<LogoDragControls>({
@@ -349,6 +351,10 @@ function LogoModel({
 
     return clone;
   }, [scene]);
+
+  useEffect(() => {
+    onModelReady?.();
+  }, [onModelReady, preparedScene]);
 
   const { center, scaleFactor } = useMemo(() => {
     const box = new THREE.Box3().setFromObject(preparedScene);
@@ -512,6 +518,7 @@ function LogoScene({
   mousePos,
   dragControls,
   onDragControlsSync,
+  onModelReady,
   playIntroSwirl,
   isLowEnd,
   isMobile,
@@ -522,6 +529,7 @@ function LogoScene({
   mousePos: MotionInput;
   dragControls?: DragInput;
   onDragControlsSync?: DragSync;
+  onModelReady?: () => void;
   playIntroSwirl: boolean;
   isLowEnd: boolean;
   isMobile: boolean;
@@ -549,6 +557,7 @@ function LogoScene({
         mousePos={mousePos}
         dragControls={dragControls}
         onDragControlsSync={onDragControlsSync}
+        onModelReady={onModelReady}
         playIntroSwirl={playIntroSwirl}
         isLowEnd={isLowEnd}
         isMobile={isMobile}
@@ -583,6 +592,7 @@ export default function Logo3D({
   pulseToken = 0,
   dragControls,
   onDragControlsSync,
+  onReady,
   playIntroSwirl = false,
 }: {
   className?: string;
@@ -590,12 +600,14 @@ export default function Logo3D({
   pulseToken?: number;
   dragControls?: DragInput;
   onDragControlsSync?: DragSync;
+  onReady?: () => void;
   playIntroSwirl?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0, active: false });
   const orientationBase = useRef<{ beta: number; gamma: number } | null>(null);
   const orientationPermissionRequested = useRef(false);
+  const orientationListenerAttached = useRef(false);
   const [isCanvasActive, setIsCanvasActive] = useState(true);
   const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
 
@@ -671,6 +683,12 @@ export default function Logo3D({
       orientationBase.current = null;
     };
 
+    const attachOrientationListener = () => {
+      if (orientationListenerAttached.current) return;
+      orientationListenerAttached.current = true;
+      window.addEventListener('deviceorientation', handleOrientation);
+    };
+
     // iOS 13+ requires explicit permission from a user gesture; Android is automatic
     const tryGyro = () => {
       if (orientationPermissionRequested.current) return;
@@ -680,15 +698,21 @@ export default function Logo3D({
       if (typeof DOE.requestPermission === 'function') {
         DOE.requestPermission()
           .then((state) => {
-            if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+            if (state === 'granted') attachOrientationListener();
           })
           .catch(() => {});
       } else {
-        window.addEventListener('deviceorientation', handleOrientation);
+        attachOrientationListener();
       }
     };
 
-    window.addEventListener('touchstart', tryGyro, { once: true });
+    const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+    if (typeof DOE.requestPermission === 'function') {
+      window.addEventListener('touchstart', tryGyro, { once: true });
+      window.addEventListener('pointerdown', tryGyro, { once: true });
+    } else {
+      attachOrientationListener();
+    }
     window.addEventListener('orientationchange', resetOrientationBase);
 
     return () => {
@@ -697,7 +721,9 @@ export default function Logo3D({
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
       window.removeEventListener('touchstart', tryGyro);
+      window.removeEventListener('pointerdown', tryGyro);
       window.removeEventListener('orientationchange', resetOrientationBase);
+      orientationListenerAttached.current = false;
     };
   }, [prefersReducedMotion, updatePointer]);
 
@@ -718,11 +744,11 @@ export default function Logo3D({
       <Canvas
         camera={{ position: [0, 0, 5.8], fov: 42 }}
         frameloop={isCanvasActive ? 'always' : 'never'}
-        dpr={isMobile ? [1.25, 1.5] : [1.5, 2]}
+        dpr={isLowEnd ? [1, 1.25] : isMobile ? [1.25, 1.5] : [1.5, 2]}
         gl={{
-          antialias: true,
+          antialias: !isLowEnd,
           alpha: true,
-          powerPreference: isMobile ? 'low-power' : 'high-performance',
+          powerPreference: isLowEnd ? 'low-power' : 'high-performance',
         }}
         onCreated={({ gl }) => {
           gl.outputColorSpace = THREE.SRGBColorSpace;
@@ -736,6 +762,7 @@ export default function Logo3D({
             mousePos={mousePos}
             dragControls={dragControls}
             onDragControlsSync={onDragControlsSync}
+            onModelReady={onReady}
             playIntroSwirl={playIntroSwirl}
             isLowEnd={isLowEnd}
             isMobile={isMobile}

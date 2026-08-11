@@ -69,6 +69,14 @@ export default function Contact() {
     { label: 'Twitter', href: contactInfo.twitter },
   ].filter((link): link is { label: string; href: string } => Boolean(link.href));
 
+  const openTo = [
+    'creative developer roles',
+    'frontend/product projects',
+    'AI prototyping',
+    'selected freelance work',
+    'music software collaborations',
+  ];
+
   return (
     <section id="contact" className="content-section relative overflow-hidden py-20 md:py-28">
       <div className="relative z-10 mx-auto max-w-6xl px-6">
@@ -108,6 +116,21 @@ export default function Contact() {
               <p className="mt-6 max-w-sm text-sm leading-6 text-gray-500">
                 Tell me what you want to build, where it is now, and what kind of help would move it forward. A rough idea is enough to begin.
               </p>
+              <div className="mt-7 border-t border-white/[0.07] pt-5">
+                <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">
+                  Open to
+                </span>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {openTo.map((item) => (
+                    <span
+                      key={item}
+                      className="border border-[#4ddbff]/15 bg-[#4ddbff]/[0.035] px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-[#4ddbff]/55"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="mt-10">

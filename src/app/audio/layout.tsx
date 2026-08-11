@@ -16,10 +16,10 @@ export const metadata: Metadata = {
     siteName: "Jesaias Audio",
     images: [
       {
-        url: "/audio/products/midium-screenshot.png",
+        url: "/og-audio-2026.png",
         width: 1200,
-        height: 760,
-        alt: "MIDIUM music software interface",
+        height: 630,
+        alt: "Jesaias Audio social preview with ORVO, MIDIUM and ABYX product mockups",
       },
     ],
   },
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Jesaias Audio",
     description: "Tools that make music feel playable.",
-    images: ["/audio/products/midium-screenshot.png"],
+    images: ["/og-audio-2026.png"],
   },
 };
 

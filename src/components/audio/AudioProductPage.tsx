@@ -180,7 +180,6 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           </div>
           {heroVideo ? (
             <div className="motion-preview motion-preview--hero">
-              <span>{product.name} motion preview</span>
               <AutoAdVideo
                 label={`${product.name} silent product advertisement`}
                 poster={product.assets.screenshot}
@@ -231,7 +230,6 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           </div>
           {product.assets.video ? (
             <div className="motion-preview motion-preview--demo">
-              <span>{product.name} motion preview</span>
               <AutoAdVideo
                 label={`${product.name} silent advertisement`}
                 poster={product.assets.screenshot}

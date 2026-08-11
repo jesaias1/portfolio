@@ -7,10 +7,10 @@ export const metadata: Metadata = createProjectMetadata({
   description:
     "Independent music software by Jesaias: ORVO, MIDIUM and ABYX for sample transformation, visual MIDI and controller-based music workflows.",
   path: "/audio",
-  image: "/projects/orvo-mockup.png",
-  imageWidth: 1672,
-  imageHeight: 941,
-  imageAlt: "Jesaias Audio product interface previews",
+  image: "/og-audio-2026.png",
+  imageWidth: 1200,
+  imageHeight: 630,
+  imageAlt: "Jesaias Audio social preview with ORVO, MIDIUM and ABYX product mockups",
   keywords: ["Jesaias Audio", "ORVO", "MIDIUM", "ABYX", "music software", "VST3", "JUCE"],
 });
 
