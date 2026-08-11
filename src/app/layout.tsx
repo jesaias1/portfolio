@@ -46,13 +46,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://jesaias.dk',
+    url: SITE_URL,
     siteName: 'Linas Jesaias - Creative Product Builder',
     title: 'Linas Jesaias - AI-assisted Creative Developer / Product Prototyper',
     description: 'Web products, interactive tools and music software built from idea to working product.',
     images: [
       {
         url: '/og-portfolio-2026.png',
+        secureUrl: `${SITE_URL}/og-portfolio-2026.png`,
+        type: 'image/png',
         width: 1200,
         height: 630,
         alt: 'Linas Jesaias portfolio preview with glowing logo and creative developer positioning',

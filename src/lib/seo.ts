@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-export const SITE_URL = 'https://jesaias.dk';
+export const SITE_URL = 'https://www.jesaias.dk';
 
 export function createProjectMetadata({
   title,
@@ -36,7 +36,16 @@ export function createProjectMetadata({
       siteName: 'Linas Jesaias - Creative Product Builder',
       title,
       description,
-      images: [{ url: image, width: imageWidth, height: imageHeight, alt: imageAlt }],
+      images: [
+        {
+          url: image,
+          secureUrl: image.startsWith('http') ? image : `${SITE_URL}${image}`,
+          type: image.endsWith('.png') ? 'image/png' : 'image/jpeg',
+          width: imageWidth,
+          height: imageHeight,
+          alt: imageAlt,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
