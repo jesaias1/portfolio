@@ -383,17 +383,6 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
               /contact
             </TerminalButton>
           </motion.div>
-          <button
-            type="button"
-            aria-label="Open root terminal"
-            onClick={() => {
-              play('click');
-              setIsTerminalOpen(true);
-            }}
-            className="mt-6 min-h-7 px-2 font-mono text-[9px] lowercase tracking-[0.18em] text-[#4ddbff]/10 transition-colors hover:text-[#4ddbff]/45 focus-visible:text-[#4ddbff] focus-visible:outline-none"
-          >
-            root
-          </button>
         </div>
       </section>
 

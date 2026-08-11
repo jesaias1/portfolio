@@ -13,13 +13,11 @@ const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: f
 const GlitchFlash = dynamic(() => import('@/components/GlitchFlash'), { ssr: false });
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), { ssr: false });
 const ServicesSection = dynamic(() => import('@/components/ServicesSection'));
-const HowIWork = dynamic(() => import('@/components/HowIWork'));
 const Projects = dynamic(() => import('@/components/Projects'));
-const BuildLog = dynamic(() => import('@/components/BuildLog'));
 const About = dynamic(() => import('@/components/About'));
 const Contact = dynamic(() => import('@/components/Contact'));
 
-const sitemap = ['services', 'process', 'projects', 'about', 'contact'];
+const sitemap = ['services', 'projects', 'about', 'contact'];
 
 const socialLinks = [
   { label: 'github', href: 'https://github.com/jesaias1' },
@@ -111,11 +109,7 @@ export default function Home() {
           <SectionDivider />
           <ServicesSection />
           <SectionDivider />
-          <HowIWork />
-          <SectionDivider />
           <Projects />
-          <SectionDivider />
-          <BuildLog />
           <SectionDivider />
           <About />
           <SectionDivider />
@@ -224,15 +218,12 @@ function Footer() {
             </span>
 
             <div className="flex items-center gap-3">
-              <span className="font-mono text-[10px] text-[#4ddbff]/15">
-                process exited with code 0
-              </span>
               <a
                 href="/admin/login"
-                aria-label="Open portfolio editor"
-                className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs opacity-15 transition-opacity hover:opacity-100"
+                aria-label="Open root access"
+                className="inline-flex min-h-11 items-center px-2 font-mono text-[10px] lowercase tracking-[0.16em] text-[#4ddbff]/15 transition-colors hover:text-[#4ddbff]/55 focus-visible:text-[#4ddbff] focus-visible:outline-none"
               >
-                .
+                root
               </a>
             </div>
           </div>

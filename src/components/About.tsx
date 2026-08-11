@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-const defaultSkills = ['Next.js', 'TypeScript', 'Node.js', 'C++ / JUCE', 'PostgreSQL', 'Realtime systems'];
+const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'C++ / JUCE learning', 'Realtime concepts'];
 
 const disciplines = [
   {
     index: '01',
     title: 'Product development',
-    text: 'Useful, dependable web products shaped from interface to infrastructure.',
+    text: 'Useful web products shaped around clear interfaces, fast iteration and real use.',
   },
   {
     index: '02',
@@ -22,6 +22,20 @@ const disciplines = [
     title: 'Audio software',
     text: 'Instruments and workflows that make sound more tactile, playful and immediate.',
   },
+];
+
+const processSteps = [
+  ['Direction', 'Clarify the product, audience, visual direction and first useful version before building too wide.'],
+  ['Prototype', 'Move into React, Next.js, TypeScript, Tailwind and AI-assisted coding workflows to make the idea tangible.'],
+  ['Test', 'Debug flows, interaction timing, edge cases and mobile behavior until the experience feels reliable.'],
+  ['Polish', 'Refine copy, motion, responsiveness and the small product details that make a demo feel credible.'],
+];
+
+const workSignals = [
+  ['Best fit', 'Creative frontend roles, product prototypes, interactive tools and music software ideas.'],
+  ['Workflow', 'Creative direction, AI-assisted implementation, debugging, testing and fast iteration.'],
+  ['Tools', 'React, Next.js, TypeScript, Tailwind, Framer Motion and real-time web concepts.'],
+  ['Currently deepening', 'JavaScript fundamentals, React patterns, TypeScript architecture, JUCE/C++ and APIs.'],
 ];
 
 type AboutData = {
@@ -117,6 +131,35 @@ export default function About() {
                 </span>
               ))}
             </div>
+
+            <div className="mt-8 divide-y divide-white/[0.07] border-y border-white/[0.07]">
+              <AboutPanel title="Process" eyebrow="idea -> prototype -> polish" defaultOpen={false}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {processSteps.map(([title, text], index) => (
+                    <div key={title} className="border border-white/[0.07] bg-black/20 p-4">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#4ddbff]/55">
+                        /{String(index + 1).padStart(2, '0')}
+                      </span>
+                      <h4 className="mt-4 text-base font-semibold text-white">{title}</h4>
+                      <p className="mt-2 text-sm leading-6 text-gray-500">{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </AboutPanel>
+
+              <AboutPanel title="Work signal" eyebrow="fit / workflow / tools" defaultOpen={false}>
+                <dl className="grid gap-0 border border-white/[0.07]">
+                  {workSignals.map(([label, value]) => (
+                    <div key={label} className="grid gap-2 border-b border-white/[0.07] p-4 last:border-b-0 sm:grid-cols-[140px_1fr]">
+                      <dt className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#4ddbff]/60">
+                        {label}
+                      </dt>
+                      <dd className="text-sm leading-6 text-gray-400">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </AboutPanel>
+            </div>
           </motion.div>
         </div>
 
@@ -139,11 +182,37 @@ export default function About() {
   );
 }
 
+function AboutPanel({
+  title,
+  eyebrow,
+  defaultOpen,
+  children,
+}: {
+  title: string;
+  eyebrow: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group py-5" open={defaultOpen}>
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.14em] text-gray-500 transition-colors hover:text-[#4ddbff]">
+        <span className="flex items-center gap-3">
+          <span className="text-[#4ddbff]/60">&gt;</span>
+          {title}
+          <span className="hidden text-gray-700 sm:inline">{eyebrow}</span>
+        </span>
+        <span className="text-[#4ddbff]/45 transition-transform group-open:rotate-45">+</span>
+      </summary>
+      <div className="pt-4">{children}</div>
+    </details>
+  );
+}
+
 function normalizeParagraphs(content?: string) {
   if (!content) {
     return [
-      'I build digital products from the first idea through the details that make them feel finished. My work moves between full-stack applications, realtime games and native audio software.',
-      'The common thread is simple: complex systems should feel clear, responsive and enjoyable to use.',
+      'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive games and music software experiments.',
+      'The common thread is simple: creative software should feel clear, responsive and enjoyable to use.',
     ];
   }
 

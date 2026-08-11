@@ -10,7 +10,6 @@ import { useSound } from '@/hooks/use-sound';
 
 const navItems = [
   { name: 'services', href: '#services', section: 'services' },
-  { name: 'process', href: '#process', section: 'process' },
   { name: 'projects', href: '#projects', section: 'projects' },
   { name: 'music software', href: '/audio', section: null },
   { name: 'about', href: '#about', section: 'about' },
@@ -35,7 +34,7 @@ export default function Navigation() {
   }, []);
 
   useEffect(() => {
-    const sectionIds = ['home', 'services', 'process', 'projects', 'about', 'contact'];
+    const sectionIds = ['home', 'services', 'projects', 'about', 'contact'];
     const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -135,7 +134,7 @@ export default function Navigation() {
             </Link>
           </motion.div>
 
-          <div className="hidden items-center space-x-6 md:flex lg:space-x-8">
+          <div className="hidden items-center space-x-8 md:flex">
             {navItems.map((item, index) => {
               const isActive = item.section === activeSection;
               return (
