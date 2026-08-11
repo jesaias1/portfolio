@@ -7,9 +7,9 @@ import { createProjectMetadata } from "@/lib/seo";
 const product = getAudioProduct("orvo");
 
 export const metadata: Metadata = createProjectMetadata({
-  title: "ORVO — Sample Transformation Instrument by Jesaias",
+  title: "ORVO - Sample Transformation Instrument by Jesaias",
   description:
-    "ORVO is a sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.",
+    "ORVO is a Windows x64 preview instrument for transforming samples into clouds, elastic rhythms, tape movement and granular textures.",
   path: "/audio/orvo",
   image: "/projects/orvo-mockup.png",
   imageWidth: 1672,

@@ -7,7 +7,7 @@ import { createProjectMetadata } from "@/lib/seo";
 const product = getAudioProduct("abyx");
 
 export const metadata: Metadata = createProjectMetadata({
-  title: "ABYX — Gamepad Music Instrument by Jesaias",
+  title: "ABYX - Gamepad Music Instrument by Jesaias",
   description:
     "Turn Xbox and PlayStation controllers into musical instruments with ABYX, a VST3 gamepad-to-music instrument with a Windows standalone app.",
   path: "/audio/abyx",

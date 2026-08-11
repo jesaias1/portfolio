@@ -1,9 +1,10 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
+import { AudioHeroShowcase } from "@/components/audio/AudioHeroShowcase";
 import { AudioNav } from "@/components/audio/AudioNav";
-import { HeroMechanic } from "@/components/audio/HeroMechanic";
-import { audioProducts, audioSite } from "@/data/audio-products";
+import { type AudioProduct, audioProducts, audioSite } from "@/data/audio-products";
 
 export function AudioLanding() {
   return (
@@ -22,7 +23,7 @@ export function AudioLanding() {
             <a href="#catalogue" className="audio-button audio-button--neutral">View all tools</a>
           </div>
         </div>
-        <HeroMechanic />
+        <AudioHeroShowcase />
       </section>
 
       <div id="catalogue">
@@ -45,18 +46,7 @@ export function AudioLanding() {
         </p>
       </section>
 
-      <section className="future-catalogue" aria-labelledby="future-title">
-        <div>
-          <p className="audio-kicker">Catalogue room</p>
-          <h2 id="future-title">Built with space for the next instruments.</h2>
-        </div>
-        <div className="future-slots" aria-label="Future product slots">
-          <span>ORVO</span>
-          <span>MIDIUM</span>
-          <span>ABYX</span>
-          <span>Next plugin</span>
-        </div>
-      </section>
+      <AccessMatrix />
 
       <UpdatesSection />
       <SupportSection />
@@ -74,33 +64,41 @@ function ProductShowcase({
 }) {
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
   const isComingSoon = product.commerce.mode === "coming-soon";
+  const primaryActionLabel = isComingSoon
+    ? "Development preview"
+    : hasLicenseCheckout
+      ? product.commerce.trialLabel ?? "Download Free Trial"
+      : product.slug === "orvo"
+        ? "Download preview"
+        : "Download";
 
   return (
     <section
       id={`download-${product.slug}`}
       className={`product-showcase product-showcase--${product.slug} product-showcase--${direction}`}
       aria-labelledby={`${product.slug}-title`}
-      style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as React.CSSProperties}
+      style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as CSSProperties}
     >
       <div id={`${product.slug}-video`} className="product-showcase__media">
-        {product.assets.video ? (
-          <AutoAdVideo
-            label={`${product.name} silent advertisement`}
-            poster={product.assets.screenshot}
-            src={product.assets.video}
+        <div className="product-showcase__poster">
+          <Image
+            src={product.assets.screenshot}
+            alt={`${product.name} interface preview`}
+            width={1600}
+            height={1000}
+            sizes="(max-width: 900px) 100vw, 56vw"
           />
-        ) : (
-          <div className="catalogue-placeholder">
-            <Image
-              src={product.assets.screenshot}
-              alt={`${product.name} interface preview`}
-              width={1600}
-              height={1000}
-              sizes="(max-width: 900px) 100vw, 58vw"
+        </div>
+        {product.assets.video ? (
+          <div className="motion-preview motion-preview--catalogue">
+            <span>{product.name} motion preview</span>
+            <AutoAdVideo
+              label={`${product.name} silent advertisement`}
+              poster={product.assets.screenshot}
+              src={product.assets.video}
             />
-            <span>Motion preview coming later</span>
           </div>
-        )}
+        ) : null}
       </div>
       <div className="product-showcase__copy">
         <div className="label-row">
@@ -145,14 +143,89 @@ function ProductShowcase({
               className="audio-button audio-button--dark"
               target={hasLicenseCheckout ? "_blank" : undefined}
               rel={hasLicenseCheckout ? "noopener noreferrer" : undefined}
+              download={!hasLicenseCheckout ? true : undefined}
             >
-              {hasLicenseCheckout ? product.commerce.trialLabel ?? "Download Free Trial" : "Download"}
+              {primaryActionLabel}
             </a>
           )}
           <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
             View {product.name} page
           </Link>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function getAccessAction(product: AudioProduct) {
+  const hasLicenseCheckout = Boolean(product.urls.buyLicense);
+  const external = hasLicenseCheckout || product.urls.download.startsWith("http");
+  const label = hasLicenseCheckout
+    ? product.commerce.trialLabel ?? "Download Free Trial"
+    : product.slug === "orvo"
+      ? "Download preview"
+      : "Download";
+
+  return {
+    external,
+    label,
+    download: !external,
+  };
+}
+
+function getAccessCopy(product: AudioProduct) {
+  if (product.slug === "orvo") {
+    return "Windows x64 standalone preview installer for testing the current ORVO direction before the formal release.";
+  }
+
+  if (product.slug === "midium") {
+    return "30-day trial for the visual MIDI workflow, with standalone and VST3 package access through Lemon Squeezy.";
+  }
+
+  return "30-day trial for the controller-based instrument, with standalone and VST3 package access through Lemon Squeezy.";
+}
+
+function AccessMatrix() {
+  return (
+    <section className="access-matrix" aria-labelledby="access-title">
+      <div className="access-matrix__intro">
+        <p className="audio-kicker">Available builds</p>
+        <h2 id="access-title">Pick the tool you want to test.</h2>
+        <p>
+          The catalogue is small on purpose: each product page has a focused preview,
+          current status, download path and beta notes.
+        </p>
+      </div>
+      <div className="access-matrix__grid">
+        {audioProducts.map((product, index) => {
+          const action = getAccessAction(product);
+
+          return (
+            <article
+              key={product.slug}
+              style={{ "--product-accent": product.accent, "--product-soft": product.accentSoft } as CSSProperties}
+            >
+              <span className="access-matrix__number">{String(index + 1).padStart(2, "0")}</span>
+              <p className="access-matrix__name">{product.name}</p>
+              <h3>{product.commerce.statusLabel}</h3>
+              <p>{getAccessCopy(product)}</p>
+              <div className="audio-actions">
+                <a
+                  href={product.urls.download}
+                  className="audio-button audio-button--dark"
+                  target={action.external ? "_blank" : undefined}
+                  rel={action.external ? "noopener noreferrer" : undefined}
+                  download={action.download ? true : undefined}
+                >
+                  {action.label}
+                </a>
+                <Link href={`/audio/${product.slug}`} className="audio-button audio-button--light">
+                  Details
+                </Link>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -186,22 +259,28 @@ function UpdatesSection() {
 }
 
 function SupportSection() {
+  const orvo = audioProducts.find((product) => product.slug === "orvo");
   const licensedProducts = audioProducts.filter((product) => product.urls.buyLicense);
 
   return (
     <section id="support" className="support-band" aria-labelledby="support-title">
       <div>
-        <p className="audio-kicker">30-day trials</p>
-        <h2 id="support-title">Try each plugin for 30 days.</h2>
+        <p className="audio-kicker">Downloads</p>
+        <h2 id="support-title">Try the current builds.</h2>
         <p>
-          MIDIUM and ABYX include VST3 plugins for compatible DAWs, plus standalone apps
-          currently available for Windows. ORVO will join the catalogue after development.
+          ORVO has a Windows preview installer. MIDIUM and ABYX include 30-day trials
+          for their Windows standalone apps and VST3 packages.
         </p>
       </div>
       <div className="audio-actions">
+        {orvo ? (
+          <a href={orvo.urls.download} className="audio-button audio-button--dark" download>
+            Download ORVO
+          </a>
+        ) : null}
         <a
           href={licensedProducts[0].urls.download}
-          className="audio-button audio-button--dark"
+          className="audio-button audio-button--light"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -214,6 +293,9 @@ function SupportSection() {
           rel="noopener noreferrer"
         >
           Try ABYX
+        </a>
+        <a href={audioSite.urls.contact} className="audio-button audio-button--light">
+          Ask for help
         </a>
       </div>
     </section>

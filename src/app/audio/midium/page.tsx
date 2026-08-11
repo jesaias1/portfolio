@@ -7,7 +7,7 @@ import { createProjectMetadata } from "@/lib/seo";
 const product = getAudioProduct("midium");
 
 export const metadata: Metadata = createProjectMetadata({
-  title: "MIDIUM — Visual MIDI Instrument by Jesaias",
+  title: "MIDIUM - Visual MIDI Instrument by Jesaias",
   description:
     "Draw MIDI and shape ideas directly with MIDIUM, a VST3 visual MIDI instrument with a Windows standalone app.",
   path: "/audio/midium",
