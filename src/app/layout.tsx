@@ -24,12 +24,12 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Linas Jesaias - AI-assisted Creative Developer",
+    default: "Linas Jesaias - Creative Developer",
     template: "%s | Jesaias",
   },
   applicationName: "Jesaias Portfolio",
-  description: "AI-assisted creative developer in Copenhagen building web products, interactive tools and music software from idea to working product.",
-  keywords: ["Linas Jesaias", "Jesaias", "AI-assisted creative developer", "product prototyper", "frontend developer", "audio software", "interactive tools", "Next.js", "Copenhagen"],
+  description: "Creative developer in Copenhagen building web products, interactive tools and music software from idea to working product.",
+  keywords: ["Linas Jesaias", "Jesaias", "creative developer", "product prototyper", "frontend developer", "audio software", "interactive tools", "Next.js", "Copenhagen"],
   authors: [{ name: "Linas Jesaias" }],
   creator: "Linas Jesaias",
   publisher: "Linas Jesaias",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: 'Linas Jesaias - Creative Product Builder',
-    title: 'Linas Jesaias - AI-assisted Creative Developer / Product Prototyper',
+    title: 'Linas Jesaias - Creative Developer',
     description: 'Web products, interactive tools and music software built from idea to working product.',
     images: [
       {
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Linas Jesaias - AI-assisted Creative Developer / Product Prototyper',
+    title: 'Linas Jesaias - Creative Developer',
     description: 'Web products, interactive tools and music software built from idea to working product.',
     images: ['/og-portfolio-2026.png'],
   },
@@ -113,9 +113,9 @@ export default function RootLayout({
                   "@id": `${SITE_URL}/#person`,
                   "name": "Linas Jesaias",
                   "url": SITE_URL,
-                  "jobTitle": "AI-assisted Creative Developer / Product Prototyper",
-                  "description": "Creative product builder creating web products, interactive tools and music software with visual direction, product thinking and AI-assisted development workflows.",
-                  "knowsAbout": ["AI-assisted development", "Frontend development", "Product prototyping", "Audio software", "Creative coding", "Game logic"],
+                  "jobTitle": "Creative Developer",
+                  "description": "Creative developer creating web products, interactive tools and music software with visual direction, product thinking and AI-supported development workflows.",
+                  "knowsAbout": ["Creative development", "Frontend development", "Product prototyping", "AI harnesses", "Audio software", "Creative coding", "Game logic"],
                   "sameAs": [
                     "https://github.com/jesaias1",
                     "https://www.linkedin.com/in/jesaias/",

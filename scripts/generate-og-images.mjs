@@ -152,11 +152,11 @@ const portfolioHtml = `
     <div class="content">
       <p class="kicker">&gt; jesaias.dk</p>
       <h1>Linas Jesaias</h1>
-      <p class="subtitle">AI-assisted Creative Developer / Product Prototyper</p>
+      <p class="subtitle">Creative Developer</p>
       <p class="body">Web products, interactive tools and music software built from idea to working product.</p>
       <div class="tags">
         <span class="tag">Web Products</span>
-        <span class="tag">AI Prototyping</span>
+        <span class="tag">Product Prototyping</span>
         <span class="tag">Interactive Tools</span>
         <span class="tag">Music Software</span>
       </div>

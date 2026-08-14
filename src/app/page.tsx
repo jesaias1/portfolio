@@ -158,7 +158,7 @@ function Footer() {
               &gt; jesaias.dk
             </span>
             <p className="max-w-xs font-mono text-xs leading-relaxed text-gray-600">
-              AI-assisted creative developer building web products, interactive tools and music software.
+              Creative developer building web products, interactive tools and music software.
             </p>
           </div>
 

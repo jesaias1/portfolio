@@ -26,14 +26,14 @@ const disciplines = [
 
 const processSteps = [
   ['Direction', 'Clarify the product, audience, visual direction and first useful version before building too wide.'],
-  ['Prototype', 'Move into React, Next.js, TypeScript, Tailwind and AI-assisted coding workflows to make the idea tangible.'],
+  ['Prototype', 'Move into React, Next.js, TypeScript, Tailwind and AI harnesses for coding, debugging and iteration to make the idea tangible.'],
   ['Test', 'Debug flows, interaction timing, edge cases and mobile behavior until the experience feels reliable.'],
   ['Polish', 'Refine copy, motion, responsiveness and the small product details that make a demo feel credible.'],
 ];
 
 const workSignals = [
   ['Best fit', 'Creative frontend roles, product prototypes, interactive tools and music software ideas.'],
-  ['Workflow', 'Creative direction, AI-assisted implementation, debugging, testing and fast iteration.'],
+  ['Workflow', 'Creative direction, AI harnesses for implementation support, debugging, testing and fast iteration.'],
   ['Tools', 'React, Next.js, TypeScript, Tailwind, Framer Motion and real-time web concepts.'],
   ['Currently deepening', 'JavaScript fundamentals, React patterns, TypeScript architecture, JUCE/C++ and APIs.'],
 ];
