@@ -27,41 +27,44 @@ export type LogoDragControls = {
 };
 type DragInput = React.RefObject<LogoDragControls>;
 type DragSync = (nextControls: LogoDragControls) => void;
+type NavigatorWithPerformanceHints = Navigator & {
+  deviceMemory?: number;
+  connection?: { saveData?: boolean };
+};
 
 function easeOutCubic(value: number) {
   return 1 - Math.pow(1 - value, 3);
 }
 
+function getInteractionProfile() {
+  if (typeof window === 'undefined') {
+    return { isLowEnd: false, isMobile: false, prefersReducedMotion: false };
+  }
+
+  const isMobileUA = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isMobileSize = window.innerWidth <= 768;
+  const isMobile = isMobileUA || isMobileSize;
+  const navigatorHints = navigator as NavigatorWithPerformanceHints;
+  const hw = navigator.hardwareConcurrency || 8;
+  const memory = navigatorHints.deviceMemory;
+  const saveData = navigatorHints.connection?.saveData === true;
+  const hasLowMemory = typeof memory === 'number' && memory <= 3;
+  const hasLowCpu = hw <= 4;
+
+  return {
+    isLowEnd: saveData || hasLowMemory || hasLowCpu,
+    isMobile,
+    prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  };
+}
+
 function useInteractionProfile() {
-  const [profile, setProfile] = useState(() => {
-    if (typeof window === 'undefined') {
-      return { isLowEnd: false, isMobile: false, prefersReducedMotion: false };
-    }
-    const isMobileUA = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isMobileSize = window.innerWidth <= 768;
-    const isMobile = isMobileUA || isMobileSize;
-    const hw = navigator.hardwareConcurrency || 8;
-    return {
-      isLowEnd: isMobile || hw <= 4,
-      isMobile,
-      prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    };
-  });
+  const [profile, setProfile] = useState(getInteractionProfile);
 
   useEffect(() => {
     const mobileQuery = window.matchMedia('(max-width: 768px)');
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const isMobileUA = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    const update = () => {
-      const isMobile = isMobileUA || mobileQuery.matches;
-      const hw = navigator.hardwareConcurrency || 8;
-      setProfile({
-        isLowEnd: isMobile || hw <= 4,
-        isMobile,
-        prefersReducedMotion: motionQuery.matches,
-      });
-    };
+    const update = () => setProfile(getInteractionProfile());
 
     mobileQuery.addEventListener('change', update);
     motionQuery.addEventListener('change', update);
@@ -610,6 +613,7 @@ export default function Logo3D({
   const orientationListenerAttached = useRef(false);
   const [isCanvasActive, setIsCanvasActive] = useState(true);
   const { isLowEnd, isMobile, prefersReducedMotion } = useInteractionProfile();
+  const dprRange: [number, number] = isLowEnd ? [1.15, 1.45] : isMobile ? [1.6, 2] : [1.5, 2];
 
   const updatePointer = useCallback((clientX: number, clientY: number) => {
     if (!containerRef.current) return;
@@ -744,9 +748,9 @@ export default function Logo3D({
       <Canvas
         camera={{ position: [0, 0, 5.8], fov: 42 }}
         frameloop={isCanvasActive ? 'always' : 'never'}
-        dpr={isLowEnd ? [1, 1.25] : isMobile ? [1.25, 1.5] : [1.5, 2]}
+        dpr={dprRange}
         gl={{
-          antialias: !isLowEnd,
+          antialias: true,
           alpha: true,
           powerPreference: isLowEnd ? 'low-power' : 'high-performance',
         }}
