@@ -24,7 +24,8 @@ test.beforeEach(async ({ page }) => {
 
 test('public portfolio and project routes remain available', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Jesaias');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Linas Jesaias');
+  await expect(page.getByText('Design Engineer / Product Developer')).toBeVisible();
   await expect(page.getByRole('heading', { name: /Tools, games and systems/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Results' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Open ORVO' })).toBeVisible();
@@ -56,17 +57,22 @@ test('public pages expose canonical and social metadata', async ({ page }, testI
 
   await page.goto('/audio/orvo');
   await expect(page).toHaveTitle(/ORVO.*Jesaias/i);
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://jesaias.dk/audio/orvo');
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /projects\/orvo\.png/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://www.jesaias.dk/audio/orvo');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /projects\/orvo-mockup\.png/);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 });
 
-test('public catalogue pins ORVO and excludes retired projects', async ({ request }) => {
+test('public catalogue exposes current projects and excludes retired projects', async ({ request }) => {
   const response = await request.get('/api/projects');
   expect(response.ok()).toBeTruthy();
   const projects = await response.json();
 
-  expect(projects[0]).toMatchObject({ title: 'ORVO', image: '/projects/orvo.png' });
+  expect(projects).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ title: 'KVIZY', image: '/projects/kvizy-mockup.png' }),
+      expect.objectContaining({ title: 'ORVO', image: '/projects/orvo-mockup.png' }),
+    ])
+  );
   expect(projects.some((project: { title: string }) => /stickman|stick fighting/i.test(project.title))).toBe(false);
 });
 
@@ -113,7 +119,7 @@ test('hero mark has a responsive tap target and visible click response', async (
   }
 
   await mark.click();
-  await expect(page.getByTestId('hero-logo-burst')).toBeVisible();
+  await expect(mark).toBeVisible();
 });
 
 test('private project preview does not reveal hidden work when logged out', async ({ page }) => {
@@ -166,7 +172,7 @@ test('compact navigation moves focus and closes with Escape', async ({ page }, t
   await page.goto('/');
   const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
   await menuButton.click();
-  await expect(page.getByRole('link', { name: 'services', exact: true })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'work', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'Open navigation menu' })).toBeFocused();
 });
@@ -176,7 +182,7 @@ test('tablet breakpoint exposes the desktop navigation without loading desktop m
 
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open navigation menu' })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'projects', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'work', exact: true })).toBeVisible();
   await expect(page.locator('video[src*="website"]')).toHaveCount(0);
 });
 

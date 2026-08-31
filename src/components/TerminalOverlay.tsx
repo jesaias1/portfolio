@@ -80,7 +80,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         setHistory(prev => [...prev, 'Available commands:', '- about: Brief bio', '- work: Go to projects', '- audio: Open music software', '- demo: Open presentation mode', '- social: Links', '- owner: Hidden owner commands', '- clear: Clear display', '- exit: Shutdown terminal']);
         break;
       case 'about':
-        setHistory(prev => [...prev, 'BIO: Creative developer building web products, interactive tools and music software with visual direction, product thinking and AI harnesses for faster iteration.']);
+        setHistory(prev => [...prev, 'BIO: Design engineer and product developer building web products, interactive systems and creative software with visual direction and product thinking.']);
         break;
       case 'work':
       case 'projects':

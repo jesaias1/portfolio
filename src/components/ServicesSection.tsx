@@ -2,32 +2,27 @@
 
 import { motion } from 'framer-motion';
 
-const services = [
+const capabilities = [
   {
-    title: 'Web products',
-    description: 'Modern websites, web apps and digital products built with polished UI and fast iteration.',
-    capabilities: ['React / Next.js', 'TypeScript workflows', 'Tailwind UI', 'Responsive interfaces'],
+    title: 'Product & Frontend',
+    description: 'Web products and interfaces shaped around clarity, responsive interaction and fast iteration.',
+    capabilities: ['React / Next.js', 'TypeScript', 'Responsive UI', 'Product implementation'],
   },
   {
-    title: 'Interactive systems',
-    description: 'Games, real-time interactions and product logic for web-based experiences.',
-    capabilities: ['Game logic', 'WebSocket concepts', 'Real-time UX', 'Interaction design'],
+    title: 'Interaction & Prototyping',
+    description: 'Interactive concepts, motion, real-time experiences and playable systems taken from idea to working prototype.',
+    capabilities: ['Interaction design', 'Motion', 'Real-time UX', 'Game / product logic'],
   },
   {
-    title: 'AI-assisted prototyping',
-    description: 'Fast product prototyping using AI tools for coding, debugging, ideation and iteration.',
-    capabilities: ['Prompt-driven development', 'Debugging with AI', 'Concept to demo', 'Rapid iteration'],
-  },
-  {
-    title: 'Creative tools / music software',
-    description: 'Creative workflow tools, music software experiments and plugin-based product ideas.',
-    capabilities: ['MIDI concepts', 'VST/plugin workflows', 'JUCE/C++ learning', 'Producer-focused UX'],
+    title: 'Creative Software',
+    description: 'Desktop tools, audio products and unconventional interfaces built around creative workflows.',
+    capabilities: ['JUCE / C++ project experience', 'Audio / MIDI workflows', 'Desktop product design', 'Creative tooling'],
   },
 ];
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="content-section relative py-16 md:py-20">
+    <section id="capabilities" className="content-section relative py-16 md:py-20">
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
         <motion.header
           initial={{ opacity: 0, y: 22 }}
@@ -39,21 +34,21 @@ export default function ServicesSection() {
           <div>
             <div className="mb-3 flex items-center gap-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#4ddbff]">
-                What I build
+                Capabilities
               </span>
               <span className="h-px w-10 bg-[#4ddbff]/30" />
             </div>
             <h2 className="text-3xl font-bold tracking-[-0.04em] text-white md:text-5xl">
-              Creative software, built into shape.
+              Product judgement with hands-on implementation.
             </h2>
           </div>
           <p className="max-w-sm font-mono text-[10px] leading-5 text-gray-600 md:text-right">
-            Practical product-building across web, interaction and music software.
+            I use tools such as Codex for implementation support, debugging, iteration and exploring solutions faster.
           </p>
         </motion.header>
 
-        <div className="grid grid-cols-2 border-l border-t border-white/[0.08] lg:grid-cols-4">
-          {services.map((service, index) => (
+        <div className="grid grid-cols-1 border-l border-t border-white/[0.08] md:grid-cols-3">
+          {capabilities.map((service, index) => (
             <motion.article
               key={service.title}
               initial={{ opacity: 0, y: 20 }}

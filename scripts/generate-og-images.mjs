@@ -152,12 +152,12 @@ const portfolioHtml = `
     <div class="content">
       <p class="kicker">&gt; jesaias.dk</p>
       <h1>Linas Jesaias</h1>
-      <p class="subtitle">Creative Developer</p>
-      <p class="body">Web products, interactive tools and music software built from idea to working product.</p>
+      <p class="subtitle">Design Engineer & Product Developer</p>
+      <p class="body">Web products, interactive systems and creative software built from idea to working product.</p>
       <div class="tags">
         <span class="tag">Web Products</span>
         <span class="tag">Product Prototyping</span>
-        <span class="tag">Interactive Tools</span>
+        <span class="tag">Interactive Systems</span>
         <span class="tag">Music Software</span>
       </div>
       <div class="terminal-line">system_status: available</div>

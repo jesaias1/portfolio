@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Jesaias — Creative Developer',
+    name: 'Jesaias — Design Engineer',
     short_name: 'Jesaias',
-    description: 'Code, sound and playful systems — built with intent.',
+    description: 'Web products, interactive systems and creative software.',
     start_url: '/?demo=app',
     scope: '/',
     display: 'standalone',

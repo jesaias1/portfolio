@@ -70,11 +70,11 @@ export default function Contact() {
   ].filter((link): link is { label: string; href: string } => Boolean(link.href));
 
   const openTo = [
-    'creative developer roles',
-    'frontend/product projects',
-    'AI prototyping',
-    'selected freelance work',
-    'music software collaborations',
+    'Design Engineer roles',
+    'Product / frontend roles',
+    'Creative technology',
+    'Selected freelance projects',
+    'Creative software collaborations',
   ];
 
   return (
@@ -114,7 +114,10 @@ export default function Contact() {
                 {contactInfo.email}
               </a>
               <p className="mt-6 max-w-sm text-sm leading-6 text-gray-500">
-                Tell me what you want to build, where it is now, and what kind of help would move it forward. A rough idea is enough to begin.
+                Based in Copenhagen and currently open to product-focused design and development roles.
+              </p>
+              <p className="mt-4 max-w-sm text-sm leading-6 text-gray-500">
+                Have a role, project or prototype that needs a creative technical builder? Send a few lines and we can start there.
               </p>
               <div className="mt-7 border-t border-white/[0.07] pt-5">
                 <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-gray-600">

@@ -24,12 +24,12 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Linas Jesaias - Creative Developer",
+    default: "Linas Jesaias — Design Engineer & Product Developer",
     template: "%s | Jesaias",
   },
   applicationName: "Jesaias Portfolio",
-  description: "Creative developer in Copenhagen building web products, interactive tools and music software from idea to working product.",
-  keywords: ["Linas Jesaias", "Jesaias", "creative developer", "product prototyper", "frontend developer", "audio software", "interactive tools", "Next.js", "Copenhagen"],
+  description: "Design engineer and product developer in Copenhagen building web products, interactive systems and creative software.",
+  keywords: ["Linas Jesaias", "Jesaias", "design engineer", "product developer", "creative technologist", "frontend developer", "audio software", "interactive systems", "Next.js", "Copenhagen"],
   authors: [{ name: "Linas Jesaias" }],
   creator: "Linas Jesaias",
   publisher: "Linas Jesaias",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: SITE_URL,
-    siteName: 'Linas Jesaias - Creative Product Builder',
-    title: 'Linas Jesaias - Creative Developer',
-    description: 'Web products, interactive tools and music software built from idea to working product.',
+    siteName: 'Linas Jesaias — Design Engineer & Product Developer',
+    title: 'Linas Jesaias — Design Engineer & Product Developer',
+    description: 'Design engineer and product developer in Copenhagen building web products, interactive systems and creative software.',
     images: [
       {
         url: '/og-portfolio-2026.png',
@@ -57,14 +57,14 @@ export const metadata: Metadata = {
         type: 'image/png',
         width: 1200,
         height: 630,
-        alt: 'Linas Jesaias portfolio preview with glowing logo and creative developer positioning',
+        alt: 'Linas Jesaias portfolio preview with glowing logo and design engineer positioning',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Linas Jesaias - Creative Developer',
-    description: 'Web products, interactive tools and music software built from idea to working product.',
+    title: 'Linas Jesaias — Design Engineer & Product Developer',
+    description: 'Design engineer and product developer in Copenhagen building web products, interactive systems and creative software.',
     images: ['/og-portfolio-2026.png'],
   },
   robots: {
@@ -113,9 +113,9 @@ export default function RootLayout({
                   "@id": `${SITE_URL}/#person`,
                   "name": "Linas Jesaias",
                   "url": SITE_URL,
-                  "jobTitle": "Creative Developer",
-                  "description": "Creative developer creating web products, interactive tools and music software with visual direction, product thinking and AI-supported development workflows.",
-                  "knowsAbout": ["Creative development", "Frontend development", "Product prototyping", "AI harnesses", "Audio software", "Creative coding", "Game logic"],
+                  "jobTitle": "Design Engineer and Product Developer",
+                  "description": "Design engineer and product developer creating web products, interactive systems and creative software with visual direction, product thinking and AI-supported development workflows.",
+                  "knowsAbout": ["Design engineering", "Frontend development", "Product prototyping", "AI-assisted development", "Audio software", "Creative coding", "Game logic"],
                   "sameAs": [
                     "https://github.com/jesaias1",
                     "https://www.linkedin.com/in/jesaias/",
@@ -126,8 +126,8 @@ export default function RootLayout({
                   "@type": "WebSite",
                   "@id": `${SITE_URL}/#website`,
                   "url": SITE_URL,
-                  "name": "Linas Jesaias - Creative Product Builder",
-                  "description": "Web products, interactive tools and music software built from idea to working product.",
+                  "name": "Linas Jesaias — Design Engineer & Product Developer",
+                  "description": "Design engineer and product developer in Copenhagen building web products, interactive systems and creative software.",
                   "inLanguage": "en",
                   "author": { "@id": `${SITE_URL}/#person` }
                 }

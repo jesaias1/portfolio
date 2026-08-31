@@ -35,7 +35,7 @@ interface TerminalLine {
   delay: number;
 }
 
-const TERMINAL_SEQUENCE: TerminalLine[] = [
+const FULL_TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '', type: 'blank', delay: 300 },
   { text: 'jesaias@dk:~$ node portfolio.js', type: 'command', delay: 0 },
   { text: '', type: 'blank', delay: 400 },
@@ -55,7 +55,20 @@ const TERMINAL_SEQUENCE: TerminalLine[] = [
   { text: '[ok] Portfolio ready. Launching...', type: 'success', delay: 500 },
 ];
 
-export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
+const SHORT_TERMINAL_SEQUENCE: TerminalLine[] = [
+  { text: 'jesaias@dk:~$ node portfolio.js', type: 'command', delay: 80 },
+  { text: '[init] Loading portfolio...', type: 'output', delay: 180 },
+  { text: 'LOGO', type: 'ascii', delay: 620 },
+  { text: '[ok] Portfolio ready.', type: 'success', delay: 160 },
+];
+
+export default function SplashScreen({
+  onComplete,
+  mode = 'short',
+}: {
+  onComplete: () => void;
+  mode?: 'short' | 'full';
+}) {
   const [visibleLines, setVisibleLines] = useState<number>(0);
   const [typedText, setTypedText] = useState('');
   const [currentTypingLine, setCurrentTypingLine] = useState(-1);
@@ -64,23 +77,46 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const [isExiting, setIsExiting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  const timersRef = useRef<number[]>([]);
+  const intervalsRef = useRef<number[]>([]);
+  const sequence = mode === 'full' ? FULL_TERMINAL_SEQUENCE : SHORT_TERMINAL_SEQUENCE;
+  const isShortMode = mode === 'short';
+
+  const clearPendingWork = useCallback(() => {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    intervalsRef.current.forEach((interval) => window.clearInterval(interval));
+    timersRef.current = [];
+    intervalsRef.current = [];
+  }, []);
+
+  const schedule = useCallback((callback: () => void, delay: number) => {
+    const timer = window.setTimeout(callback, delay);
+    timersRef.current.push(timer);
+    return timer;
+  }, []);
+
+  const finishSplash = useCallback((exitDelay = isShortMode ? 500 : 600) => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    clearPendingWork();
+    setIsExiting(true);
+    schedule(() => onCompleteRef.current(), exitDelay);
+  }, [clearPendingWork, isShortMode, schedule]);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const processLine = useCallback((lineIndex: number) => {
-    if (lineIndex >= TERMINAL_SEQUENCE.length) {
-      // All lines done; start exit
-      setTimeout(() => {
-        setIsExiting(true);
-        setTimeout(() => {
-          if (!completedRef.current) {
-            completedRef.current = true;
-            onComplete();
-          }
-        }, 600);
-      }, 400);
+    if (completedRef.current) return;
+
+    if (lineIndex >= sequence.length) {
+      schedule(() => finishSplash(), isShortMode ? 180 : 400);
       return;
     }
 
-    const line = TERMINAL_SEQUENCE[lineIndex];
+    const line = sequence[lineIndex];
     
     if (line.type === 'command') {
       // Type out command character by character
@@ -89,42 +125,58 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       const fullText = line.text;
       let charIndex = 0;
       
-      const typeInterval = setInterval(() => {
+      const typeInterval = window.setInterval(() => {
+        if (completedRef.current) {
+          window.clearInterval(typeInterval);
+          return;
+        }
         charIndex++;
         setTypedText(fullText.slice(0, charIndex));
         
         if (charIndex >= fullText.length) {
-          clearInterval(typeInterval);
+          window.clearInterval(typeInterval);
           setCurrentTypingLine(-1);
-          setTimeout(() => processLine(lineIndex + 1), line.delay + 200);
+          schedule(() => processLine(lineIndex + 1), line.delay + (isShortMode ? 45 : 200));
         }
-      }, 25 + Math.random() * 30);
+      }, isShortMode ? 7 : 25 + Math.random() * 30);
+      intervalsRef.current.push(typeInterval);
     } else if (line.type === 'progress') {
       setVisibleLines(lineIndex + 1);
       setShowProgress(true);
       // Animate progress bar
       let prog = 0;
-      const progressInterval = setInterval(() => {
+      const progressInterval = window.setInterval(() => {
+        if (completedRef.current) {
+          window.clearInterval(progressInterval);
+          return;
+        }
         prog += 3 + Math.random() * 5;
         if (prog >= 100) {
           prog = 100;
-          clearInterval(progressInterval);
-          setTimeout(() => processLine(lineIndex + 1), 300);
+          window.clearInterval(progressInterval);
+          schedule(() => processLine(lineIndex + 1), 300);
         }
         setProgressValue(prog);
       }, 40);
+      intervalsRef.current.push(progressInterval);
     } else {
       // Instant reveal for output/success/blank/ascii
       setVisibleLines(lineIndex + 1);
-      setTimeout(() => processLine(lineIndex + 1), line.delay + 50);
+      schedule(() => processLine(lineIndex + 1), line.delay + (isShortMode ? 25 : 50));
     }
-  }, [onComplete]);
+  }, [finishSplash, isShortMode, schedule, sequence]);
 
   useEffect(() => {
     // Start the sequence
-    const timer = setTimeout(() => processLine(0), 500);
-    return () => clearTimeout(timer);
-  }, [processLine]);
+    const timer = schedule(() => processLine(0), isShortMode ? 180 : 500);
+    return () => {
+      window.clearTimeout(timer);
+      clearPendingWork();
+    };
+    // Run the splash sequence once per mode. State updates during typing should
+    // not restart or clear the active timers.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   // Auto-scroll terminal
   useEffect(() => {
@@ -147,7 +199,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-[#4ddbff] text-[0.55rem] leading-tight font-mono select-none whitespace-pre overflow-visible origin-left scale-[0.5] sm:scale-[0.65] md:scale-100 transition-transform"
+          className="text-[#4ddbff] text-[0.5rem] leading-tight font-mono select-none whitespace-pre overflow-visible origin-left scale-[0.44] sm:scale-[0.62] md:scale-100 transition-transform"
           style={{ textShadow: '0 0 10px rgba(77, 219, 255, 0.5)' }}
         >
           {ASCII_LOGO}
@@ -244,7 +296,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           {/* Terminal body */}
           <div 
             ref={containerRef}
-            className="bg-[#0c0c0c] border border-[#333] p-6 min-h-[400px] max-h-[70vh] overflow-y-auto space-y-1"
+            className="bg-[#0c0c0c] border border-[#333] p-5 min-h-[300px] max-h-[70vh] overflow-y-auto space-y-1 sm:p-6 sm:min-h-[400px]"
           >
             {/* Initial prompt */}
             <div className="font-mono text-sm text-gray-600 mb-2">
@@ -254,7 +306,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               Type &apos;help&apos; for available commands.
             </div>
 
-            {TERMINAL_SEQUENCE.map((line, index) => renderLine(line, index))}
+            {sequence.map((line, index) => renderLine(line, index))}
 
             {/* Blinking cursor at the end when idle */}
             {visibleLines === 0 && (
@@ -269,11 +321,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
         {/* Skip button */}
         <button
           onClick={() => {
-            if (!completedRef.current) {
-              completedRef.current = true;
-              setIsExiting(true);
-              setTimeout(onComplete, 500);
-            }
+            finishSplash(isShortMode ? 160 : 500);
           }}
           className="absolute bottom-6 right-6 font-mono text-xs text-gray-600 hover:text-[#4ddbff] transition-colors z-10 cursor-pointer"
         >

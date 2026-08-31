@@ -19,7 +19,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'orvo-006',
     title: 'ORVO',
     description:
-      'A sample-transformation instrument for stretching, freezing, granulating and rhythmically reshaping sound.',
+      'A creative audio product for turning samples into evolving playable instruments through tactile controls and visual feedback.',
     longDesc:
       'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
     image: '/projects/orvo-mockup.png',
@@ -34,7 +34,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'midium-004',
     title: 'MIDIUM',
     description:
-      'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll.',
+      'A visual MIDI instrument concept for sketching melodies, basslines and patterns directly into a producer-focused piano roll.',
     longDesc:
       'MIDIUM is a visual MIDI instrument for quickly turning drawn gestures into playable musical ideas, built for fast DAW workflows and standalone experimentation.',
     image: '/projects/midium.png',
@@ -49,7 +49,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'abyx-005',
     title: 'ABYX',
     description:
-      'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music with familiar controllers.',
+      'A controller-based music tool exploring how familiar gamepad input can become a playful performance interface for DAWs.',
     longDesc:
       'ABYX turns Xbox and PlayStation-style controllers into performance hardware for musical gestures, effects, samples and DAW control.',
     image: '/projects/abyx.png',
@@ -64,7 +64,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'kvizy-007',
     title: 'KVIZY',
     description:
-      'A complete Danish pass-the-device quiz game for game nights, families, parties and friendly competition.',
+      'A Danish pass-the-device quiz product designed for one shared screen, quick setup and real game-night use.',
     longDesc:
       'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
     image: '/projects/kvizy-mockup.png',
@@ -79,7 +79,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'ordbomben-001',
     title: 'Ordbomben',
     description:
-      'Multiplayer word game where players compete in real time to find the most words before time runs out.',
+      'A real-time multiplayer word game built around speed, pressure, score logic and responsive rounds.',
     longDesc:
       'Ordbomben is a real-time multiplayer word game focused on speed, pressure and playful competition.',
     image: '/projects/ordbomben.png',
@@ -94,7 +94,7 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'lettus-002',
     title: 'Lettus',
     description:
-      'Wordle-inspired word guessing game with daily challenges, clean feedback and mobile-first play.',
+      'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
     longDesc:
       'Lettus is a compact word game built around daily challenges, focused rounds and a crisp mobile experience.',
     image: '/projects/lettus.png',

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'C++ / JUCE learning', 'Realtime concepts'];
+const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'JUCE / C++', 'Unity / C#', 'PWA / offline-first', 'WebSockets'];
 
 const disciplines = [
   {
@@ -26,16 +26,16 @@ const disciplines = [
 
 const processSteps = [
   ['Direction', 'Clarify the product, audience, visual direction and first useful version before building too wide.'],
-  ['Prototype', 'Move into React, Next.js, TypeScript, Tailwind and AI harnesses for coding, debugging and iteration to make the idea tangible.'],
+  ['Prototype', 'Move into React, Next.js, TypeScript and Tailwind to make the idea tangible.'],
   ['Test', 'Debug flows, interaction timing, edge cases and mobile behavior until the experience feels reliable.'],
   ['Polish', 'Refine copy, motion, responsiveness and the small product details that make a demo feel credible.'],
 ];
 
 const workSignals = [
-  ['Best fit', 'Creative frontend roles, product prototypes, interactive tools and music software ideas.'],
-  ['Workflow', 'Creative direction, AI harnesses for implementation support, debugging, testing and fast iteration.'],
-  ['Tools', 'React, Next.js, TypeScript, Tailwind, Framer Motion and real-time web concepts.'],
-  ['Currently deepening', 'JavaScript fundamentals, React patterns, TypeScript architecture, JUCE/C++ and APIs.'],
+  ['Best fit', 'Design engineer roles, product/frontend roles, creative technology and selected freelance projects.'],
+  ['Workflow', 'Creative direction, implementation support from AI tools, debugging, testing and fast iteration.'],
+  ['Primary tools', 'React, Next.js, TypeScript, Tailwind and Framer Motion.'],
+  ['Project experience', 'JUCE / C++, Unity / C#, WebSockets, PWA patterns and API-backed products.'],
 ];
 
 type AboutData = {
@@ -59,7 +59,7 @@ export default function About() {
   }, []);
 
   const paragraphs = normalizeParagraphs(aboutData.content);
-  const skills = aboutData.skills?.length ? aboutData.skills : defaultSkills;
+  const skills = getDisplaySkills(aboutData.skills);
   const image = aboutData.image?.startsWith('/') ? aboutData.image : '/headshot.jpg';
 
   return (
@@ -81,7 +81,7 @@ export default function About() {
             </h2>
           </div>
           <p className="font-mono text-[10px] uppercase leading-5 tracking-[0.14em] text-gray-600 md:text-right">
-            Copenhagen, Denmark<br />Creative developer
+            Copenhagen, Denmark<br />Design Engineer
           </p>
         </motion.header>
 
@@ -96,7 +96,7 @@ export default function About() {
             <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#090a0b]">
               <Image
                 src={image}
-                alt="Jesaias, creative developer"
+                alt="Jesaias, design engineer and product developer"
                 fill
                 sizes="(max-width: 768px) 85vw, 340px"
                 className="object-cover object-top grayscale transition duration-700 hover:grayscale-[35%]"
@@ -104,7 +104,7 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-[#4ddbff]/[0.04]" />
             </div>
             <div className="flex items-center justify-between border-x border-b border-white/10 px-4 py-3 font-mono text-[9px] uppercase tracking-[0.12em] text-gray-600">
-              <span>Creative developer</span>
+              <span>Design engineer</span>
               <span className="text-[#4ddbff]/70">DK / available</span>
             </div>
           </motion.div>
@@ -209,12 +209,12 @@ function AboutPanel({
 }
 
 function normalizeParagraphs(content?: string) {
-  if (!content) {
-    return [
-      'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive games and music software experiments.',
-      'The common thread is simple: creative software should feel clear, responsive and enjoyable to use.',
-    ];
-  }
+  const fallback = [
+    'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive systems and creative software.',
+    'My background started in visual design and grew into product development. I work hands-on across direction, interface, prototyping, testing and implementation, using modern AI-assisted development tools while keeping product and visual judgement at the center.',
+  ];
+
+  if (!content) return fallback;
 
   const plainText = content
     .replace(/<\/p>/gi, '\n\n')
@@ -225,5 +225,16 @@ function normalizeParagraphs(content?: string) {
     .replace(/&#39;/g, "'")
     .trim();
 
+  if (/passionate developer|6\+ years|scalable solutions|function perfectly/i.test(plainText)) {
+    return fallback;
+  }
+
   return plainText.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
+}
+
+function getDisplaySkills(skills?: string[]) {
+  if (!skills?.length) return defaultSkills;
+  const serialized = skills.join(' ').toLowerCase();
+  if (serialized.includes('postgresql') || serialized.includes('node.js')) return defaultSkills;
+  return skills;
 }

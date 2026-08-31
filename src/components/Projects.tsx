@@ -13,32 +13,44 @@ type NavigatorWithConnection = Navigator & {
 };
 
 const projectPresentation: Record<string, { category: string; status: string; caseStudy?: string }> = {
-  orvo: { category: 'Audio software', status: 'In development', caseStudy: '/audio/orvo' },
-  midium: { category: 'Audio software', status: 'Beta', caseStudy: '/audio/midium' },
+  kvizy: { category: 'Web product / PWA', status: 'Live', caseStudy: '/projects/kvizy' },
+  orvo: { category: 'Creative desktop software', status: 'In development', caseStudy: '/audio/orvo' },
+  ordbomben: { category: 'Real-time web product', status: 'Under maintenance' },
+  midium: { category: 'Audio software', status: 'Demo in progress', caseStudy: '/audio/midium' },
   abyx: { category: 'Audio software', status: 'Beta', caseStudy: '/audio/abyx' },
-  kvizy: { category: 'Game / PWA', status: 'Live', caseStudy: '/projects/kvizy' },
-  ordbomben: { category: 'Multiplayer game', status: 'Under maintenance' },
   lettus: { category: 'Daily game', status: 'Live' },
   'dump.media': { category: 'Music platform', status: 'Under maintenance' },
   'moonana studio': { category: 'Creative software', status: 'Under maintenance' },
 };
 
 const projectSignals: Record<string, string> = {
-  orvo: 'Product concept, interface direction and AI-assisted plugin iteration for a private preview build.',
-  midium: 'Music software prototype combining branding, MIDI workflow thinking and AI-assisted JUCE/C++ learning.',
-  abyx: 'Creative controller concept shaped around gamepad input, performance UX and plugin workflow experiments.',
-  kvizy: 'Built and iterated a Danish quiz product with offline-first flow, mobile UX and AI-assisted debugging.',
+  kvizy: 'Designed and built a Danish quiz product with offline-first flow, mobile UX and practical game-night pacing.',
+  orvo: 'Product concept, interface direction and iterative development of a private preview build.',
   ordbomben: 'Developed and refined a real-time multiplayer word game with game flow, score logic and responsive play.',
+  midium: 'Visual MIDI workflow prototype combining product direction, interface design and plugin development.',
+  abyx: 'Creative controller concept shaped around gamepad input, performance UX and plugin workflow experiments.',
   lettus: 'Designed and iterated a compact daily word game with clear feedback, mobile layout and focused game logic.',
   'dump.media': 'Directed a producer marketplace concept around audio browsing, creator profiles and media-commerce flow.',
+};
+
+const preferredProjectOrder = ['kvizy', 'orvo', "ryder's road", 'ryders road', 'ordbomben', 'midium', 'abyx', 'lettus', 'dump.media'];
+
+const projectDescriptions: Record<string, string> = {
+  kvizy: 'A Danish pass-the-device quiz product designed for one shared screen, quick setup and real game-night use.',
+  orvo: 'A creative audio product for turning samples into evolving playable instruments through tactile controls and visual feedback.',
+  ordbomben: 'A real-time multiplayer word game built around speed, pressure, score logic and responsive rounds.',
+  midium: 'A visual MIDI instrument concept for sketching melodies, basslines and patterns directly into a producer-focused piano roll.',
+  abyx: 'A controller-based music tool exploring how familiar gamepad input can become a playful performance interface for DAWs.',
+  lettus: 'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
+  'dump.media': 'A producer marketplace concept for browsing audio, presenting creator profiles and shaping media-commerce flows.',
 };
 
 export default function Projects() {
   const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
   const [previewMode, setPreviewMode] = useState(false);
-  const visibleProjects = projects.filter(
-    (project) => !isLegacyHidden(project) && (previewMode || project.visible !== false)
-  );
+  const visibleProjects = projects
+    .filter((project) => !isLegacyHidden(project) && (previewMode || project.visible !== false))
+    .sort((a, b) => getProjectRank(a) - getProjectRank(b));
 
   useEffect(() => {
     const wantsPreview = new URLSearchParams(window.location.search).get('portfolioPreview') === '1';
@@ -153,6 +165,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
   const tags = project.tags.slice(0, 4);
   const signal = projectSignals[key];
+  const description = projectDescriptions[key] ?? project.description;
 
   useEffect(() => {
     const media = window.matchMedia('(hover: none), (pointer: coarse)');
@@ -267,7 +280,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
         </div>
 
         <p className="max-w-xl text-sm leading-6 text-gray-400 sm:text-[15px]">
-          {project.description}
+          {description}
         </p>
 
         {signal ? (
@@ -310,4 +323,10 @@ function isExternal(href: string) {
 function isLegacyHidden(project: PortfolioProject) {
   const key = `${project.title} ${project.id}`.toLowerCase();
   return key.includes('stickman') || key.includes('stick fighting') || key.includes('stick-fighting');
+}
+
+function getProjectRank(project: PortfolioProject) {
+  const key = project.title.toLowerCase();
+  const rank = preferredProjectOrder.indexOf(key);
+  return rank === -1 ? 100 + (project.order ?? 0) : rank;
 }

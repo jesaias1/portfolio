@@ -7,6 +7,7 @@ import TerminalOverlay from './TerminalOverlay';
 import { useLenis } from 'lenis/react';
 import dynamic from 'next/dynamic';
 import type { LogoDragControls } from './Logo3D';
+import { CV_HREF } from '@/lib/profile';
 
 const Logo3D = dynamic(() => import('./Logo3D'), {
   ssr: false,
@@ -19,9 +20,15 @@ const Logo3D = dynamic(() => import('./Logo3D'), {
   ),
 });
 
-const FULL_SUBTITLE = '> creative_developer --software --audio --games';
+const FULL_SUBTITLE = '> design_engineer --product --software --sound --play';
 
-export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolean }) {
+export default function Hero({
+  playLogoIntro = false,
+  enableLogo = true,
+}: {
+  playLogoIntro?: boolean;
+  enableLogo?: boolean;
+}) {
   const heroRef = useRef<HTMLElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const introInView = useInView(introRef, { once: true, margin: '-80px' });
@@ -51,6 +58,7 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
   const shouldReduceMotion = useReducedMotion();
   const { play } = useSound();
   const lenis = useLenis();
+  const cvHref = CV_HREF;
   const closeTerminal = useCallback(() => setIsTerminalOpen(false), []);
   const setHeroCursorHidden = useCallback((hidden: boolean) => {
     document.body.classList.toggle('hero-logo-cursor-hidden', hidden);
@@ -138,6 +146,10 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
         }
       }
     } else {
+      if (href === CV_HREF) {
+        window.open(href, '_blank', 'noopener,noreferrer');
+        return;
+      }
       if (shouldReduceMotion) {
         window.location.href = href;
         return;
@@ -205,19 +217,26 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
         id="home" 
         className="relative flex h-screen min-h-[100svh] items-center justify-center overflow-hidden"
       >
-        <h1 className="sr-only">Jesaias — creative developer building software, audio tools and playful systems</h1>
+        <h1 className="sr-only">Linas Jesaias — Design Engineer and Product Developer</h1>
         <div className="pointer-events-none absolute inset-0 z-0">
           <div className="absolute left-1/2 top-[44%] h-[62vw] max-h-[760px] min-h-[420px] w-[62vw] max-w-[760px] min-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4ddbff]/[0.035] blur-3xl" />
           <div className="absolute inset-x-[8vw] top-1/2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
           <div className="absolute bottom-[12vh] left-1/2 h-[32vh] w-px bg-gradient-to-b from-transparent via-[#4ddbff]/10 to-transparent" />
         </div>
 
-        <div className="pointer-events-none absolute left-5 top-24 z-30 font-mono text-[9px] uppercase leading-5 tracking-[0.16em] text-white/30 sm:left-8 sm:text-[10px] md:left-12">
-          <span className="block text-[#4ddbff]/70">Jesaias</span>
-          Creative developer
+        <div className="pointer-events-none absolute left-5 top-24 z-30 max-w-[18rem] sm:left-8 md:left-12">
+          <span className="block font-mono text-[10px] uppercase leading-5 tracking-[0.18em] text-[#4ddbff]/70">
+            Linas Jesaias
+          </span>
+          <p className="mt-3 max-w-xs text-2xl font-semibold leading-none tracking-[-0.04em] text-white sm:text-3xl md:text-4xl">
+            Design Engineer / Product Developer
+          </p>
+          <p className="mt-4 max-w-[16rem] text-sm leading-6 text-gray-500 sm:text-[15px]">
+            I design and build digital products across web, creative software and interactive systems.
+          </p>
         </div>
 
-        <div className="pointer-events-none absolute right-5 top-24 z-30 text-right font-mono text-[9px] uppercase leading-5 tracking-[0.16em] text-white/30 sm:right-8 sm:text-[10px] md:right-12">
+        <div className="pointer-events-none absolute right-5 top-24 z-30 hidden text-right font-mono text-[9px] uppercase leading-5 tracking-[0.16em] text-white/30 sm:right-8 sm:block sm:text-[10px] md:right-12">
           <span className="block text-white/50">Copenhagen / DK</span>
           Software · Sound · Play
         </div>
@@ -240,14 +259,16 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
             transition={{ duration: 1.2, delay: shouldReduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0"
           >
-            <Logo3D
-              isActive={isLogoHovered}
-              pulseToken={logoPulse}
-              dragControls={logoDragControls}
-              onDragControlsSync={syncLogoDragControls}
-              onReady={handleLogoReady}
-              playIntroSwirl={playLogoIntro && isLogoReady}
-            />
+            {enableLogo ? (
+              <Logo3D
+                isActive={isLogoHovered}
+                pulseToken={logoPulse}
+                dragControls={logoDragControls}
+                onDragControlsSync={syncLogoDragControls}
+                onReady={handleLogoReady}
+                playIntroSwirl={playLogoIntro && isLogoReady}
+              />
+            ) : null}
           </motion.div>
         </motion.div>
 
@@ -363,7 +384,7 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
             className="text-xl md:text-3xl lg:text-4xl text-gray-200 font-light tracking-[0.1em] max-w-3xl mx-auto text-center mt-6"
             style={{ textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 30px rgba(0,0,0,0.8), 0 0 20px rgba(77, 219, 255, 0.15)' }}
           >
-            Code, sound and playful systems—built with intent.
+            Designing and building from idea to working product.
           </motion.p>
 
           {/* CTA Buttons — terminal commands */}
@@ -373,12 +394,14 @@ export default function Hero({ playLogoIntro = false }: { playLogoIntro?: boolea
             transition={{ duration: 0.8, delay: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 md:mt-14 relative z-40 pointer-events-auto"
           >
-            <TerminalButton onClick={() => handleNavClick('#projects')} variant="outline">
-              /projects
+            <TerminalButton onClick={() => handleNavClick('#projects')} variant="solid">
+              View selected work ↓
             </TerminalButton>
-            <TerminalButton onClick={() => handleNavClick('#about')}>
-              /about
-            </TerminalButton>
+            {cvHref ? (
+              <TerminalButton onClick={() => handleNavClick(cvHref)} variant="outline">
+                CV ↗
+              </TerminalButton>
+            ) : null}
             <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
               /contact
             </TerminalButton>
@@ -417,12 +440,6 @@ function BlueprintReveal() {
         className="absolute inset-y-[5%] w-px bg-[#b9f4ff] shadow-[0_0_18px_rgba(77,219,255,0.9)]"
       />
 
-      <div className="absolute left-3 top-3 font-mono text-[8px] uppercase tracking-[0.2em] text-[#4ddbff]/55 sm:text-[9px]">
-        mark / construction
-      </div>
-      <div className="absolute bottom-3 right-3 font-mono text-[8px] uppercase tracking-[0.2em] text-white/30 sm:text-[9px]">
-        geometry locked
-      </div>
       <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-[#4ddbff]/55" />
       <span className="absolute left-1/2 bottom-0 h-3 w-px -translate-x-1/2 translate-y-1/2 bg-[#4ddbff]/35" />
       <span className="absolute left-0 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-[#4ddbff]/35" />

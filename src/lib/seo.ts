@@ -33,7 +33,7 @@ export function createProjectMetadata({
       type: 'website',
       locale: 'en_US',
       url: canonical,
-      siteName: 'Linas Jesaias - Creative Product Builder',
+      siteName: 'Linas Jesaias — Design Engineer & Product Developer',
       title,
       description,
       images: [

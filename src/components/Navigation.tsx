@@ -7,13 +7,15 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useSound } from '@/hooks/use-sound';
+import { CV_HREF } from '@/lib/profile';
 
 const navItems = [
-  { name: 'services', href: '#services', section: 'services' },
-  { name: 'projects', href: '#projects', section: 'projects' },
-  { name: 'music software', href: '/audio', section: null },
+  { name: 'work', href: '#projects', section: 'projects' },
   { name: 'about', href: '#about', section: 'about' },
+  { name: 'capabilities', href: '#capabilities', section: 'capabilities' },
+  { name: 'music software', href: '/audio', section: null },
   { name: 'contact', href: '#contact', section: 'contact' },
+  ...(CV_HREF ? [{ name: 'CV ↗', href: CV_HREF, section: null }] : []),
 ];
 
 export default function Navigation() {
@@ -34,7 +36,7 @@ export default function Navigation() {
   }, []);
 
   useEffect(() => {
-    const sectionIds = ['home', 'services', 'projects', 'about', 'contact'];
+    const sectionIds = ['home', 'projects', 'about', 'capabilities', 'contact'];
     const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -88,6 +90,11 @@ export default function Navigation() {
 
     if (shouldReduceMotion) {
       window.location.assign(href);
+      return;
+    }
+
+    if (href === CV_HREF) {
+      window.open(href, '_blank', 'noopener,noreferrer');
       return;
     }
 

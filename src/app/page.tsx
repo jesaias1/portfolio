@@ -17,7 +17,12 @@ const Projects = dynamic(() => import('@/components/Projects'));
 const About = dynamic(() => import('@/components/About'));
 const Contact = dynamic(() => import('@/components/Contact'));
 
-const sitemap = ['services', 'projects', 'about', 'contact'];
+const sitemap = [
+  { label: 'work', href: '#projects' },
+  { label: 'about', href: '#about' },
+  { label: 'capabilities', href: '#capabilities' },
+  { label: 'contact', href: '#contact' },
+];
 
 const socialLinks = [
   { label: 'github', href: 'https://github.com/jesaias1' },
@@ -95,28 +100,33 @@ export default function Home() {
           Skip to main content
         </a>
       ) : null}
-      {showSplash && <SplashScreen onComplete={completeSplash} />}
+      {showSplash && <SplashScreen mode={isPresentationMode ? 'full' : 'short'} onComplete={completeSplash} />}
 
-      {!showSplash && isReady && (
-        <main id="main-content" className="relative" tabIndex={-1}>
+      {isReady && (
+        <main
+          id="main-content"
+          className="relative"
+          tabIndex={-1}
+          aria-hidden={showSplash}
+        >
           <ScrollVideo />
           <CustomCursor />
           <ScrollProgress />
           <GlitchFlash />
           <Navigation />
-          <Hero playLogoIntro={playLogoIntro} />
+          <Hero playLogoIntro={playLogoIntro} enableLogo={!showSplash} />
 
-          <SectionDivider />
-          <ServicesSection />
           <SectionDivider />
           <Projects />
           <SectionDivider />
           <About />
           <SectionDivider />
+          <ServicesSection />
+          <SectionDivider />
           <Contact />
 
           <Footer />
-          {isPresentationMode ? (
+          {isPresentationMode && !showSplash ? (
             <PresentationModeControl onReplay={replayPresentationIntro} />
           ) : null}
         </main>
@@ -158,7 +168,7 @@ function Footer() {
               &gt; jesaias.dk
             </span>
             <p className="max-w-xs font-mono text-xs leading-relaxed text-gray-600">
-              Creative developer building web products, interactive tools and music software.
+              Design engineer and product developer building web products, interactive systems and creative software.
             </p>
           </div>
 
@@ -169,12 +179,12 @@ function Footer() {
             <div className="grid grid-cols-2 gap-2">
               {sitemap.map((item) => (
                 <a
-                  key={item}
-                  href={`#${item}`}
+                  key={item.href}
+                  href={item.href}
                   className="inline-flex min-h-11 items-center font-mono text-xs text-gray-600 transition-colors hover:text-[#4ddbff]"
                 >
                   <span className="mr-1 text-[#4ddbff]/30">&gt;</span>
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </div>
