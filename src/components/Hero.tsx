@@ -250,13 +250,13 @@ export default function Hero({
           className="absolute inset-0 z-20 pointer-events-none"
         >
           <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
+            initial={{ opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
             animate={{
               opacity: 1,
               scale: isLogoHovered ? 1.012 : 1,
               filter: 'blur(0px)',
             }}
-            transition={{ duration: 1.2, delay: shouldReduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: shouldReduceMotion ? 0 : 1.2, delay: shouldReduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0"
           >
             {enableLogo ? (
@@ -324,7 +324,7 @@ export default function Hero({
             if (event.detail > 0) event.currentTarget.blur();
             setLogoPulse((value) => value + 1);
           }}
-          className="group absolute left-1/2 top-[44%] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 touch-none cursor-grab rounded-[45%] bg-transparent focus-visible:outline-none active:cursor-grabbing max-sm:h-[240px] max-sm:w-[86vw]"
+          className="group absolute left-1/2 top-[44%] min-[769px]:max-[1439px]:top-[62%] min-[769px]:max-[1439px]:h-[min(36vw,360px)] z-[25] h-[min(48vw,500px)] min-h-[220px] w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 touch-none cursor-grab rounded-[45%] bg-transparent focus-visible:outline-none active:cursor-grabbing max-sm:h-[240px] max-sm:w-[86vw]"
         >
           <span className="sr-only">The signature responds to pointer movement, dragging and clicks</span>
           <span aria-hidden="true" className="absolute left-[9%] top-[12%] h-3 w-3 border-l border-t border-[#4ddbff]/70 opacity-0 transition-opacity group-focus-visible:opacity-100" />
@@ -334,7 +334,7 @@ export default function Hero({
         </button>
 
         <AnimatePresence>
-          {showBlueprint && !shouldReduceMotion ? <BlueprintReveal /> : null}
+          {showBlueprint ? <BlueprintReveal /> : null}
         </AnimatePresence>
 
         {/* Scroll indicator — anchored to bottom of hero */}

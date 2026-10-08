@@ -62,6 +62,7 @@ export default function Home() {
       setShowSplash(shouldPlayIntro);
       setPlayLogoIntro(shouldPlayIntro);
       setIsReady(true);
+      document.documentElement.removeAttribute('data-intro');
     });
 
     return () => window.cancelAnimationFrame(frame);
@@ -102,35 +103,35 @@ export default function Home() {
       ) : null}
       {showSplash && <SplashScreen mode={isPresentationMode ? 'full' : 'short'} onComplete={completeSplash} />}
 
-      {isReady && (
-        <main
-          id="main-content"
-          className="relative"
-          tabIndex={-1}
-          aria-hidden={showSplash}
-        >
-          <ScrollVideo />
-          <CustomCursor />
-          <ScrollProgress />
-          <GlitchFlash />
-          <Navigation />
-          <Hero playLogoIntro={playLogoIntro} enableLogo={!showSplash} />
+      {/* Rendered on the server so crawlers and slow connections get real content;
+          first-time visitors stay hidden behind the splash via the data-intro hook in layout.tsx. */}
+      <main
+        id="main-content"
+        className="relative"
+        tabIndex={-1}
+        aria-hidden={showSplash}
+      >
+        <ScrollVideo />
+        <CustomCursor />
+        <ScrollProgress />
+        <GlitchFlash />
+        <Navigation />
+        <Hero playLogoIntro={playLogoIntro} enableLogo={isReady && !showSplash} />
 
-          <SectionDivider />
-          <Projects />
-          <SectionDivider />
-          <About />
-          <SectionDivider />
-          <ServicesSection />
-          <SectionDivider />
-          <Contact />
+        <SectionDivider />
+        <Projects />
+        <SectionDivider />
+        <About />
+        <SectionDivider />
+        <ServicesSection />
+        <SectionDivider />
+        <Contact />
 
-          <Footer />
-          {isPresentationMode && !showSplash ? (
-            <PresentationModeControl onReplay={replayPresentationIntro} />
-          ) : null}
-        </main>
-      )}
+        <Footer />
+        {isPresentationMode && !showSplash ? (
+          <PresentationModeControl onReplay={replayPresentationIntro} />
+        ) : null}
+      </main>
     </>
   );
 }
@@ -227,15 +228,6 @@ function Footer() {
               (c) {new Date().getFullYear()} jesaias.dk - all rights reserved
             </span>
 
-            <div className="flex items-center gap-3">
-              <a
-                href="/admin/login"
-                aria-label="Open root access"
-                className="inline-flex min-h-11 items-center px-2 font-mono text-[10px] lowercase tracking-[0.16em] text-[#4ddbff]/15 transition-colors hover:text-[#4ddbff]/55 focus-visible:text-[#4ddbff] focus-visible:outline-none"
-              >
-                root
-              </a>
-            </div>
           </div>
         </div>
       </div>

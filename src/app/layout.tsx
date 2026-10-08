@@ -103,6 +103,11 @@ export default function RootLayout({
     <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: 'var(--font-display)' }}>
         <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var q=new URLSearchParams(location.search).get('demo');var s=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&(q==='1'||q==='app'||s||!localStorage.getItem('jesaias-visited')))document.documentElement.setAttribute('data-intro','1')}catch(e){}`,
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       request.headers.get('x-real-ip') ||
       requestId ||
       'local';
-    const rateLimit = checkContactRateLimit(clientKey);
+    const rateLimit = await checkContactRateLimit(clientKey);
     if (!rateLimit.allowed) {
       log('error', 'Contact rate limit exceeded', 429);
       return NextResponse.json(

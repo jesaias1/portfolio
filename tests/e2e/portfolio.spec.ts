@@ -114,6 +114,9 @@ test('hero mark has a responsive tap target and visible click response', async (
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
 
   if (!isCompactProject(testInfo.project.name)) {
+    // The cursor is lazy-loaded; wait for it to mount so the hover is not sent before its listener exists.
+    await expect(page.locator('.cursor-ring')).toBeAttached();
+    await page.mouse.move(2, 2);
     await mark.hover();
     await expect(page.locator('.cursor-ring')).toHaveClass(/cursor-ring-hidden/);
   }
@@ -154,7 +157,7 @@ test('contact bot trap and security headers are active', async ({ request }, tes
 });
 
 test('core pages have no serious automated accessibility violations', async ({ page }) => {
-  for (const path of ['/', '/audio/orvo', '/projects/kvizy']) {
+  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead']) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -187,7 +190,7 @@ test('tablet breakpoint exposes the desktop navigation without loading desktop m
 });
 
 test('core routes fit every tested viewport without horizontal overflow', async ({ page }) => {
-  for (const path of ['/', '/audio/orvo', '/projects/kvizy']) {
+  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead']) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -220,4 +223,54 @@ test('reduced-motion mode disables decorative background motion', async ({ page 
     () => window.getComputedStyle(document.documentElement).scrollBehavior
   );
   expect(scrollBehavior).toBe('auto');
+});
+
+test('homepage is server-rendered with real content for crawlers', async ({ request }, testInfo) => {
+  test.skip(isCompactProject(testInfo.project.name), 'Server output is viewport-independent.');
+
+  const html = await (await request.get('/')).text();
+  expect(html).toContain('<h1');
+  expect(html).toContain('Linas Jesaias');
+  expect(html).toContain('KVIZY');
+  expect(html).toContain('Project Reel');
+});
+
+test('sitemap and robots use the canonical www host', async ({ request }, testInfo) => {
+  test.skip(isCompactProject(testInfo.project.name), 'Server output is viewport-independent.');
+
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  expect(locations.length).toBeGreaterThan(0);
+  for (const location of locations) expect(location).toMatch(/^https:\/\/www\.jesaias\.dk(\/|$)/);
+
+  const robots = await (await request.get('/robots.txt')).text();
+  expect(robots).toContain('Sitemap: https://www.jesaias.dk/sitemap.xml');
+});
+
+test('project reel stays idle until played and the admin link is not exposed', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#about summary', { hasText: 'Project Reel' }).click();
+  const reel = page.locator('#about video');
+  await expect(reel).toHaveAttribute('preload', 'none');
+  await expect(reel).not.toHaveAttribute('controls', /.*/);
+  await expect(page.getByRole('button', { name: /Play reel/i })).toBeVisible();
+  await expect(page.locator('a[href="/admin/login"]')).toHaveCount(0);
+});
+
+test('KVIZY case study offers the ad with sound on request', async ({ page }) => {
+  await page.goto('/projects/kvizy');
+  await expect(page.getByRole('heading', { name: /Kvik\. Kvikkere\. KVIZY\./ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Watch the ad/i })).toBeVisible();
+});
+
+test('audio landing presents every product with working download paths', async ({ page }) => {
+  await page.goto('/audio');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Tools that make music feel playable');
+  await expect(page.getByRole('table')).toBeVisible();
+  for (const name of ['ORVO', 'MIDIUM', 'ABYX']) {
+    await expect(page.getByRole('link', { name: `Explore ${name}` })).toBeVisible();
+  }
+  await expect(page.locator('a[href="/audio/downloads/ORVO-1.0.0-Windows-x64-Setup.exe"]').first()).toBeAttached();
+  await expect(page.locator('a[href*="lemonsqueezy.com"]').first()).toBeAttached();
+  await page.locator('#support summary').first().click();
 });

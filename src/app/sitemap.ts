@@ -1,44 +1,23 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/seo';
+
+const lastModified = new Date('2026-10-07T00:00:00.000Z');
+
+const routes: { path: string; priority: number }[] = [
+  { path: '', priority: 1 },
+  { path: '/audio', priority: 0.9 },
+  { path: '/audio/orvo', priority: 0.9 },
+  { path: '/audio/midium', priority: 0.8 },
+  { path: '/audio/abyx', priority: 0.8 },
+  { path: '/projects/kvizy', priority: 0.8 },
+  { path: '/projects/playhead', priority: 0.8 },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date('2026-08-04T00:00:00.000Z');
-
-  return [
-    {
-      url: 'https://jesaias.dk',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    {
-      url: 'https://jesaias.dk/audio',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: 'https://jesaias.dk/audio/orvo',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: 'https://jesaias.dk/audio/midium',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://jesaias.dk/audio/abyx',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://jesaias.dk/projects/kvizy',
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-  ];
+  return routes.map(({ path, priority }) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency: 'monthly',
+    priority,
+  }));
 }

@@ -4,7 +4,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${isDevelopment ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://va.vercel-scripts.com${isDevelopment ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -47,12 +47,33 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   poweredByHeader: false,
+  async redirects() {
+    return [
+      // Keeps the Vercel preview hostname out of the page; swap the destination if a domain is added later.
+      {
+        source: '/play/ordbomben',
+        destination: 'https://ordbomben-iicajd8io-jesaias-projects-402253d5.vercel.app',
+        permanent: false,
+      },
+      {
+        source: '/play/playhead',
+        destination: 'https://playhead-sooty.vercel.app',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
         source: '/((?!_next/).*)',
         headers: securityHeaders,
       },
+      // Large media is revalidated daily rather than on every request; file names are not
+      // versioned, so keep this short enough that a replaced video shows up quickly.
+      ...['/reel/:path*', '/projects/videos/:path*', '/audio/products/:path*', '/video/:path*'].map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+      })),
     ];
   },
 };

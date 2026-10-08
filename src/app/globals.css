@@ -535,3 +535,16 @@ a, button {
 .scroll-pulse {
   animation: scrollPulse 2s ease-in-out infinite;
 }
+
+/* First visit: keep the server-rendered page hidden until the intro splash has mounted. */
+html[data-intro="1"] #main-content {
+  visibility: hidden;
+  /* Safety net: never leave the page hidden if scripts fail to load. */
+  animation: intro-reveal-fallback 0s 6s forwards;
+}
+
+@keyframes intro-reveal-fallback {
+  to {
+    visibility: visible;
+  }
+}

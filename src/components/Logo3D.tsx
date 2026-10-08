@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   Clone,
   Environment,
@@ -14,6 +14,9 @@ const MODEL_PATH = '/logo3d.glb';
 const BASE_Y_ROTATION = Math.PI / 2;
 const DESKTOP_VISUAL_OFFSET: [number, number, number] = [0, 0.14, 0];
 const MOBILE_VISUAL_OFFSET: [number, number, number] = [0, 0.15, 0];
+// Below this width the hero copy (top-left) would sit behind the full-size logo.
+const COMPACT_DESKTOP_WIDTH = 1440;
+const COMPACT_VISUAL_OFFSET: [number, number, number] = [0, -0.62, 0];
 
 useGLTF.preload(MODEL_PATH);
 
@@ -329,6 +332,8 @@ function LogoModel({
     isDragging: false,
   });
   const { scene } = useGLTF(MODEL_PATH);
+  const viewportWidth = useThree((state) => state.size.width);
+  const isCompactDesktop = !isMobile && viewportWidth < COMPACT_DESKTOP_WIDTH;
 
   useEffect(() => {
     if (pulseToken > 0 && !prefersReducedMotion) pulse.current = 1;
@@ -364,9 +369,10 @@ function LogoModel({
     const size = box.getSize(new THREE.Vector3());
     const c = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Smaller scale on mobile so logo fits within narrow viewports
-    return { center: c, scaleFactor: (isMobile ? 1.72 : 3.2) / maxDim };
-  }, [preparedScene, isMobile]);
+    // Smaller scale on mobile and compact desktops so the logo clears the hero copy
+    const targetWidth = isMobile ? 1.72 : isCompactDesktop ? 2.5 : 3.2;
+    return { center: c, scaleFactor: targetWidth / maxDim };
+  }, [preparedScene, isMobile, isCompactDesktop]);
 
   useFrame((_, delta) => {
     if (!groupRef.current || prefersReducedMotion) return;
@@ -475,7 +481,7 @@ function LogoModel({
     <group
       ref={groupRef}
       rotation={[0, BASE_Y_ROTATION, 0]}
-      position={isMobile ? MOBILE_VISUAL_OFFSET : DESKTOP_VISUAL_OFFSET}
+      position={isMobile ? MOBILE_VISUAL_OFFSET : isCompactDesktop ? COMPACT_VISUAL_OFFSET : DESKTOP_VISUAL_OFFSET}
     >
       {/* Inner group: centering + scale — offsets cancel cleanly before rotation is applied */}
       <group
