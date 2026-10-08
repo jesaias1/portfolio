@@ -12,6 +12,11 @@ const budgets = [
     maxBytes: 2 * MB,
   },
   {
+    label: 'project reel',
+    matches: (relativePath) => relativePath.startsWith('reel/') && /\.(mp4|webm)$/i.test(relativePath),
+    maxBytes: 60 * MB,
+  },
+  {
     label: 'project preview video',
     matches: (relativePath) => relativePath.startsWith('projects/videos/'),
     maxBytes: 22 * MB,
@@ -38,7 +43,7 @@ const budgets = [
   },
 ];
 
-const totalPublicBudget = 105 * MB;
+const totalPublicBudget = 120 * MB;
 
 async function collectFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

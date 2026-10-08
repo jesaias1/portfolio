@@ -42,3 +42,6 @@ prisma/dev.db-journal
 
 # large assets
 /assets_large/
+
+# Codex remote attachments
+/.codex-remote-attachments/

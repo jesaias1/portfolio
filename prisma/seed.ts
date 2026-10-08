@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { fallbackProjects } from '../src/data/projects'
 
 const prisma = new PrismaClient()
 
@@ -25,158 +26,25 @@ async function main() {
     },
   })
 
-  await prisma.project.upsert({
-    where: { id: 'orvo-006' },
-    update: {
-      title: 'ORVO',
-      description: 'A creative audio product for turning samples into evolving playable instruments through tactile controls and visual feedback.',
-      longDesc: 'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
-      image: '/projects/orvo-mockup.png',
-      tags: JSON.stringify(['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake']),
-      link: '/audio/orvo',
-      featured: true,
-      order: 2,
-    },
-    create: {
-      id: 'orvo-006',
-      title: 'ORVO',
-      description: 'A creative audio product for turning samples into evolving playable instruments through tactile controls and visual feedback.',
-      longDesc: 'ORVO turns any sample into an evolving instrument. Cloud, Elastic, Tape and Grain engines combine with PULSE gating, drawn motion, four LFOs, macros and a full effects rack - with finished audio rendered straight back into the DAW.',
-      image: '/projects/orvo-mockup.png',
-      tags: JSON.stringify(['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake']),
-      link: '/audio/orvo',
-      featured: true,
-      order: 2,
-    },
-  })
+  // Project copy lives in src/data/projects.ts; array order is the display order.
+  for (const [index, project] of fallbackProjects.entries()) {
+    const data = {
+      title: project.title,
+      description: project.description,
+      longDesc: project.longDesc ?? null,
+      image: project.image,
+      tags: JSON.stringify(project.tags),
+      link: project.link ?? null,
+      featured: project.featured,
+      order: index + 1,
+    }
 
-  await prisma.project.upsert({
-    where: { id: 'ordbomben-001' },
-    update: {
-      description: 'A real-time multiplayer word game built around speed, pressure, score logic and responsive rounds.',
-      order: 4,
-    },
-    create: {
-      id: 'ordbomben-001',
-      title: 'Ordbomben',
-      description: 'A real-time multiplayer word game built around speed, pressure, score logic and responsive rounds.',
-      longDesc: 'Ordbomben is an intense multiplayer word game built with Next.js and WebSocket technology. Players compete in real-time to find the most possible words from a random set of letters.',
-      image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=800',
-      tags: JSON.stringify(['Next.js', 'WebSocket', 'PostgreSQL', 'Real-time', 'Multiplayer']),
-      link: 'https://www.ordbomben.dk',
-      featured: true,
-      order: 4,
-    },
-  })
-
-  await prisma.project.upsert({
-    where: { id: 'lettus-002' },
-    update: {
-      description: 'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
-      order: 7,
-    },
-    create: {
-      id: 'lettus-002',
-      title: 'Lettus',
-      description: 'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
-      longDesc: 'Lettus is an engaging word guessing game inspired by Wordle, where players have 6 attempts to guess the word of the day. The game offers daily challenges and stat tracking.',
-      image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800',
-      tags: JSON.stringify(['React', 'TypeScript', 'Game Logic', 'PWA', 'Mobile First']),
-      link: 'https://www.lettus.fun',
-      featured: true,
-      order: 7,
-    },
-  })
-
-  await prisma.project.upsert({
-    where: { id: 'dump-003' },
-    update: {
-      description: 'A producer marketplace concept for browsing audio, presenting creator profiles and shaping media-commerce flows.',
-      order: 8,
-    },
-    create: {
-      id: 'dump-003',
-      title: 'dump.media',
-      description: 'A producer marketplace concept for browsing audio, presenting creator profiles and shaping media-commerce flows.',
-      longDesc: 'dump.media is a professional platform for producers and artists. The platform connects beat producers with artists through an intuitive interface.',
-      image: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=800',
-      tags: JSON.stringify(['Next.js', 'Stripe', 'Audio Player', 'E-commerce', 'Subscriptions']),
-      link: 'https://www.dump.media',
-      featured: true,
-      order: 8,
-    },
-  })
-
-  await prisma.project.upsert({
-    where: { id: 'midium-004' },
-    update: {
-      title: 'MIDIUM',
-      description: 'A visual MIDI instrument concept for sketching melodies, basslines and patterns directly into a producer-focused piano roll.',
-      longDesc: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
-      image: '/projects/midium.png',
-      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
-      featured: true,
-      order: 5,
-    },
-    create: {
-      id: 'midium-004',
-      title: 'MIDIUM',
-      description: 'A visual MIDI instrument concept for sketching melodies, basslines and patterns directly into a producer-focused piano roll.',
-      longDesc: 'A creative MIDI-drawing VST that lets producers sketch melodies, basslines and patterns directly into a visual piano roll, turning hand-drawn shapes into playable MIDI.',
-      image: '/projects/midium.png',
-      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'CMake']),
-      featured: true,
-      order: 5,
-    },
-  })
-
-  await prisma.project.upsert({
-    where: { id: 'abyx-005' },
-    update: {
-      title: 'ABYX',
-      description: 'A controller-based music tool exploring how familiar gamepad input can become a playful performance interface for DAWs.',
-      longDesc: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
-      image: '/projects/abyx.png',
-      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
-      featured: true,
-      order: 6,
-    },
-    create: {
-      id: 'abyx-005',
-      title: 'ABYX',
-      description: 'A controller-based music tool exploring how familiar gamepad input can become a playful performance interface for DAWs.',
-      longDesc: 'A gamepad-powered music controller for DAWs, built to trigger sounds, control effects and perform music using Xbox and PlayStation controllers.',
-      image: '/projects/abyx.png',
-      tags: JSON.stringify(['C++', 'JUCE', 'VST3', 'MIDI', 'XInput', 'HID', 'CMake']),
-      featured: true,
-      order: 6,
-    },
-  })
-
-  await prisma.project.upsert({
-    where: { id: 'kvizy-007' },
-    update: {
-      title: 'KVIZY',
-      description: 'A Danish pass-the-device quiz product designed for one shared screen, quick setup and real game-night use.',
-      longDesc: 'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
-      image: '/projects/kvizy-mockup.png',
-      tags: JSON.stringify(['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest']),
-      link: 'https://kvizy.dk',
-      featured: true,
-      order: 1,
-    },
-    create: {
-      id: 'kvizy-007',
-      title: 'KVIZY',
-      description: 'A Danish pass-the-device quiz product designed for one shared screen, quick setup and real game-night use.',
-      longDesc: 'KVIZY turns one phone, tablet or screen into a full Danish quiz night. Players or teams pass the device between turns across classic, quick, risk and mystery modes, backed by 1,439 curated questions, offline play, adaptive difficulty, history and rematches.',
-      image: '/projects/kvizy-mockup.png',
-      tags: JSON.stringify(['Next.js 16', 'TypeScript', 'PWA', 'Offline-first', 'Vitest']),
-      link: 'https://kvizy.dk',
-      featured: true,
-      order: 1,
-    },
-  })
+    await prisma.project.upsert({
+      where: { id: project.id },
+      update: data,
+      create: { id: project.id, ...data },
+    })
+  }
 
   await prisma.about.upsert({
     where: { id: 'main' },
