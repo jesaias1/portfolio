@@ -58,6 +58,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
   const hasLicenseCheckout = Boolean(product.urls.buyLicense);
   const isComingSoon = product.commerce.mode === "coming-soon";
   const pageCopy = productPageCopy[product.slug];
+  const price = product.commerce.priceLabel.match(/^\$\d+/)?.[0] ?? "Free";
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -67,11 +68,11 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
     applicationSubCategory: "Music software",
     operatingSystem: product.compatibility.join(", "),
     softwareVersion: product.currentVersion.version,
-    url: `https://jesaias.dk/audio/${product.slug}`,
+    url: `https://www.jesaias.dk/audio/${product.slug}`,
     author: {
       "@type": "Person",
       name: "Jesaias",
-      url: "https://jesaias.dk",
+      url: "https://www.jesaias.dk",
     },
     ...(hasLicenseCheckout
       ? {
@@ -86,6 +87,26 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
       : {}),
   };
 
+  const downloadActions = hasLicenseCheckout ? (
+    <>
+      <a href={product.urls.download} className="btn btn--accent" target="_blank" rel="noopener noreferrer">
+        {product.commerce.trialLabel ?? "Download free trial"}
+      </a>
+      <a href={product.urls.buyLicense} className="btn btn--ghost" target="_blank" rel="noopener noreferrer">
+        Buy license key
+      </a>
+    </>
+  ) : (
+    <>
+      <a href={product.urls.download} className="btn btn--accent" download>
+        Download {product.name}
+      </a>
+      <a href={product.urls.support} className="btn btn--ghost">
+        Contact / support
+      </a>
+    </>
+  );
+
   return (
     <main
       className={`audio-site product-page product-page--${product.slug}`}
@@ -97,14 +118,10 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
       />
       <AudioNav />
 
-      <section className="product-hero" aria-labelledby="product-title">
-        <div className="product-hero__copy">
-          <div className="label-row">
-            {product.labels.map((label) => (
-              <span key={label}>{label}</span>
-            ))}
-          </div>
-          <p className="audio-kicker">{product.kicker}</p>
+      <section className="phero" aria-labelledby="product-title">
+        <div className="phero__glow" aria-hidden="true" />
+        <div className="phero__copy">
+          <p className="eyebrow">{product.kicker}</p>
           {product.assets.logo ? (
             <Image
               src={product.assets.logo}
@@ -119,84 +136,76 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             {product.name}
           </h1>
           <h2>{product.headline}</h2>
-          <p>{product.longCopy}</p>
-          <p className="product-hero__note">{pageCopy.heroNote}</p>
-          {product.commerce.trialNote ? (
-            <p className="trial-note">{product.commerce.trialNote}</p>
-          ) : null}
-          <div className="audio-actions">
+          <p className="phero__lead">{product.longCopy}</p>
+          <div className="actions">
             {isComingSoon ? (
               <>
-                <a href={`#${product.slug}-video`} className="audio-button audio-button--dark">
+                <a href={`#${product.slug}-video`} className="btn btn--accent">
                   Explore the interface
                 </a>
-                <Link href="/#contact" className="audio-button audio-button--light">
+                <Link href="/#contact" className="btn btn--ghost">
                   Follow development
                 </Link>
               </>
-            ) : hasLicenseCheckout ? (
-              <>
-                <a
-                  href={product.urls.download}
-                  className="audio-button audio-button--dark"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {product.commerce.trialLabel ?? "Download Free Trial"}
-                </a>
-                <a
-                  href={product.urls.buyLicense}
-                  className="audio-button audio-button--light"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Buy License Key
-                </a>
-              </>
             ) : (
-              <>
-                <a href={product.urls.download} className="audio-button audio-button--dark" download>
-                  Download {product.name}
-                </a>
-                <a href={product.urls.watch} className="audio-button audio-button--light">
-                  Watch preview
-                </a>
-              </>
+              downloadActions
             )}
           </div>
-        </div>
-        <div className="product-hero__image">
-          <Image
-            src={product.assets.screenshot}
-            alt={`${product.name} interface screenshot`}
-            width={1300}
-            height={820}
-            priority
-            sizes="(max-width: 900px) 100vw, 58vw"
-          />
-          <div className="product-hero__hud" aria-hidden="true">
-            <span>{product.commerce.statusLabel}</span>
-            <strong>{product.currentVersion.version}</strong>
-          </div>
-          {heroVideo ? (
-            <div className="motion-preview motion-preview--hero">
-              <AutoAdVideo
-                label={`${product.name} silent product advertisement`}
-                poster={product.assets.screenshot}
-                src={heroVideo}
-              />
+          <p className="phero__note">{pageCopy.heroNote}</p>
+          <dl className="glance">
+            <div>
+              <dt>Version</dt>
+              <dd>{product.currentVersion.version}</dd>
             </div>
-          ) : null}
+            <div>
+              <dt>Status</dt>
+              <dd>{product.commerce.statusLabel}</dd>
+            </div>
+            <div>
+              <dt>Price</dt>
+              <dd>{price === "Free" ? "Free preview" : `${price} license`}</dd>
+            </div>
+          </dl>
+        </div>
+        <div className="phero__media">
+          <div className="frame frame--hero">
+            <Image
+              src={product.assets.screenshot}
+              alt={`${product.name} interface screenshot`}
+              width={1300}
+              height={820}
+              priority
+              sizes="(max-width: 960px) 100vw, 58vw"
+            />
+            {heroVideo ? (
+              <div className="frame__video">
+                <AutoAdVideo
+                  label={`${product.name} silent product advertisement`}
+                  poster={product.assets.screenshot}
+                  src={heroVideo}
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
       </section>
 
-      <section className="product-snapshot" aria-labelledby={`${product.slug}-snapshot-title`}>
-        <div className="product-snapshot__intro">
-          <p className="audio-kicker">Product direction</p>
+      <nav className="subnav" aria-label={`${product.name} sections`}>
+        <a href="#overview">Overview</a>
+        <a href={`#${product.slug}-video`}>In motion</a>
+        <a href="#features">Features</a>
+        <a href="#specs">Specs</a>
+        {isComingSoon ? null : <a href={`#download-${product.slug}`}>Download</a>}
+        <a href="#changelog">Changelog</a>
+      </nav>
+
+      <section id="overview" className="section" aria-labelledby={`${product.slug}-snapshot-title`}>
+        <header className="section__head">
+          <p className="eyebrow">Product direction</p>
           <h2 id={`${product.slug}-snapshot-title`}>{pageCopy.snapshotTitle}</h2>
           <p>{pageCopy.snapshotCopy}</p>
-        </div>
-        <div className="product-snapshot__cards" aria-label={`${product.name} at a glance`}>
+        </header>
+        <div className="trio" aria-label={`${product.name} at a glance`}>
           <article>
             <span>Focus</span>
             <p>{pageCopy.focus}</p>
@@ -212,157 +221,115 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
         </div>
       </section>
 
-      <section id={`${product.slug}-video`} className="interface-demo" aria-labelledby="demo-title">
-        <div>
-          <p className="audio-kicker">Interface demonstration</p>
+      <section id={`${product.slug}-video`} className="section section--panel" aria-labelledby="demo-title">
+        <header className="section__head">
+          <p className="eyebrow">Interface demonstration</p>
           <h2 id="demo-title">The workflow in motion.</h2>
           <p>{product.shortCopy}</p>
-        </div>
-        <div className="interface-demo__film">
-          <div className="interface-demo__poster">
-            <Image
-              src={product.assets.screenshot}
-              alt={`${product.name} interface preview`}
-              width={1600}
-              height={1000}
-              sizes="(max-width: 900px) 100vw, 64vw"
-            />
-          </div>
+        </header>
+        <div className="frame frame--wide">
+          <Image
+            src={product.assets.screenshot}
+            alt={`${product.name} interface preview`}
+            width={1600}
+            height={1000}
+            sizes="(max-width: 960px) 100vw, 1100px"
+          />
           {product.assets.video ? (
-            <div className="motion-preview motion-preview--demo">
+            <div className="frame__video">
               <AutoAdVideo
                 label={`${product.name} silent advertisement`}
                 poster={product.assets.screenshot}
                 src={product.assets.video}
               />
             </div>
-          ) : (
-            <div className="interface-placeholder__label">
-              <span>{product.name} / Interface study</span>
-              <strong>One sample. Four ways out.</strong>
-            </div>
-          )}
+          ) : null}
         </div>
-        {!product.assets.video ? (
-          <ol className="interface-demo__steps" aria-label={`${product.name} workflow preview`}>
-            {product.workflow.map((step, index) => (
-              <li key={step.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <strong>{step.title}</strong>
-                  <p>{step.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        ) : null}
+        <ol className="steps steps--row" aria-label={`${product.name} workflow`}>
+          {product.workflow.map((step, index) => (
+            <li key={step.title}>
+              <span>{index + 1}</span>
+              <div>
+                <strong>{step.title}</strong>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="product-detail-grid" aria-label={`${product.name} product details`}>
-        <DetailBlock title="Core features" items={product.features} />
-        <DetailBlock title="Compatibility" items={product.compatibility} />
-        <DetailBlock title="Installation" items={product.installation} ordered />
-        <article className="detail-block">
-          <h2>Current version</h2>
-          <p className="version-line">{product.currentVersion.version}</p>
-          <time dateTime={product.currentVersion.date}>{product.currentVersion.date}</time>
-          <ul>
-            {product.currentVersion.notes.map((note) => (
-              <li key={note}>{note}</li>
-            ))}
-          </ul>
-        </article>
+      <section id="features" className="section" aria-labelledby="features-title">
+        <header className="section__head">
+          <p className="eyebrow">Core features</p>
+          <h2 id="features-title">What is inside.</h2>
+        </header>
+        <ul className="features">
+          {product.features.map((feature, index) => (
+            <li key={feature}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <p>{feature}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section id="changelog" className="changelog-detail" aria-labelledby="changelog-title">
-        <div>
-          <p className="audio-kicker">Changelog</p>
+      <section id="specs" className="section section--panel" aria-labelledby="specs-title">
+        <header className="section__head">
+          <p className="eyebrow">Specs</p>
+          <h2 id="specs-title">Requirements and setup.</h2>
+        </header>
+        <div className="specs">
+          <DetailBlock title="Compatibility" items={product.compatibility} />
+          <DetailBlock title="Installation" items={product.installation} ordered />
+          <DetailBlock title={isComingSoon ? "Preview notes" : "Known beta limitations"} items={product.betaLimitations} />
+        </div>
+      </section>
+
+      {isComingSoon ? (
+        <section className="cta-band" aria-labelledby="development-title">
+          <div>
+            <p className="eyebrow">In development</p>
+            <h2 id="development-title">The structure is ready for launch.</h2>
+            <p>
+              Product recordings, audio examples, compatibility details and the final download link
+              can be added here without rebuilding the page.
+            </p>
+          </div>
+          <Link href="/#contact" className="btn btn--accent">
+            Ask about {product.name}
+          </Link>
+        </section>
+      ) : (
+        <section id={`download-${product.slug}`} className="cta-band" aria-labelledby="download-title">
+          <div>
+            <p className="eyebrow">{product.commerce.statusLabel}</p>
+            <h2 id="download-title">{product.commerce.priceLabel}.</h2>
+            <p>{pageCopy.accessCopy}</p>
+          </div>
+          <div className="actions actions--stack">{downloadActions}</div>
+        </section>
+      )}
+
+      <section id="changelog" className="section section--split" aria-labelledby="changelog-title">
+        <header className="section__head">
+          <p className="eyebrow">Changelog</p>
           <h2 id="changelog-title">{product.currentVersion.version}</h2>
           <time dateTime={product.currentVersion.date}>{product.currentVersion.date}</time>
-        </div>
-        <ul>
+        </header>
+        <ul className="notes">
           {product.currentVersion.notes.map((note) => (
             <li key={note}>{note}</li>
           ))}
         </ul>
       </section>
 
-      {hasLicenseCheckout ? (
-        <section id={`download-${product.slug}`} className="download-panel access-panel" aria-labelledby="access-title">
-          <div>
-            <p className="audio-kicker">{product.commerce.statusLabel}</p>
-            <h2 id="access-title">{product.commerce.priceLabel}.</h2>
-            <p>{pageCopy.accessCopy}</p>
-          </div>
-          <div className="audio-actions">
-            <a
-              href={product.urls.download}
-              className="audio-button audio-button--dark"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {product.commerce.trialLabel ?? "Download Free Trial"}
-            </a>
-            <a
-              href={product.urls.buyLicense}
-              className="audio-button audio-button--light"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Buy License Key
-            </a>
-          </div>
-        </section>
-      ) : !isComingSoon ? (
-        <section id={`download-${product.slug}`} className="download-panel" aria-labelledby="download-title">
-          <div>
-            <p className="audio-kicker">{product.commerce.statusLabel}</p>
-            <h2 id="download-title">{product.commerce.priceLabel}.</h2>
-            <p>{pageCopy.accessCopy}</p>
-          </div>
-          <div className="audio-actions">
-            <a href={product.urls.download} className="audio-button audio-button--dark" download>
-              Download installer
-            </a>
-            <a href={product.urls.support} className="audio-button audio-button--light">
-              Contact / Support
-            </a>
-          </div>
-        </section>
-      ) : null}
-
-      {isComingSoon ? (
-        <section className="download-panel development-panel" aria-labelledby="development-title">
-          <div>
-            <p className="audio-kicker">In development</p>
-            <h2 id="development-title">The structure is ready for launch.</h2>
-            <p>
-              Product recordings, audio examples, compatibility details and the final download
-              link can be added here without rebuilding the page.
-            </p>
-          </div>
-          <Link href="/#contact" className="audio-button audio-button--light">
-            Ask about ORVO
-          </Link>
-        </section>
-      ) : null}
-
-      <section className="limitations" aria-labelledby="limitations-title">
-        <h2 id="limitations-title">Known beta limitations</h2>
-        <ul>
-          {product.betaLimitations.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-
       {product.slug === "abyx" ? (
-        <section id="controller-support" className="controller-support" aria-labelledby="controller-support-title">
-          <div>
-            <p className="audio-kicker">Controller support</p>
+        <section id="controller-support" className="section section--split" aria-labelledby="controller-support-title">
+          <header className="section__head">
+            <p className="eyebrow">Controller support</p>
             <h2 id="controller-support-title">Designed for familiar pads.</h2>
-          </div>
-          <ul>
+          </header>
+          <ul className="notes">
             <li>Xbox and PlayStation style layouts are the initial beta target.</li>
             <li>Wired connections are recommended for the first public beta.</li>
             <li>Driver behavior can vary, so controller notes will live with each release.</li>
@@ -389,8 +356,8 @@ function DetailBlock({
   const List = ordered ? "ol" : "ul";
 
   return (
-    <article className="detail-block">
-      <h2>{title}</h2>
+    <article className="spec">
+      <h3>{title}</h3>
       <List>
         {items.map((item) => (
           <li key={item}>{item}</li>
