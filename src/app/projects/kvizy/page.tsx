@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ClickToPlayVideo from "@/components/ClickToPlayVideo";
 import ProjectNavigation from "@/components/ProjectNavigation";
 import { createProjectMetadata } from "@/lib/seo";
 import styles from "./kvizy.module.css";
@@ -123,6 +124,21 @@ export default function KvizyCaseStudy() {
             managing software.
           </p>
         </div>
+      </section>
+
+      <section className={styles.watch} aria-labelledby="watch-title">
+        <div className={styles.sectionHeading}>
+          <p className={styles.eyebrow}>The ad</p>
+          <h2 id="watch-title">Kvik. Kvikkere. KVIZY.</h2>
+        </div>
+        <ClickToPlayVideo
+          src="/projects/videos/kvizy-ad.mp4"
+          poster="/projects/kvizy-ad-poster.webp"
+          label="KVIZY ad, 19 seconds"
+          buttonLabel="Watch the ad"
+          accent="#ff641f"
+          className={styles.adPlayer}
+        />
       </section>
 
       <section className={styles.modes} aria-labelledby="modes-title">

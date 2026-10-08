@@ -3,7 +3,7 @@
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { fallbackProjects, type PortfolioProject } from '@/data/projects';
 import { useSound } from '@/hooks/use-sound';
 import TransitionLink from '@/components/TransitionLink';
@@ -12,38 +12,10 @@ type NavigatorWithConnection = Navigator & {
   connection?: { saveData?: boolean };
 };
 
-const projectPresentation: Record<string, { category: string; status: string; caseStudy?: string }> = {
-  kvizy: { category: 'Web product / PWA', status: 'Live', caseStudy: '/projects/kvizy' },
-  orvo: { category: 'Creative desktop software', status: 'In development', caseStudy: '/audio/orvo' },
-  ordbomben: { category: 'Real-time web product', status: 'Under maintenance' },
-  midium: { category: 'Audio software', status: 'Demo in progress', caseStudy: '/audio/midium' },
-  abyx: { category: 'Audio software', status: 'Beta', caseStudy: '/audio/abyx' },
-  lettus: { category: 'Daily game', status: 'Live' },
-  'dump.media': { category: 'Music platform', status: 'Under maintenance' },
-  'moonana studio': { category: 'Creative software', status: 'Under maintenance' },
-};
-
-const projectSignals: Record<string, string> = {
-  kvizy: 'Designed and built a Danish quiz product with offline-first flow, mobile UX and practical game-night pacing.',
-  orvo: 'Product concept, interface direction and iterative development of a private preview build.',
-  ordbomben: 'Developed and refined a real-time multiplayer word game with game flow, score logic and responsive play.',
-  midium: 'Visual MIDI workflow prototype combining product direction, interface design and plugin development.',
-  abyx: 'Creative controller concept shaped around gamepad input, performance UX and plugin workflow experiments.',
-  lettus: 'Designed and iterated a compact daily word game with clear feedback, mobile layout and focused game logic.',
-  'dump.media': 'Directed a producer marketplace concept around audio browsing, creator profiles and media-commerce flow.',
-};
-
-const preferredProjectOrder = ['kvizy', 'orvo', "ryder's road", 'ryders road', 'ordbomben', 'midium', 'abyx', 'lettus', 'dump.media'];
-
-const projectDescriptions: Record<string, string> = {
-  kvizy: 'A Danish pass-the-device quiz product designed for one shared screen, quick setup and real game-night use.',
-  orvo: 'A creative audio product for turning samples into evolving playable instruments through tactile controls and visual feedback.',
-  ordbomben: 'A real-time multiplayer word game built around speed, pressure, score logic and responsive rounds.',
-  midium: 'A visual MIDI instrument concept for sketching melodies, basslines and patterns directly into a producer-focused piano roll.',
-  abyx: 'A controller-based music tool exploring how familiar gamepad input can become a playful performance interface for DAWs.',
-  lettus: 'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
-  'dump.media': 'A producer marketplace concept for browsing audio, presenting creator profiles and shaping media-commerce flows.',
-};
+// fallbackProjects is the single source for curated copy and display order. Projects coming from
+// the database are matched by title so the curated description, category and case study win.
+const curatedByTitle = new Map(fallbackProjects.map((project) => [project.title.toLowerCase(), project]));
+const displayOrder = fallbackProjects.map((project) => project.title.toLowerCase());
 
 export default function Projects() {
   const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
@@ -130,16 +102,8 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
   const cardRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
-  const [touchLayout, setTouchLayout] = useState(() =>
-    typeof window === 'undefined'
-      ? false
-      : window.matchMedia('(hover: none), (pointer: coarse)').matches
-  );
-  const [saveData] = useState(() =>
-    typeof navigator === 'undefined'
-      ? false
-      : (navigator as NavigatorWithConnection).connection?.saveData === true
-  );
+  const touchLayout = useSyncExternalStore(subscribeTouchLayout, getTouchLayout, getServerFalse);
+  const saveData = useSyncExternalStore(subscribeNothing, getSaveData, getServerFalse);
   const [touchInViewReady, setTouchInViewReady] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const inView = useInView(cardRef, { amount: 0.42 });
@@ -147,14 +111,14 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
   const { play } = useSound();
 
   const key = project.title.toLowerCase();
-  const presentation = projectPresentation[key] ?? {
-    category: project.tags[0] ?? 'Digital product',
-    status: project.featured ? 'Featured' : 'Project',
-  };
-  const status = project.status ?? presentation.status;
+  const curated = curatedByTitle.get(key);
+  const category = curated?.category ?? project.category ?? project.tags[0] ?? 'Digital product';
+  const caseStudy = curated?.caseStudy ?? project.caseStudy;
+  const status = curated?.status ?? project.status ?? (project.featured ? 'Featured' : 'Project');
   const isUnavailable = status === 'Under maintenance' || status === 'Archived';
-  const liveHref = !isUnavailable && project.link && isExternal(project.link) ? project.link : undefined;
-  const primaryHref = presentation.caseStudy ?? liveHref;
+  const link = curated?.link ?? project.link;
+  const liveHref = !isUnavailable && link && isExternal(link) ? link : undefined;
+  const primaryHref = caseStudy ?? liveHref;
   const hasVideo = Boolean(project.video);
   const showVideo =
     hasVideo &&
@@ -164,15 +128,8 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
     (touchLayout ? touchInViewReady : hovered);
 
   const tags = project.tags.slice(0, 4);
-  const signal = projectSignals[key];
-  const description = projectDescriptions[key] ?? project.description;
-
-  useEffect(() => {
-    const media = window.matchMedia('(hover: none), (pointer: coarse)');
-    const update = () => setTouchLayout(media.matches);
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
-  }, []);
+  const signal = curated?.signal ?? project.signal;
+  const description = curated?.description ?? project.description;
 
   useEffect(() => {
     const shouldPrepareTouchVideo = touchLayout && hasVideo && !reduceMotion && !saveData && inView;
@@ -260,7 +217,7 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070809]/75 via-transparent to-black/10" />
         <div className="absolute left-4 top-4 z-10 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.13em] text-white/70 sm:left-5 sm:top-5">
           <span className="border border-white/15 bg-black/55 px-2 py-1.5 backdrop-blur-md">
-            {presentation.category}
+            {category}
           </span>
           <span className="border border-[#4ddbff]/20 bg-black/55 px-2 py-1.5 text-[#4ddbff]/80 backdrop-blur-md">
             {status}
@@ -299,8 +256,8 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
           </div>
 
           <div className="relative z-30 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.1em]">
-            {presentation.caseStudy ? (
-              <TransitionLink href={presentation.caseStudy} className="inline-flex min-h-11 items-center text-[#4ddbff] hover:text-white">
+            {caseStudy ? (
+              <TransitionLink href={caseStudy} className="inline-flex min-h-11 items-center text-[#4ddbff] hover:text-white">
                 Case study
               </TransitionLink>
             ) : null}
@@ -316,17 +273,46 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
   );
 }
 
+const TOUCH_QUERY = '(hover: none), (pointer: coarse)';
+
+function subscribeTouchLayout(onChange: () => void) {
+  const media = window.matchMedia(TOUCH_QUERY);
+  media.addEventListener('change', onChange);
+  return () => media.removeEventListener('change', onChange);
+}
+
+function getTouchLayout() {
+  return window.matchMedia(TOUCH_QUERY).matches;
+}
+
+function getSaveData() {
+  return (navigator as NavigatorWithConnection).connection?.saveData === true;
+}
+
+function subscribeNothing() {
+  return () => undefined;
+}
+
+function getServerFalse() {
+  return false;
+}
+
 function isExternal(href: string) {
-  return /^https?:\/\//i.test(href);
+  return /^https?:\/\//i.test(href) || href.startsWith('/play/');
 }
 
 function isLegacyHidden(project: PortfolioProject) {
   const key = `${project.title} ${project.id}`.toLowerCase();
-  return key.includes('stickman') || key.includes('stick fighting') || key.includes('stick-fighting');
+  return (
+    key.includes('stickman') ||
+    key.includes('stick fighting') ||
+    key.includes('stick-fighting') ||
+    key.includes('dump.media') ||
+    key.includes('dump-media')
+  );
 }
 
 function getProjectRank(project: PortfolioProject) {
-  const key = project.title.toLowerCase();
-  const rank = preferredProjectOrder.indexOf(key);
+  const rank = displayOrder.indexOf(project.title.toLowerCase());
   return rank === -1 ? 100 + (project.order ?? 0) : rank;
 }

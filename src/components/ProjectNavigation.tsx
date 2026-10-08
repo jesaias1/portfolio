@@ -7,6 +7,7 @@ const projects = [
   { slug: 'midium', title: 'MIDIUM', category: 'Visual MIDI tool', href: '/audio/midium' },
   { slug: 'abyx', title: 'ABYX', category: 'Gamepad instrument', href: '/audio/abyx' },
   { slug: 'kvizy', title: 'KVIZY', category: 'Offline quiz game', href: '/projects/kvizy' },
+  { slug: 'playhead', title: 'Playhead', category: 'Music surf game', href: '/projects/playhead' },
 ] as const;
 
 export default function ProjectNavigation({

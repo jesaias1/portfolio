@@ -23,12 +23,12 @@ const legacyPolicy = (title: string, id = '') => {
   if (key.includes('stickman') || key.includes('stick fighting')) {
     return { visible: false, status: 'Archived' as const };
   }
-  if (key.includes('ordbomben') || key.includes('dump') || key.includes('moonana')) {
+  if (key.includes('moonana')) {
     return { visible: true, status: 'Under maintenance' as const };
   }
   if (key.includes('orvo')) return { visible: true, status: 'In development' as const };
   if (key.includes('midium') || key.includes('abyx')) return { visible: true, status: 'Beta' as const };
-  if (key.includes('kvizy') || key.includes('lettus')) return { visible: true, status: 'Live' as const };
+  if (key.includes('kvizy') || key.includes('lettus') || key.includes('ordbomben')) return { visible: true, status: 'Live' as const };
   return { visible: true, status: undefined };
 };
 

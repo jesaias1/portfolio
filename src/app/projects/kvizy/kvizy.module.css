@@ -74,6 +74,10 @@
 .storyBody { display: grid; gap: 26px; max-width: 780px; }
 .storyBody p { color: rgba(243, 238, 229, .72); font-size: clamp(19px, 2vw, 27px); line-height: 1.55; }
 
+.watch { padding: clamp(72px, 10vw, 140px) clamp(18px, 5vw, 72px); border-bottom: 1px solid rgba(243, 238, 229, .12); }
+.watch h2 { margin-top: 18px; font-size: clamp(42px, 5.8vw, 90px); line-height: .94; letter-spacing: -.055em; }
+.adPlayer { margin-top: 48px; border: 1px solid rgba(255, 100, 31, .36); box-shadow: 0 35px 120px rgba(0,0,0,.45); }
+
 .modes { padding: clamp(72px, 10vw, 140px) clamp(18px, 5vw, 72px); border-bottom: 1px solid rgba(243, 238, 229, .12); }
 .sectionHeading { max-width: 900px; }
 .modeGrid { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 60px; border: 1px solid rgba(243, 238, 229, .12); }

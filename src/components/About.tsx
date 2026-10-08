@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import ClickToPlayVideo from './ClickToPlayVideo';
 
 const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'JUCE / C++', 'Unity / C#', 'PWA / offline-first', 'WebSockets'];
 
@@ -33,7 +34,7 @@ const processSteps = [
 
 const workSignals = [
   ['Best fit', 'Design engineer roles, product/frontend roles, creative technology and selected freelance projects.'],
-  ['Workflow', 'Creative direction, implementation support from AI tools, debugging, testing and fast iteration.'],
+  ['Workflow', 'Creative direction, rapid prototyping, debugging, testing and fast iteration.'],
   ['Primary tools', 'React, Next.js, TypeScript, Tailwind and Framer Motion.'],
   ['Project experience', 'JUCE / C++, Unity / C#, WebSockets, PWA patterns and API-backed products.'],
 ];
@@ -120,6 +121,33 @@ export default function About() {
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
+
+            <details className="group mt-8 border border-[#4ddbff]/30 bg-[#4ddbff]/[0.05] transition-colors open:bg-[#4ddbff]/[0.03] hover:border-[#4ddbff]/60">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 sm:px-5">
+                <span className="flex items-center gap-4">
+                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#4ddbff]/60 text-[#4ddbff]">
+                    <span className="absolute inset-0 animate-ping rounded-full border border-[#4ddbff]/40 group-open:hidden" aria-hidden="true" />
+                    <svg viewBox="0 0 24 24" className="ml-0.5 h-4 w-4 fill-current" aria-hidden="true">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </span>
+                  <span>
+                    <span className="block text-base font-semibold text-white sm:text-lg">Watch the Project Reel</span>
+                    <span className="block font-mono text-[10px] uppercase tracking-[0.14em] text-[#4ddbff]/70">1:28 / sound on</span>
+                  </span>
+                </span>
+                <span className="font-mono text-lg text-[#4ddbff]/70 transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+              </summary>
+              <div className="px-4 pb-4 sm:px-5 sm:pb-5">
+                <ClickToPlayVideo
+                  src="/reel/project-reel-v2.mp4"
+                  poster="/reel/project-reel-v2-poster.webp"
+                  label="Project Reel"
+                  buttonLabel="Play reel"
+                  className="border border-white/[0.09]"
+                />
+              </div>
+            </details>
 
             <div className="mt-9 flex flex-wrap gap-2 border-t border-white/[0.07] pt-6">
               {skills.slice(0, 8).map((skill) => (

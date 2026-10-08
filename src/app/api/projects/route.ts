@@ -74,5 +74,11 @@ function catalogueResponse(projects: typeof fallbackProjects, includeHidden: boo
 
 function isLegacyHidden(project: PortfolioProject) {
   const key = `${project.title} ${project.id}`.toLowerCase();
-  return key.includes('stickman') || key.includes('stick fighting') || key.includes('stick-fighting');
+  return (
+    key.includes('stickman') ||
+    key.includes('stick fighting') ||
+    key.includes('stick-fighting') ||
+    key.includes('dump.media') ||
+    key.includes('dump-media')
+  );
 }
