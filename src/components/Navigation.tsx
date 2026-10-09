@@ -15,7 +15,6 @@ const navItems = [
   { name: 'capabilities', href: '#capabilities', section: 'capabilities' },
   { name: 'music software', href: '/audio', section: null },
   { name: 'contact', href: '#contact', section: 'contact' },
-  ...(CV_HREF ? [{ name: 'CV ↗', href: CV_HREF, section: null }] : []),
 ];
 
 export default function Navigation() {

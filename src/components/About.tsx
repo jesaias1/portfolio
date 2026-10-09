@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import ClickToPlayVideo from './ClickToPlayVideo';
+import { CV_HREF } from '@/lib/profile';
 
 const bioParagraphs = [
   'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive systems and creative software.',
@@ -106,6 +107,17 @@ export default function About() {
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
+            {CV_HREF ? (
+              <a
+                href={CV_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-track="cv_open"
+                className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.14em] text-gray-600 transition-colors hover:text-gray-300"
+              >
+                Résumé (PDF) ↗
+              </a>
+            ) : null}
 
             <details className="group mt-8 border border-[#4ddbff]/30 bg-[#4ddbff]/[0.05] transition-colors open:bg-[#4ddbff]/[0.03] hover:border-[#4ddbff]/60">
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 sm:px-5">

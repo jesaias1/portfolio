@@ -58,7 +58,6 @@ export default function Hero({
   const shouldReduceMotion = useReducedMotion();
   const { play } = useSound();
   const lenis = useLenis();
-  const cvHref = CV_HREF;
   const closeTerminal = useCallback(() => setIsTerminalOpen(false), []);
   const setHeroCursorHidden = useCallback((hidden: boolean) => {
     document.body.classList.toggle('hero-logo-cursor-hidden', hidden);
@@ -397,11 +396,6 @@ export default function Hero({
             <TerminalButton onClick={() => handleNavClick('#projects')} variant="solid">
               View selected work ↓
             </TerminalButton>
-            {cvHref ? (
-              <TerminalButton onClick={() => handleNavClick(cvHref)} variant="outline">
-                CV ↗
-              </TerminalButton>
-            ) : null}
             <TerminalButton onClick={() => handleNavClick('#contact')} variant="outline">
               /contact
             </TerminalButton>

@@ -191,6 +191,11 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
           <span className="mt-2 text-xl text-[#4ddbff]/45 transition-transform duration-300 group-hover:translate-x-1">↗</span>
         </div>
 
+        <p className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-gray-500">
+          <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${statusDot(status)}`} />
+          {status}
+        </p>
+
         <p className="max-w-xl text-sm leading-6 text-gray-400 sm:text-[15px]">
           {description}
         </p>
@@ -250,6 +255,12 @@ function subscribeNothing() {
 
 function getServerFalse() {
   return false;
+}
+
+function statusDot(status: string) {
+  if (status === 'Live') return 'bg-emerald-400';
+  if (status === 'Beta' || status === 'In development') return 'bg-[#4ddbff]';
+  return 'bg-gray-500';
 }
 
 function isExternal(href: string) {
