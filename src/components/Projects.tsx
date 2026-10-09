@@ -175,7 +175,10 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
           />
         ) : null}
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070809]/75 via-transparent to-black/10" />
+        {/* Same treatment as the social cards: dark left edge for legibility, soft cyan glow, darker foot. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070809]/70 via-[#070809]/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_12%,rgba(77,219,255,0.14),transparent_45%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070809]/80 via-transparent to-black/10" />
         <div className="absolute left-4 top-4 z-10 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.13em] text-white/70 sm:left-5 sm:top-5">
           <span className="border border-white/15 bg-black/55 px-2 py-1.5 backdrop-blur-md">
             {category}
