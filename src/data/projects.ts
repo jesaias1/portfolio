@@ -39,26 +39,6 @@ export const fallbackProjects: PortfolioProject[] = [
     visible: true,
   },
   {
-    id: 'playhead-008',
-    title: 'Playhead',
-    description:
-      'Your music, as a place. Playhead turns any song you drop in into a 3D world you strafe and surf through in first person. Free to play in the browser.',
-    longDesc:
-      'Playhead analyses an audio file in the browser and builds a world from it: the song ahead is dormant architecture, the now-line ignites it as you arrive, and drops become set pieces. You are the playhead, strafing and surfing through your own music, and every run you win earns a signal drop.',
-    category: 'Browser game',
-    signal:
-      'Designed and built a game that analyses audio in real time and generates its 3D world from the song.',
-    image: '/projects/playhead-v2.webp',
-    video: '/projects/videos/playhead-v2.mp4',
-    tags: ['Three.js', 'TypeScript', 'Web Audio', 'Procedural 3D', 'Vite'],
-    caseStudy: '/projects/playhead',
-    // Public path that redirects to the live deployment (see next.config.ts).
-    link: '/play/playhead',
-    featured: true,
-    status: 'Live',
-    visible: true,
-  },
-  {
     id: 'orvo-006',
     title: 'ORVO',
     description:
@@ -94,6 +74,26 @@ export const fallbackProjects: PortfolioProject[] = [
     link: '/audio/midium',
     featured: true,
     status: 'Beta',
+    visible: true,
+  },
+  {
+    id: 'playhead-008',
+    title: 'Playhead',
+    description:
+      'Your music, as a place. Playhead turns any song you drop in into a 3D world you strafe and surf through in first person. Free to play in the browser.',
+    longDesc:
+      'Playhead analyses an audio file in the browser and builds a world from it: the song ahead is dormant architecture, the now-line ignites it as you arrive, and drops become set pieces. You are the playhead, strafing and surfing through your own music, and every run you win earns a signal drop.',
+    category: 'Browser game',
+    signal:
+      'Designed and built a game that analyses audio in real time and generates its 3D world from the song.',
+    image: '/projects/playhead-thumb.webp',
+    video: '/projects/videos/playhead-v2.mp4',
+    tags: ['Three.js', 'TypeScript', 'Web Audio', 'Procedural 3D', 'Vite'],
+    caseStudy: '/projects/playhead',
+    // Public path that redirects to the live deployment (see next.config.ts).
+    link: '/play/playhead',
+    featured: true,
+    status: 'Live',
     visible: true,
   },
   {
