@@ -177,6 +177,8 @@ export function AudioLanding() {
                 <div className="actions actions--stack">
                   <a
                     href={product.urls.download}
+                    data-track="download_click"
+                    data-track-product={product.slug}
                     className="btn btn--accent"
                     target={action.external ? "_blank" : undefined}
                     rel={action.external ? "noopener noreferrer" : undefined}
@@ -185,7 +187,7 @@ export function AudioLanding() {
                     {action.label}
                   </a>
                   {product.urls.buyLicense ? (
-                    <a href={product.urls.buyLicense} className="btn btn--ghost" target="_blank" rel="noopener noreferrer">
+                    <a href={product.urls.buyLicense} data-track="buy_license_click" data-track-product={product.slug} className="btn btn--ghost" target="_blank" rel="noopener noreferrer">
                       Buy license key
                     </a>
                   ) : (
@@ -340,6 +342,8 @@ function ProductShowcase({
         <div className="actions">
           <a
             href={product.urls.download}
+            data-track="download_click"
+            data-track-product={product.slug}
             className="btn btn--accent"
             target={action.external ? "_blank" : undefined}
             rel={action.external ? "noopener noreferrer" : undefined}

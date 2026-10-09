@@ -11,9 +11,9 @@ export const metadata: Metadata = createProjectMetadata({
   description:
     "A case study of Playhead, a free first-person browser game that analyses any song and builds a 3D world to strafe and surf through.",
   path: "/projects/playhead",
-  image: "/projects/playhead-v2.webp",
-  imageWidth: 1672,
-  imageHeight: 941,
+  image: "/og-playhead.png",
+  imageWidth: 1200,
+  imageHeight: 630,
   imageAlt: "Playhead first-person surf run through a song-generated world",
   keywords: ["Playhead", "music game", "browser game", "Three.js", "Web Audio", "procedural world", "surf game"],
 });

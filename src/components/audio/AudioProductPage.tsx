@@ -89,16 +89,16 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
 
   const downloadActions = hasLicenseCheckout ? (
     <>
-      <a href={product.urls.download} className="btn btn--accent" target="_blank" rel="noopener noreferrer">
+      <a href={product.urls.download} data-track="download_click" data-track-product={product.slug} className="btn btn--accent" target="_blank" rel="noopener noreferrer">
         {product.commerce.trialLabel ?? "Download free trial"}
       </a>
-      <a href={product.urls.buyLicense} className="btn btn--ghost" target="_blank" rel="noopener noreferrer">
+      <a href={product.urls.buyLicense} data-track="buy_license_click" data-track-product={product.slug} className="btn btn--ghost" target="_blank" rel="noopener noreferrer">
         Buy license key
       </a>
     </>
   ) : (
     <>
-      <a href={product.urls.download} className="btn btn--accent" download>
+      <a href={product.urls.download} data-track="download_click" data-track-product={product.slug} className="btn btn--accent" download>
         Download {product.name}
       </a>
       <a href={product.urls.support} className="btn btn--ghost">

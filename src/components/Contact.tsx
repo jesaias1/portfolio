@@ -1,7 +1,8 @@
 'use client';
 
+import { track } from '@vercel/analytics';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSound } from '@/hooks/use-sound';
 
@@ -21,20 +22,10 @@ const fallbackContact: ContactInfo = {
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '', website: '' });
   const [formStartedAt, setFormStartedAt] = useState(() => Date.now());
-  const [contactInfo, setContactInfo] = useState<ContactInfo>(fallbackContact);
+  const contactInfo: ContactInfo = fallbackContact;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { play } = useSound();
-
-  useEffect(() => {
-    fetch('/api/contact')
-      .then((response) => {
-        if (!response.ok) throw new Error('Contact details unavailable');
-        return response.json();
-      })
-      .then((data) => setContactInfo({ ...fallbackContact, ...data }))
-      .catch(() => undefined);
-  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -53,6 +44,7 @@ export default function Contact() {
       toast.success('Message sent.');
       play('success');
       setIsSuccess(true);
+      track('contact_sent');
       setFormData({ name: '', email: '', message: '', website: '' });
       setFormStartedAt(Date.now());
     } catch {

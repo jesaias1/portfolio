@@ -112,7 +112,7 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
         }, 400);
         break;
       case 'owner':
-        setHistory(prev => [...prev, 'OWNER COMMANDS:', '- demo: Presentation mode', '- reset-visit: Replay splash for normal browser launch', '- root: Admin login', '- audio: Music software']);
+        setHistory(prev => [...prev, 'OWNER COMMANDS:', '- demo: Presentation mode', '- reset-visit: Replay splash for normal browser launch', '- audio: Music software']);
         break;
       case 'reset-visit':
       case 'reset':
@@ -125,15 +125,6 @@ export default function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProp
       case 'exit':
         setHistory(prev => [...prev, 'SHUTDOWN INITIATED...']);
         setTimeout(onClose, 500);
-        break;
-      case 'root':
-      case 'admin':
-      case '/admin':
-        setHistory(prev => [...prev, 'ACCESSING CORE SYSTEM...', 'REDIRECTING TO ADMIN LOGIN...']);
-        window.dispatchEvent(new CustomEvent('glitch-trigger'));
-        setTimeout(() => {
-          window.location.href = '/admin/login';
-        }, 400);
         break;
       default:
         setHistory(prev => [...prev, `ERR: Command "${cmd}" not found. Type "help" for assistance.`]);

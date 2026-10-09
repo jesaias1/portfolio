@@ -47,6 +47,7 @@ export default function Home() {
   const [playLogoIntro, setPlayLogoIntro] = useState(false);
   const [rememberSplashVisit, setRememberSplashVisit] = useState(true);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
+  const [logoIdle, setLogoIdle] = useState(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -68,8 +69,22 @@ export default function Home() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
+  // Keep three.js and the 3D logo out of the critical path: text and layout hydrate first.
   useEffect(() => {
-    void import('@/components/Logo3D');
+    const start = () => {
+      void import('@/components/Logo3D');
+      setLogoIdle(true);
+    };
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+      const id = idleWindow.requestIdleCallback(start, { timeout: 2500 });
+      return () => idleWindow.cancelIdleCallback?.(id);
+    }
+    const timer = window.setTimeout(start, 600);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -116,7 +131,7 @@ export default function Home() {
         <ScrollProgress />
         <GlitchFlash />
         <Navigation />
-        <Hero playLogoIntro={playLogoIntro} enableLogo={isReady && !showSplash} />
+        <Hero playLogoIntro={playLogoIntro} enableLogo={isReady && logoIdle && !showSplash} />
 
         <SectionDivider />
         <Projects />

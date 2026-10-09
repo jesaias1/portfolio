@@ -9,11 +9,17 @@ export default function TransitionLink({
   children,
   className,
   ariaLabel,
+  dataTrack,
+  dataTrackProject,
+  dataTrackKind,
 }: {
   href: string;
   children?: ReactNode;
   className?: string;
   ariaLabel?: string;
+  dataTrack?: string;
+  dataTrackProject?: string;
+  dataTrackKind?: string;
 }) {
   const router = useRouter();
   const timerRef = useRef<number | null>(null);
@@ -44,7 +50,15 @@ export default function TransitionLink({
   };
 
   return (
-    <Link href={href} className={className} aria-label={ariaLabel} onClick={handleClick}>
+    <Link
+      href={href}
+      className={className}
+      aria-label={ariaLabel}
+      onClick={handleClick}
+      data-track={dataTrack}
+      data-track-project={dataTrackProject}
+      data-track-kind={dataTrackKind}
+    >
       {children}
     </Link>
   );

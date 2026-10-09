@@ -2,8 +2,21 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import ClickToPlayVideo from './ClickToPlayVideo';
+import { fallbackProjects } from '@/data/projects';
+
+const bioParagraphs = [
+  'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive systems and creative software.',
+  'My background started in visual design and grew into product development. I work hands-on across direction, interface, prototyping, testing and implementation, using modern AI-assisted development tools while keeping product and visual judgement at the center.',
+];
+
+const liveProjects = fallbackProjects.filter((project) => project.status === 'Live').length;
+const proof = [
+  [String(fallbackProjects.length), 'projects shipped'],
+  [String(liveProjects), 'live in the browser'],
+  ['3', 'music tools with VST3'],
+  ['1,439', 'curated questions in KVIZY'],
+];
 
 const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'JUCE / C++', 'Unity / C#', 'PWA / offline-first', 'WebSockets'];
 
@@ -39,29 +52,10 @@ const workSignals = [
   ['Project experience', 'JUCE / C++, Unity / C#, WebSockets, PWA patterns and API-backed products.'],
 ];
 
-type AboutData = {
-  title?: string;
-  content?: string;
-  image?: string;
-  skills?: string[];
-};
-
 export default function About() {
-  const [aboutData, setAboutData] = useState<AboutData>({});
-
-  useEffect(() => {
-    fetch('/api/about')
-      .then((response) => {
-        if (!response.ok) throw new Error('About content unavailable');
-        return response.json();
-      })
-      .then((data) => setAboutData(data))
-      .catch(() => undefined);
-  }, []);
-
-  const paragraphs = normalizeParagraphs(aboutData.content);
-  const skills = getDisplaySkills(aboutData.skills);
-  const image = aboutData.image?.startsWith('/') ? aboutData.image : '/headshot.jpg';
+  const paragraphs = bioParagraphs;
+  const skills = defaultSkills;
+  const image = '/headshot.jpg';
 
   return (
     <section id="about" className="content-section relative overflow-hidden py-20 md:py-28">
@@ -149,6 +143,15 @@ export default function About() {
               </div>
             </details>
 
+            <dl className="mt-9 grid grid-cols-2 gap-px border border-white/[0.08] bg-white/[0.08] sm:grid-cols-4">
+              {proof.map(([value, label]) => (
+                <div key={label} className="flex flex-col-reverse justify-end bg-[#0a0b0c] p-4">
+                  <dt className="mt-1 font-mono text-[9px] uppercase leading-4 tracking-[0.12em] text-gray-500">{label}</dt>
+                  <dd className="text-2xl font-semibold tracking-[-0.03em] text-white sm:text-3xl">{value}</dd>
+                </div>
+              ))}
+            </dl>
+
             <div className="mt-9 flex flex-wrap gap-2 border-t border-white/[0.07] pt-6">
               {skills.slice(0, 8).map((skill) => (
                 <span
@@ -234,35 +237,4 @@ function AboutPanel({
       <div className="pt-4">{children}</div>
     </details>
   );
-}
-
-function normalizeParagraphs(content?: string) {
-  const fallback = [
-    'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive systems and creative software.',
-    'My background started in visual design and grew into product development. I work hands-on across direction, interface, prototyping, testing and implementation, using modern AI-assisted development tools while keeping product and visual judgement at the center.',
-  ];
-
-  if (!content) return fallback;
-
-  const plainText = content
-    .replace(/<\/p>/gi, '\n\n')
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .trim();
-
-  if (/passionate developer|6\+ years|scalable solutions|function perfectly/i.test(plainText)) {
-    return fallback;
-  }
-
-  return plainText.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
-}
-
-function getDisplaySkills(skills?: string[]) {
-  if (!skills?.length) return defaultSkills;
-  const serialized = skills.join(' ').toLowerCase();
-  if (serialized.includes('postgresql') || serialized.includes('node.js')) return defaultSkills;
-  return skills;
 }

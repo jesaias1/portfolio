@@ -7,7 +7,7 @@ const outDir = join(root, 'public');
 
 function assetUrl(path) {
   const ext = path.split('.').pop()?.toLowerCase();
-  const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'webp' ? 'image/webp' : 'image/png';
   const data = readFileSync(join(root, 'public', path)).toString('base64');
   return `data:${mime};base64,${data}`;
 }
@@ -247,6 +247,72 @@ const audioHtml = `
 </body>
 </html>`;
 
+const projectCss = (accent, glow) => `${baseCss}
+  .card { background: #05060a; }
+  .card::before { display: none; }
+  .shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .card::after {
+    background:
+      linear-gradient(90deg, rgba(5, 6, 10, 0.94) 0%, rgba(5, 6, 10, 0.72) 42%, rgba(5, 6, 10, 0.1) 78%),
+      radial-gradient(circle at 85% 20%, ${glow}, transparent 40%);
+  }
+  .kicker { color: ${accent}; }
+  h1 { font-size: 92px; letter-spacing: -0.03em; text-transform: none; }
+  .subtitle { color: #fff; }
+  .tag { border-color: ${accent}66; background: ${accent}14; color: #fff; }
+`;
+
+const playheadHtml = `
+<!doctype html>
+<html>
+<head><style>${projectCss('#9dff4a', 'rgba(27, 44, 255, 0.35)')}</style></head>
+<body>
+  <div class="card">
+    <img class="shot" src="${assetUrl('projects/playhead-v2.webp')}" />
+    <div class="content">
+      <p class="kicker">&gt; jesaias.dk / playhead</p>
+      <h1>Playhead</h1>
+      <p class="subtitle">Your music, as a place.</p>
+      <p class="body">Drop in any song and surf through the world it becomes. Free to play in the browser.</p>
+      <div class="tags">
+        <span class="tag">Browser game</span>
+        <span class="tag">Three.js</span>
+        <span class="tag">Web Audio</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+const kvizyHtml = `
+<!doctype html>
+<html>
+<head><style>${projectCss('#ff641f', 'rgba(255, 100, 31, 0.3)')}</style></head>
+<body>
+  <div class="card">
+    <img class="shot" src="${assetUrl('projects/kvizy-mockup.png')}" />
+    <div class="content">
+      <p class="kicker">&gt; jesaias.dk / kvizy</p>
+      <h1>KVIZY</h1>
+      <p class="subtitle">Quiz-aftenen starter her.</p>
+      <p class="body">A Danish pass-the-device quiz for one shared screen, with 1,439 questions and offline play.</p>
+      <div class="tags">
+        <span class="tag">Next.js 16</span>
+        <span class="tag">PWA</span>
+        <span class="tag">Offline-first</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
 async function render(html, filename) {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
@@ -260,3 +326,5 @@ async function render(html, filename) {
 
 await render(portfolioHtml, 'og-portfolio-2026.png');
 await render(audioHtml, 'og-audio-2026.png');
+await render(playheadHtml, 'og-playhead.png');
+await render(kvizyHtml, 'og-kvizy.png');

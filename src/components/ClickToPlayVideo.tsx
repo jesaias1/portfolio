@@ -1,5 +1,6 @@
 'use client';
 
+import { track } from '@vercel/analytics';
 import { useRef, useState, type CSSProperties } from 'react';
 
 type ClickToPlayVideoProps = {
@@ -27,6 +28,7 @@ export default function ClickToPlayVideo({
     const video = videoRef.current;
     if (!video) return;
     setStarted(true);
+    track('video_play', { label });
     video.muted = false;
     void video.play().catch(() => undefined);
   };

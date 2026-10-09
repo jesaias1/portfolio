@@ -11,9 +11,9 @@ export const metadata: Metadata = createProjectMetadata({
   description:
     "A case study of KVIZY, a Danish offline-first pass-the-device quiz game designed for game nights on one shared screen.",
   path: "/projects/kvizy",
-  image: "/projects/kvizy-mockup.png",
-  imageWidth: 1672,
-  imageHeight: 941,
+  image: "/og-kvizy.png",
+  imageWidth: 1200,
+  imageHeight: 630,
   imageAlt: "KVIZY Danish multiplayer quiz interface",
   keywords: ["KVIZY", "Danish quiz", "multiplayer quiz", "offline PWA", "Next.js game", "game night"],
 });

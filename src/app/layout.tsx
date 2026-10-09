@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import SmoothScroll from '@/components/SmoothScroll';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import ClickTracker from '@/components/ClickTracker';
 import GlitchTransition from '@/components/GlitchTransition';
 import { SITE_URL } from '@/lib/seo';
 
@@ -161,6 +162,7 @@ export default function RootLayout({
           }}
         />
         <Analytics />
+        <ClickTracker />
         <SpeedInsights />
       </body>
     </html>

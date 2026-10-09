@@ -2,7 +2,6 @@
 
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { fallbackProjects, type PortfolioProject } from '@/data/projects';
 import { useSound } from '@/hooks/use-sound';
@@ -18,50 +17,12 @@ const curatedByTitle = new Map(fallbackProjects.map((project) => [project.title.
 const displayOrder = fallbackProjects.map((project) => project.title.toLowerCase());
 
 export default function Projects() {
-  const [projects, setProjects] = useState<PortfolioProject[]>(fallbackProjects);
-  const [previewMode, setPreviewMode] = useState(false);
-  const visibleProjects = projects
-    .filter((project) => !isLegacyHidden(project) && (previewMode || project.visible !== false))
+  const visibleProjects = fallbackProjects
+    .filter((project) => !isLegacyHidden(project) && project.visible !== false)
     .sort((a, b) => getProjectRank(a) - getProjectRank(b));
-
-  useEffect(() => {
-    const wantsPreview = new URLSearchParams(window.location.search).get('portfolioPreview') === '1';
-    fetch(wantsPreview ? '/api/projects?preview=1' : '/api/projects')
-      .then((response) => {
-        if (!response.ok) throw new Error('Failed to fetch projects');
-        setPreviewMode(response.headers.get('x-portfolio-preview') === 'true');
-        return response.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data) || data.length === 0) return;
-
-        const apiProjects = data as PortfolioProject[];
-        const localOnly = fallbackProjects.filter(
-          (fallback) =>
-            !apiProjects.some(
-              (project) =>
-                project.id === fallback.id ||
-                project.title.toLowerCase() === fallback.title.toLowerCase()
-            )
-        );
-
-        setProjects([...localOnly, ...apiProjects]);
-      })
-      .catch(() => setProjects(fallbackProjects));
-  }, []);
 
   return (
     <section id="projects" className="content-section relative overflow-hidden py-16 md:py-24">
-      {previewMode ? (
-        <div className="fixed bottom-5 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-4 border border-[#4ddbff]/30 bg-[#050607]/95 px-4 py-3 shadow-2xl backdrop-blur-lg">
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#4ddbff]">
-            Private preview / hidden projects visible
-          </span>
-          <Link href="/#projects" className="inline-flex min-h-11 items-center font-mono text-[10px] uppercase tracking-[0.12em] text-gray-500 hover:text-white">
-            Exit
-          </Link>
-        </div>
-      ) : null}
       <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[520px] max-w-6xl bg-[radial-gradient(circle_at_50%_0%,rgba(77,219,255,0.07),transparent_58%)]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
@@ -257,12 +218,12 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
           <div className="relative z-30 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.1em]">
             {caseStudy ? (
-              <TransitionLink href={caseStudy} className="inline-flex min-h-11 items-center text-[#4ddbff] hover:text-white">
+              <TransitionLink href={caseStudy} dataTrack="project_open" dataTrackProject={project.title} dataTrackKind="case_study" className="inline-flex min-h-11 items-center text-[#4ddbff] hover:text-white">
                 Case study
               </TransitionLink>
             ) : null}
             {liveHref ? (
-              <a href={liveHref} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-gray-500 hover:text-white" onClick={() => play('click')}>
+              <a href={liveHref} target="_blank" rel="noopener noreferrer" data-track="project_open" data-track-project={project.title} data-track-kind="live" className="inline-flex min-h-11 items-center text-gray-500 hover:text-white" onClick={() => play('click')}>
                 Live site ↗
               </a>
             ) : null}
