@@ -3,19 +3,10 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import ClickToPlayVideo from './ClickToPlayVideo';
-import { fallbackProjects } from '@/data/projects';
 
 const bioParagraphs = [
   'I build digital products from the first idea through the details that make them feel finished. My work moves between web products, interactive systems and creative software.',
   'My background started in visual design and grew into product development. I work hands-on across direction, interface, prototyping, testing and implementation, using modern AI-assisted development tools while keeping product and visual judgement at the center.',
-];
-
-const liveProjects = fallbackProjects.filter((project) => project.status === 'Live').length;
-const proof = [
-  [String(fallbackProjects.length), 'projects shipped'],
-  [String(liveProjects), 'live in the browser'],
-  ['3', 'music tools with VST3'],
-  ['1,439', 'curated questions in KVIZY'],
 ];
 
 const defaultSkills = ['React / Next.js', 'TypeScript', 'Tailwind', 'Framer Motion', 'JUCE / C++', 'Unity / C#', 'PWA / offline-first', 'WebSockets'];
@@ -142,15 +133,6 @@ export default function About() {
                 />
               </div>
             </details>
-
-            <dl className="mt-9 grid grid-cols-2 gap-px border border-white/[0.08] bg-white/[0.08] sm:grid-cols-4">
-              {proof.map(([value, label]) => (
-                <div key={label} className="flex flex-col-reverse justify-end bg-[#0a0b0c] p-4">
-                  <dt className="mt-1 font-mono text-[9px] uppercase leading-4 tracking-[0.12em] text-gray-500">{label}</dt>
-                  <dd className="text-2xl font-semibold tracking-[-0.03em] text-white sm:text-3xl">{value}</dd>
-                </div>
-              ))}
-            </dl>
 
             <div className="mt-9 flex flex-wrap gap-2 border-t border-white/[0.07] pt-6">
               {skills.slice(0, 8).map((skill) => (

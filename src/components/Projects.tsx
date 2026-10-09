@@ -73,7 +73,6 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
 
   const key = project.title.toLowerCase();
   const curated = curatedByTitle.get(key);
-  const category = curated?.category ?? project.category ?? project.tags[0] ?? 'Digital product';
   const caseStudy = curated?.caseStudy ?? project.caseStudy;
   const status = curated?.status ?? project.status ?? (project.featured ? 'Featured' : 'Project');
   const isUnavailable = status === 'Under maintenance' || status === 'Archived';
@@ -179,14 +178,6 @@ function ProjectCard({ project, index }: { project: PortfolioProject; index: num
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070809]/70 via-[#070809]/10 to-transparent" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_12%,rgba(77,219,255,0.14),transparent_45%)]" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070809]/80 via-transparent to-black/10" />
-        <div className="absolute left-4 top-4 z-10 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.13em] text-white/70 sm:left-5 sm:top-5">
-          <span className="border border-white/15 bg-black/55 px-2 py-1.5 backdrop-blur-md">
-            {category}
-          </span>
-          <span className="border border-[#4ddbff]/20 bg-black/55 px-2 py-1.5 text-[#4ddbff]/80 backdrop-blur-md">
-            {status}
-          </span>
-        </div>
         <span className="absolute bottom-4 right-4 z-10 font-mono text-[10px] text-white/35 sm:bottom-5 sm:right-5">
           /{String(index + 1).padStart(2, '0')}
         </span>
