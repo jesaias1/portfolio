@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
 
-const lastModified = new Date('2026-10-07T00:00:00.000Z');
+// Evaluated at build time, so it moves forward with every deploy.
+const lastModified = new Date();
 
 const routes: { path: string; priority: number }[] = [
   { path: '', priority: 1 },
