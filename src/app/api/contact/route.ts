@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 import { checkContactRateLimit } from '@/lib/rate-limit';
 
@@ -8,30 +7,6 @@ const LEGACY_CONTACT_EMAIL = 'contact@jesaias.dk';
 
 function publicContactEmail(email?: string | null) {
   return !email || email === LEGACY_CONTACT_EMAIL ? CONTACT_EMAIL : email;
-}
-
-export async function GET() {
-  try {
-    const contact = await prisma.contact.findFirst();
-
-    if (!contact) {
-      return NextResponse.json({
-        id: 'main',
-        email: CONTACT_EMAIL,
-        github: 'https://github.com/jesaias1',
-        linkedin: 'https://www.linkedin.com/in/jesaias/',
-      });
-    }
-
-    return NextResponse.json({ ...contact, email: publicContactEmail(contact.email) });
-  } catch {
-    return NextResponse.json({
-      id: 'main',
-      email: CONTACT_EMAIL,
-      github: 'https://github.com/jesaias1',
-      linkedin: 'https://www.linkedin.com/in/jesaias/',
-    });
-  }
 }
 
 export async function POST(request: Request) {
@@ -96,42 +71,51 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid contact form submission' }, { status: 400 });
     }
 
+    const resendKey = process.env.RESEND_API_KEY;
     const emailUser = process.env.EMAIL_USER;
     const emailPass = process.env.EMAIL_PASS;
-    const configuredContactEmail = process.env.CONTACT_TO_EMAIL?.trim();
-    const contactToEmail = publicContactEmail(configuredContactEmail);
+    const contactToEmail = publicContactEmail(process.env.CONTACT_TO_EMAIL?.trim());
 
-    if (emailUser && emailPass && contactToEmail) {
+    const esc = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const subject = `New Message from Portfolio: ${name.replace(/[\r\n]+/g, ' ')}`;
+    const text = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+    const html = `
+      <h3>New Message from Portfolio</h3>
+      <p><strong>Name:</strong> ${esc(name)}</p>
+      <p><strong>Email:</strong> ${esc(email)}</p>
+      <p><strong>Message:</strong></p>
+      <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #4ddbff;">
+        ${esc(message).replace(/\n/g, '<br>')}
+      </blockquote>
+    `;
+
+    if (resendKey) {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM?.trim() || 'Jesaias Portfolio <onboarding@resend.dev>',
+          to: [contactToEmail],
+          reply_to: email,
+          subject,
+          text,
+          html,
+        }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!response.ok) throw new Error(`Resend responded with ${response.status}`);
+      log('info', 'Contact message sent via Resend', 200);
+      return NextResponse.json({ success: true, message: 'Message sent via email' });
+    }
+
+    if (emailUser && emailPass) {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
-        auth: {
-          user: emailUser,
-          pass: emailPass,
-        },
+        auth: { user: emailUser, pass: emailPass },
       });
-
-      const esc = (s: string) =>
-        s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-      const mailOptions = {
-        from: emailUser,
-        to: contactToEmail,
-        replyTo: email,
-        subject: `New Message from Portfolio: ${name.replace(/[\r\n]+/g, ' ')}`,
-        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-        html: `
-          <h3>New Message from Portfolio</h3>
-          <p><strong>Name:</strong> ${esc(name)}</p>
-          <p><strong>Email:</strong> ${esc(email)}</p>
-          <p><strong>Message:</strong></p>
-          <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #4ddbff;">
-            ${esc(message).replace(/\n/g, '<br>')}
-          </blockquote>
-        `,
-      };
-
-      await transporter.sendMail(mailOptions);
-      log('info', 'Contact message sent', 200);
+      await transporter.sendMail({ from: emailUser, to: contactToEmail, replyTo: email, subject, text, html });
+      log('info', 'Contact message sent via Gmail', 200);
       return NextResponse.json({ success: true, message: 'Message sent via email' });
     }
 

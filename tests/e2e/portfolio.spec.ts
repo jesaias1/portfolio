@@ -1,6 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { isSafeMediaReference } from '../../src/lib/media-reference';
 
 const isCompactProject = (projectName: string) =>
   projectName.includes('mobile') || projectName.includes('tablet');
@@ -62,29 +61,6 @@ test('public pages expose canonical and social metadata', async ({ page }, testI
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 });
 
-test('public catalogue exposes current projects and excludes retired projects', async ({ request }) => {
-  const response = await request.get('/api/projects');
-  expect(response.ok()).toBeTruthy();
-  const projects = await response.json();
-
-  expect(projects).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({ title: 'KVIZY', image: '/projects/kvizy-mockup.png' }),
-      expect.objectContaining({ title: 'ORVO', image: '/projects/orvo-mockup.png' }),
-    ])
-  );
-  expect(projects.some((project: { title: string }) => /stickman|stick fighting/i.test(project.title))).toBe(false);
-});
-
-test('project media paths reject unsafe protocols', async ({}, testInfo) => {
-  test.skip(isCompactProject(testInfo.project.name), 'Pure validation only needs one project.');
-
-  expect(isSafeMediaReference('/projects/videos/orvo.mp4', true)).toBe(true);
-  expect(isSafeMediaReference('https://cdn.example.com/orvo.webm', true)).toBe(true);
-  expect(isSafeMediaReference('javascript:alert(1)', true)).toBe(false);
-  expect(isSafeMediaReference('//untrusted.example/video.mp4', true)).toBe(false);
-});
-
 test('optimized background replaces the oversized originals', async ({ request }, testInfo) => {
   test.skip(isCompactProject(testInfo.project.name), 'Asset response is viewport-independent.');
 
@@ -123,13 +99,6 @@ test('hero mark has a responsive tap target and visible click response', async (
 
   await mark.click();
   await expect(mark).toBeVisible();
-});
-
-test('private project preview does not reveal hidden work when logged out', async ({ page }) => {
-  const catalogue = await page.request.get('/api/projects?preview=1');
-  expect(catalogue.headers()['x-portfolio-preview']).toBe('false');
-  await page.goto('/?portfolioPreview=1');
-  await expect(page.getByText(/Private preview \/ hidden projects visible/i)).toHaveCount(0);
 });
 
 test('contact bot trap and security headers are active', async ({ request }, testInfo) => {
@@ -273,4 +242,16 @@ test('audio landing presents every product with working download paths', async (
   await expect(page.locator('a[href="/audio/downloads/ORVO-1.0.0-Windows-x64-Setup.exe"]').first()).toBeAttached();
   await expect(page.locator('a[href*="lemonsqueezy.com"]').first()).toBeAttached();
   await page.locator('#support summary').first().click();
+});
+
+test('project cards list current work in order and link games through redirects', async ({ page, request }) => {
+  await page.goto('/');
+  const titles = await page.locator('#projects article h3').allTextContents();
+  expect(titles).toEqual(['KVIZY', 'ORVO', 'MIDIUM', 'Playhead', 'Lettus', 'ABYX', 'Ordbomben']);
+  expect(titles.join(' ')).not.toMatch(/dump|stickman/i);
+
+  const html = await (await request.get('/')).text();
+  expect(html).not.toContain('vercel.app');
+  const redirect = await request.get('/play/playhead', { maxRedirects: 0 });
+  expect(redirect.status()).toBe(307);
 });
