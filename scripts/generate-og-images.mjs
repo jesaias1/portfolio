@@ -313,6 +313,28 @@ const kvizyHtml = `
 </body>
 </html>`;
 
+const lettusHtml = `
+<!doctype html>
+<html>
+<head><style>${projectCss('#7ddb3f', 'rgba(60, 140, 40, 0.35)')}</style></head>
+<body>
+  <div class="card">
+    <img class="shot" src="${assetUrl('projects/lettus-thumb.webp')}" />
+    <div class="content">
+      <p class="kicker">&gt; jesaias.dk / lettus</p>
+      <h1>Lettus</h1>
+      <p class="subtitle">Pick a letter. Build a word.</p>
+      <p class="body">A free grid word game. Solo vs the AI, 2-4 players on one screen, or a 1v1 duel. No download.</p>
+      <div class="tags">
+        <span class="tag">Word game</span>
+        <span class="tag">Free to play</span>
+        <span class="tag">Browser</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
 async function render(html, filename) {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
@@ -328,3 +350,4 @@ await render(portfolioHtml, 'og-portfolio-2026.png');
 await render(audioHtml, 'og-audio-2026.png');
 await render(playheadHtml, 'og-playhead.png');
 await render(kvizyHtml, 'og-kvizy.png');
+await render(lettusHtml, 'og-lettus.png');

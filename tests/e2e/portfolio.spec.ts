@@ -126,7 +126,7 @@ test('contact bot trap and security headers are active', async ({ request }, tes
 });
 
 test('core pages have no serious automated accessibility violations', async ({ page }) => {
-  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead']) {
+  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead', '/projects/lettus']) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -159,7 +159,7 @@ test('tablet breakpoint exposes the desktop navigation without loading desktop m
 });
 
 test('core routes fit every tested viewport without horizontal overflow', async ({ page }) => {
-  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead']) {
+  for (const path of ['/', '/audio', '/audio/orvo', '/audio/midium', '/audio/abyx', '/projects/kvizy', '/projects/playhead', '/projects/lettus']) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth

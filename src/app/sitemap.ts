@@ -12,6 +12,7 @@ const routes: { path: string; priority: number }[] = [
   { path: '/audio/abyx', priority: 0.8 },
   { path: '/projects/kvizy', priority: 0.8 },
   { path: '/projects/playhead', priority: 0.8 },
+  { path: '/projects/lettus', priority: 0.8 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

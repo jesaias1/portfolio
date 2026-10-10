@@ -106,6 +106,7 @@ export const fallbackProjects: PortfolioProject[] = [
     category: 'Word game',
     signal:
       'Designed and built a grid word game with solo, AI and same-screen multiplayer modes.',
+    caseStudy: '/projects/lettus',
     image: '/projects/lettus-thumb.webp',
     video: '/projects/videos/lettus-v2.mp4',
     tags: ['React', 'TypeScript', 'Game Logic', 'PWA'],

@@ -8,6 +8,7 @@ const projects = [
   { slug: 'abyx', title: 'ABYX', category: 'Gamepad instrument', href: '/audio/abyx' },
   { slug: 'kvizy', title: 'KVIZY', category: 'Offline quiz game', href: '/projects/kvizy' },
   { slug: 'playhead', title: 'Playhead', category: 'Music surf game', href: '/projects/playhead' },
+  { slug: 'lettus', title: 'Lettus', category: 'Grid word game', href: '/projects/lettus' },
 ] as const;
 
 export default function ProjectNavigation({

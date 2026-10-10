@@ -521,12 +521,18 @@
   z-index: 2;
 }
 
+.audio-ad-wrap {
+  width: 100%;
+  height: 100%;
+}
+
 .audio-ad-video {
   display: block;
   width: 100%;
   height: 100%;
   background: transparent;
   object-fit: cover;
+  transition: opacity 0.4s ease;
 }
 
 .showcase__title {
