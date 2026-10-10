@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { AutoAdVideo } from "@/components/audio/AutoAdVideo";
+import ClickToPlayVideo from "@/components/ClickToPlayVideo";
 import { AudioFooter } from "@/components/audio/AudioLanding";
 import { AudioNav } from "@/components/audio/AudioNav";
 import ProjectNavigation from "@/components/ProjectNavigation";
@@ -227,6 +228,16 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
           <h2 id="demo-title">The workflow in motion.</h2>
           <p>{product.shortCopy}</p>
         </header>
+        {product.assets.film && product.assets.filmPoster ? (
+          <ClickToPlayVideo
+            src={product.assets.film}
+            poster={product.assets.filmPoster}
+            label={`${product.name} ad`}
+            buttonLabel="Watch the ad"
+            accent={product.accent}
+            className="frame frame--wide"
+          />
+        ) : (
         <div className="frame frame--wide">
           <Image
             src={product.assets.screenshot}
@@ -245,6 +256,7 @@ export function AudioProductPage({ product }: { product: AudioProduct }) {
             </div>
           ) : null}
         </div>
+        )}
         <ol className="steps steps--row" aria-label={`${product.name} workflow`}>
           {product.workflow.map((step, index) => (
             <li key={step.title}>

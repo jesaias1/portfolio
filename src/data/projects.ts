@@ -49,8 +49,8 @@ export const fallbackProjects: PortfolioProject[] = [
     signal:
       'Product concept, interface direction and iterative development of a private preview build.',
     caseStudy: '/audio/orvo',
-    image: '/projects/orvo-mockup.png',
-    video: '/projects/videos/orvo-teaser.mp4',
+    image: '/projects/orvo-thumb.webp',
+    video: '/projects/videos/orvo-v2.mp4',
     tags: ['C++20', 'JUCE 8', 'VST3', 'Audio DSP', 'CMake'],
     link: '/audio/orvo',
     featured: true,
@@ -68,8 +68,8 @@ export const fallbackProjects: PortfolioProject[] = [
     signal:
       'Visual MIDI workflow prototype combining product direction, interface design and plugin development.',
     caseStudy: '/audio/midium',
-    image: '/projects/midium.png',
-    video: '/projects/videos/midium.mp4',
+    image: '/projects/midium-thumb.webp',
+    video: '/projects/videos/midium-v2.mp4',
     tags: ['C++', 'JUCE', 'VST3', 'MIDI', 'CMake'],
     link: '/audio/midium',
     featured: true,

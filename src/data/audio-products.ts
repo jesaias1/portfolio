@@ -20,6 +20,9 @@ export type AudioProduct = {
   assets: {
     screenshot: string;
     video?: string | string[];
+    /** Full ad with sound, played on request on the product page. */
+    film?: string;
+    filmPoster?: string;
     logo?: string;
   };
   urls: {
@@ -84,7 +87,9 @@ export const audioProducts: AudioProduct[] = [
     labels: ["WINDOWS INSTALLER", "C++20", "JUCE 8", "PREVIEW BUILD"],
     assets: {
       screenshot: "/projects/orvo-mockup.png",
-      video: "/projects/videos/orvo-teaser.mp4",
+      video: "/projects/videos/orvo-v2.mp4",
+      film: "/projects/videos/orvo-film-v2.mp4",
+      filmPoster: "/projects/orvo-thumb.webp",
     },
     urls: {
       download: "/audio/downloads/ORVO-1.0.0-Windows-x64-Setup.exe",
@@ -164,7 +169,9 @@ export const audioProducts: AudioProduct[] = [
     labels: ["VST3", "WINDOWS STANDALONE", "$10", "30-DAY TRIAL"],
     assets: {
       screenshot: "/audio/products/midium-screenshot.png",
-      video: "/projects/videos/midium.mp4",
+      video: "/projects/videos/midium-v2.mp4",
+      film: "/projects/videos/midium-film-v2.mp4",
+      filmPoster: "/projects/midium-thumb.webp",
     },
     urls: {
       download: "https://jesaias.lemonsqueezy.com/checkout/buy/cf61954c-2b62-4161-a08f-2d6f96f549e5",
