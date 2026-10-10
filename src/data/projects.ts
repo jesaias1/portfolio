@@ -100,14 +100,14 @@ export const fallbackProjects: PortfolioProject[] = [
     id: 'lettus-002',
     title: 'Lettus',
     description:
-      'A compact daily word game focused on clean feedback, mobile-first rounds and a simple repeatable loop.',
+      'A free grid word game: pick a letter, build words across, down and backwards, and outscore an AI or friends on one screen. No download.',
     longDesc:
-      'Lettus is a compact word game built around daily challenges, focused rounds and a crisp mobile experience.',
-    category: 'Daily game',
+      'Lettus is a free grid word game. Pick a letter, build words in every direction and score for every word on your grid. Play solo against an AI, or 2-4 players on one screen, right in the browser.',
+    category: 'Word game',
     signal:
-      'Designed and iterated a compact daily word game with clear feedback, mobile layout and focused game logic.',
-    image: '/projects/lettus.png',
-    video: '/projects/videos/lettus.mp4',
+      'Designed and built a grid word game with solo, AI and same-screen multiplayer modes.',
+    image: '/projects/lettus-thumb.webp',
+    video: '/projects/videos/lettus-v2.mp4',
     tags: ['React', 'TypeScript', 'Game Logic', 'PWA'],
     link: 'https://www.lettus.fun',
     featured: true,
