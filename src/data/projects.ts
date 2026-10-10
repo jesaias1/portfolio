@@ -131,7 +131,8 @@ export const fallbackProjects: PortfolioProject[] = [
     link: '/audio/abyx',
     featured: true,
     status: 'Beta',
-    visible: true,
+    // Hidden from the homepage for now; set back to true to show it again.
+    visible: false,
   },
   {
     id: 'ordbomben-001',
@@ -150,6 +151,7 @@ export const fallbackProjects: PortfolioProject[] = [
     link: '/play/ordbomben',
     featured: true,
     status: 'Live',
-    visible: true,
+    // Hidden from the homepage for now; set back to true to show it again.
+    visible: false,
   },
 ];

@@ -247,7 +247,7 @@ test('audio landing presents every product with working download paths', async (
 test('project cards list current work in order and link games through redirects', async ({ page, request }) => {
   await page.goto('/');
   const titles = await page.locator('#projects article h3').allTextContents();
-  expect(titles).toEqual(['KVIZY', 'ORVO', 'MIDIUM', 'Playhead', 'Lettus', 'ABYX', 'Ordbomben']);
+  expect(titles).toEqual(['KVIZY', 'ORVO', 'MIDIUM', 'Playhead', 'Lettus']);
   expect(titles.join(' ')).not.toMatch(/dump|stickman/i);
 
   const html = await (await request.get('/')).text();
